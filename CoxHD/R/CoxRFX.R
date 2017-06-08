@@ -572,7 +572,7 @@ summary.CoxRFX <- function(object, ...){
 	p[!names(p) %in% which.mu] <- NA
 	cat("Means:\n")
 	show(format(data.frame(mean=object$mu, sd=s, z=z, p.val=p, sig=sig2star(p)), digits=2))
-	cat("\nVariances:\n")
+	cat("\nVariances - p-values only indicative:\n")
 	v <- object$sigma2
 	c <- coef(object) - object$mu[object$groups] ## centred coefficients
 	chisq <- sapply(split(c^2/diag(object$Hinv)[1:length(c)], object$groups), sum)
