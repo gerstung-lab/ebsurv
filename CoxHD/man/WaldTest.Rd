@@ -3,15 +3,17 @@
 \alias{WaldTest}
 \title{A Wald test for the coefficients of a CoxRFX model}
 \usage{
-WaldTest(coxRFX, var = c("var2", "var"))
+WaldTest(coxRFX, var = c("var2", "var"), uncentered = TRUE)
 }
 \arguments{
 \item{coxRFX}{The CoxRFX model}
 
 \item{var}{Which type of variance estimate to use. The default choice is var2 = H^{-1} I H^{-1}. A more conservative choice is var = H^{-1}.}
+
+\item{uncentred}{logical (default=TRUE). Test uncentred coefficients or not. Tests of uncentred coefficients are not independent due to the shared mean.}
 }
 \value{
-A data.frame with columns coef, sd, z and p.value
+A data.frame with columns group, coef, coef-mu, sd, z and p.value, the latter three depending whether the test is performed on coef (uncentered=TRUE) or coef-mu.
 }
 \description{
 This separately tests the null-hypothesis of being zero on each coefficient in a CoxRFX model using a Wald test. The test

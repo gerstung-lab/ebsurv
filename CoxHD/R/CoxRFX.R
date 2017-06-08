@@ -512,17 +512,31 @@ plot.CoxRFX <- function(x, ...){
 #' http://glmm.wikidot.com/faq
 #' @param coxRFX The CoxRFX model
 #' @param var Which type of variance estimate to use. The default choice is var2 = H^{-1} I H^{-1}. A more conservative choice is var = H^{-1}.
-#' @return A data.frame with columns coef, sd, z and p.value
+#' @param uncentred logical (default=TRUE). Test uncentred coefficients or not. Tests of uncentred coefficients are not independent due to the shared mean.
+#' @return A data.frame with columns group, coef, coef-mu, sd, z and p.value, the latter three depending whether the test is performed on coef (uncentered=TRUE) or coef-mu.
 #' 
 #' @author mg14
 #' @export
-WaldTest <- function(coxRFX, var=c("var2","var")){
+WaldTest <- function(coxRFX, var=c("var2","var"), uncentered=TRUE){
 	var <- match.arg(var)
-	v <- diag(coxRFX[[var]]) 
-	z <- coef(coxRFX)/sqrt(v) 
+	g <- coxRFX$groups
+	c <- coef(coxRFX)
+	o <- coxRFX$mu[g]
+	if(uncentered){
+		v <- diag(coxRFX[[var]]) 
+	}else{
+		if(var=="var2") v <- diag(coxRFX$V)
+		else v <- diag(coxRFX$Hinv)
+		c <- c(c - o, mu=coxRFX$mu)
+		g <- c(g, rep(NA, length(mu)))
+		o <- c(o, rep(NA, length(mu)))
+	}
+	z <- c/sqrt(v)
 	d <- 1
 	p <- pchisq(z^2, d, lower.tail=FALSE)
-	data.frame(coef=coef(coxRFX), sd=sqrt(v), z=z, df = d, p.value=p, sig=sig2star(p))
+	d <- data.frame(group=g, coef=c, `coef-mu`=c-o, sd=sqrt(v), z=z, df = d, p.value=p, sig=sig2star(p), check.names=FALSE)
+	print(format(d, digits=3))
+	invisible(d)
 }
 
 #' A summary method for CoxRFX models
