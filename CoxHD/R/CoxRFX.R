@@ -528,8 +528,8 @@ WaldTest <- function(coxRFX, var=c("var2","var"), uncentered=TRUE){
 		if(var=="var2") v <- diag(coxRFX$V)
 		else v <- diag(coxRFX$Hinv)
 		c <- c(c - o, mu=coxRFX$mu)
-		g <- factor(c(as.character(g), rep(NA, length(mu))), levels=levels(g))
-		o <- c(o, rep(NA, length(mu)))
+		g <- factor(c(as.character(g), rep(NA, length(coxRFX$mu))), levels=levels(g))
+		o <- c(o, rep(NA, length(coxRFX$mu)))
 	}
 	z <- c/sqrt(v)
 	d <- 1
