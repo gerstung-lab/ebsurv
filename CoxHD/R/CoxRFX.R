@@ -94,7 +94,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	names(mu) <- uniqueGroups
 	beta = rep(1,ncol(Z)+length(which.mu))
 	beta0ld = rep(0,ncol(Z)+length(which.mu))
-	sigma2.mu = 42
+	sigma2.mu = sigma0
 	if(!is.null(which.mu)) 
 		if(!penalize.mu)
 			sumTerm <- "sumZ" 
