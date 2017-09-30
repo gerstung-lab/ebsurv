@@ -1,0 +1,24 @@
+Package: CoxHD
+Type: Package
+Title: High-dimensional extensions of the Cox proportional hazards model
+Version: 0.0.71
+Date: Thu Jun 8 14:54:32 BST 2017
+Author: Moritz Gerstung
+Maintainer: <moritz.gerstung@ebi.ac.uk>
+Description: This package includes two extensions of the Cox proportional
+    hazards model for high-dimensional regression and tools for non-parametric
+    simulation of survival data. The main models are a random effects model and
+    complementary pairs stability selection.
+Depends:
+    survival,
+    parallel,
+    RColorBrewer
+Imports:
+    glmnet,
+    MASS,
+    mg14,
+    mvtnorm,
+    mice
+Suggests:
+    coxme
+License: GPL-3
