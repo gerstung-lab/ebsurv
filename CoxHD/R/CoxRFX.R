@@ -71,7 +71,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @author mg14
 #' @export
 #' @example inst/example/CoxRFX-example.R
-CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE){
+CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
 	if(class(Z)=="data.frame"){
 		Z = as.matrix(Z)
 		Z.df <- TRUE
@@ -109,7 +109,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 								#ifelse(!is.null(which.mu),"ridge(sumZ, theta=1/sigma.mu, scale=FALSE)","")), 
 								sumTerm), 
 						collapse=" + ")))
-		fit <- coxph(formula)
+		fit <- coxph(formula, ...)
 		if(any(is.na(coef(fit)))){
 			warning(paste("NA during estimation (iter: ", iter, ", coef: ", paste(which(is.na(coef(fit)[order(o)])), sep=","), ")", sep=""))
 			break
