@@ -1,9 +1,9 @@
-Package: CoxHD
+Package: ebsurv
 Type: Package
 Title: High-dimensional extensions of the Cox proportional hazards model
 Version: 0.0.73
 Date: Thu Nov 23 21:34:01 GMT 2017
-Author: Moritz Gerstung
+Author: Moritz Gerstung & Rui Costa
 Maintainer: <moritz.gerstung@ebi.ac.uk>
 Description: This package includes two extensions of the Cox proportional
     hazards model for high-dimensional regression and tools for non-parametric
