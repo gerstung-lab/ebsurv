@@ -18,7 +18,9 @@ Imports:
     MASS,
     mg14,
     mvtnorm,
-    mice
+    mice,
+    Rcpp
 Suggests:
     coxme
 License: GPL-3
+LinkingTo: Rcpp
