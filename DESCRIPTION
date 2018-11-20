@@ -19,7 +19,8 @@ Imports:
     mg14,
     mvtnorm,
     mice,
-    Rcpp
+    Rcpp,
+    mstate
 Suggests:
     coxme
 License: GPL-3
