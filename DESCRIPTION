@@ -3,13 +3,15 @@ Type: Package
 Title: High-dimensional extensions of the Cox proportional hazards model
 Version: 0.0.73
 Date: Thu Nov 23 21:34:01 GMT 2017
-Author: Moritz Gerstung & Rui Costa
-Maintainer: <moritz.gerstung@ebi.ac.uk>
+Authors@R: c(
+    person("Moritz","Gerstung",email=moritz.gerstung@ebi.ac.uk, role="cre"),
+    person("Rui","Costa",email=rui.costa@ebi.ac.uk), role="cre")
 Description: This package includes two extensions of the Cox proportional
     hazards model for high-dimensional regression and tools for non-parametric
     simulation of survival data. The main models are a random effects model and
     complementary pairs stability selection.
 Depends:
+    R (>= 3.5.1),
     survival,
     parallel,
     RColorBrewer
@@ -20,7 +22,7 @@ Imports:
     mvtnorm,
     mice,
     Rcpp,
-    mstate
+    mstate (>= 0.2.11)
 Suggests:
     coxme
 License: GPL-3
