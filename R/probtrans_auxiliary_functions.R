@@ -1,5 +1,3 @@
-#' @useDynLib ebsurv
-#' @importFrom Rcpp sourceCpp
 
 #'Create a spline approximation for each vector of cumulative hazards
 #'
