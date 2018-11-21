@@ -27,3 +27,4 @@ Suggests:
     coxme
 License: GPL-3
 LinkingTo: Rcpp
+RoxygenNote: 6.1.1
