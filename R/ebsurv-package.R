@@ -16,3 +16,6 @@
 #' @importFrom mvtnorm rmvnorm
 #' @import MASS
 NA
+#' @useDynLib ebsurv, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+NULL
