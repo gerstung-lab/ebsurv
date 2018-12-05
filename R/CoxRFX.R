@@ -72,7 +72,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @export
 #' @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
-	if(class(Z)=="data.frame"){
+	if("data.frame"%in%class(Z)){
 		Z = as.matrix(Z)
 		Z.df <- TRUE
 	}else
