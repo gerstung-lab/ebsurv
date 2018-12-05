@@ -39,7 +39,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' This function estimates a Cox proportional in which the parameters follow normal distributions as discussed by Therneau et al. (2003). 
 #' Multiple groups can be defined with different prior mean and variance. 
 #' The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
-#' @param Z The data matrix of random effects (n x p)
+#' @param Z A matrix or data frame with the covariate data in 'long format' (see details).
 #' @param surv The survival object (n x 2)
 #' @param groups Optional groups as a factor (p) with l levels. Default = rep(1, n)
 #' @param which.mu Indicator which of the groups should have an offset. Default = unique(groups)
@@ -52,7 +52,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @param verbose Gives more output.
 #' @details The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
 #' 
-#' Different estimators exist for the variances sigma2_g: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). In the M-step of the algorithm, this uses sigma^2_g = beta_g beta_g^T/df_g, where the degrees 
+#' The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)}.  Different estimators exist for the variances sigma2_g: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). In the M-step of the algorithm, this uses sigma^2_g = beta_g beta_g^T/df_g, where the degrees 
 #' of freedom df_g = tr H_{gg} are the trace of the Hessian matrix over the elements of group g. Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
 #' Simulations indicate that the 'df' method is most accurate.
 #' 
