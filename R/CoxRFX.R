@@ -76,8 +76,9 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @export
 #' @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
-		Z = as.matrix(Z)
-		Z.df <- TRUE
+  namesZ<-names(Z)	
+  Z = as.matrix(Z)
+	Z.df <- TRUE
 	if(is.null(colnames(Z)))
 		colnames(Z) <- make.names(1:ncol(Z))
 	sigma.hat = match.arg(sigma.hat)
@@ -178,7 +179,7 @@ CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = uni
 	fit$mu.var2 = var2[-(1:p),-(1:p)] ## covariance of mean (var2)
 	fit$means = fit$means[1:p][j]
 	fit$coefficients <- (fit$coefficients %*% C)[j]
-	names(fit$means) <- names(fit$coefficients) <-  colnames(Z)[j]
+	names(fit$means) <- names(fit$coefficients) <- namesZ
 	fit$terms <- fit$terms[1:length(uniqueGroups)]
 	fit$penalized.loglik <- fit$loglik[2] - fit$penalty[2] - 1/2 * sum(log(fit$sigma2[groups]))
 	## Fake call for predict.coxph and survfit.coxph
