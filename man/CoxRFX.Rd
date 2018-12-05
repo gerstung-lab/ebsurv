@@ -10,7 +10,7 @@ CoxRFX(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
   verbose = FALSE, ...)
 }
 \arguments{
-\item{Z}{The data matrix of random effects (n x p)}
+\item{Z}{A matrix or data frame with the covariate data in 'long format' (see details).}
 
 \item{surv}{The survival object (n x 2)}
 
@@ -42,6 +42,8 @@ Multiple groups can be defined with different prior mean and variance.
 The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
 }
 \details{
+The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)} 
+
 The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
 
 Different estimators exist for the variances sigma2_g: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). In the M-step of the algorithm, this uses sigma^2_g = beta_g beta_g^T/df_g, where the degrees 

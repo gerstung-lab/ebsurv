@@ -50,9 +50,11 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @param penalize.mu Wether to define an N(0,tau) hyperprior on the group means.
 #' @param sigma.hat Which estimator to use for the variances. Default df, other possibilities include MLE, REML and BLUP, see details.
 #' @param verbose Gives more output.
-#' @details The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
+#' @details The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)}. 
 #' 
-#' The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)}.  Different estimators exist for the variances sigma2_g: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). In the M-step of the algorithm, this uses sigma^2_g = beta_g beta_g^T/df_g, where the degrees 
+#' The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
+#' 
+#' Different estimators exist for the variances sigma2_g: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). In the M-step of the algorithm, this uses sigma^2_g = beta_g beta_g^T/df_g, where the degrees 
 #' of freedom df_g = tr H_{gg} are the trace of the Hessian matrix over the elements of group g. Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
 #' Simulations indicate that the 'df' method is most accurate.
 #' 
