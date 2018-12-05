@@ -4,15 +4,18 @@
 \alias{CoxRFX}
 \title{Cox proportional hazards model with random effects}
 \usage{
-CoxRFX(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
-  tol = 0.001, max.iter = 50, sigma0 = 0.1, nu = 0,
-  penalize.mu = FALSE, sigma.hat = c("df", "MLE", "REML", "BLUP"),
-  verbose = FALSE, ...)
+CoxRFX(Z, surv, transition, groups = rep(1, ncol(Z)),
+  which.mu = unique(groups), tol = 0.001, max.iter = 50,
+  sigma0 = 0.1, nu = 0, penalize.mu = FALSE, sigma.hat = c("df",
+  "MLE", "REML", "BLUP"), verbose = FALSE, ...)
 }
 \arguments{
-\item{Z}{A matrix or data frame with the covariate data in 'long format' (see details).}
+\item{Z}{A matrix or data frame corresponding to the covariate columns in the 'long format' 
+data (see details).}
 
 \item{surv}{The survival object (n x 2)}
+
+\item{transition}{A vector corresponding to the transitions column in the 'long format' data.}
 
 \item{groups}{Optional groups as a factor (p) with l levels. Default = rep(1, n)}
 
