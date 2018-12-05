@@ -1,9 +1,9 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Convolute two vectors
+//' Multiply a number by two
 //' 
-//' @param time_vector,integrand_1,integrand_2 Numeric vectors.
+//' @param time_vector,integrand_1,integrand_2  Numeric vectors.
 //' @export
 // [[Rcpp::export]]
 NumericVector convolute_semiMarkov(NumericVector time_vector, NumericVector integrand_1, NumericVector integrand_2 ) {
@@ -17,4 +17,3 @@ NumericVector convolute_semiMarkov(NumericVector time_vector, NumericVector inte
   }
   return overallSurvival;
 }
-
