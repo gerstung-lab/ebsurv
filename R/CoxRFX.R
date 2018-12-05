@@ -109,7 +109,7 @@ CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = uni
 		mu0ld <- mu
 		formula <- formula(paste("surv ~", paste(c(sapply(1:nGroups, function(i) paste("ridge(ZZ[[",i,"]], theta=1/sigma2[",i,"], scale=FALSE)", sep="")), 
 								#ifelse(!is.null(which.mu),"ridge(sumZ, theta=1/sigma.mu, scale=FALSE)","")), 
-								sumTerm), 
+								sumTerm,"strata(transition)"), 
 						collapse=" + ")))
 		fit <- coxph(formula, ...)
 		if(any(is.na(coef(fit)))){
@@ -186,7 +186,7 @@ CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = uni
 	call <- match.call()
 	if(Z.df){
 		call["data"] <- call["Z"]
-		formula <- as.formula(paste(as.character(call["surv"]),"~",paste(colnames(Z)[j], collapse="+")))
+		formula <- as.formula(paste(as.character(call["surv"]),"~",paste(colnames(Z)[j], collapse="+"),"+strata(transition)"))
 	}else{
 		formula <- as.formula(paste(as.character(call["surv"]),"~",as.character(call["Z"])))
 	}
@@ -194,6 +194,8 @@ CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = uni
 	fit$formula <- formula
 	call["formula"] <- call("foo",formula=formula)["formula"]
 	fit$terms <- terms(formula)
+	attr(fit$terms,"specials")<-list(strata=NULL,cluster=NULL)
+	attr(fit$terms,"specials")$strata<-length(attr(fit$terms,"term.labels"))+1
 	fit$call <- call
 	class(fit) <- c("CoxRFX", class(fit))
 	return(fit)
