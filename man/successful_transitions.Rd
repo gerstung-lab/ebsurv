@@ -10,7 +10,11 @@ successful_transitions(unique_paths_object, to_state)
 A vector with the unique sequence of states between two states.
 }
 \description{
-Find the unique sequence of states between two states
+\code{successful_transitions} finds the unique path between 
+two states (if there is one) when the process has a tree-like structure.
+}
+\details{
+This function is not meant to be called by the user.
 }
 \author{
 rc28

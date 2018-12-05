@@ -2,7 +2,7 @@
 % Please edit documentation in R/probtrans_auxiliary_functions.R
 \name{unique_paths}
 \alias{unique_paths}
-\title{Find the all possible paths until absorption from a given starting state}
+\title{Find all possible paths until absorption from a given starting state}
 \usage{
 unique_paths(from_state, tmat)
 }
@@ -11,7 +11,11 @@ A matrix where each column is a sequence of states taken by the process until ab
 There are as many columns as the number of possible paths until absorption.
 }
 \description{
-Find the all possible paths until absorption from a given starting state
+\code{unique_paths} finds all possible sequences of states until absorption
+when the process has tree-like structure.
+}
+\details{
+This function is not meant to be called by the user.
 }
 \author{
 rc28

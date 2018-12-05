@@ -1,6 +1,9 @@
 
-#'Create a spline approximation for each vector of cumulative hazards
+#'Spline approximations of the cumulative hazards functions
 #'
+#'Creates a spline approximation for each vector of cumulative hazards.
+#'
+#'This function is not meant to be called by the user.
 #'
 #'@param cumhaz
 #'@return A list with a spline function for each vector of cumulative hazards 
@@ -17,8 +20,12 @@ cumhaz_splines<-function(cumhaz){
   spline_list
 }
 
-#'Find the all possible paths until absorption from a given starting state
+#'Find all possible paths until absorption from a given starting state
 #'
+#'\code{unique_paths} finds all possible sequences of states until absorption
+#'when the process has tree-like structure.
+#'
+#'This function is not meant to be called by the user.
 #'
 #'@param from_state
 #'@param tmat
@@ -57,6 +64,10 @@ unique_paths<-function(from_state,tmat){
 
 #'Find the unique sequence of states between two states
 #'
+#'\code{successful_transitions} finds the unique path between 
+#'two states (if there is one) when the process has a tree-like structure.
+#'
+#'This function is not meant to be called by the user.
 #'
 #'@param unique_paths_object
 #'@param to_state
@@ -81,12 +92,20 @@ successful_transitions<-function(unique_paths_object,to_state){
   }
 }
 
-#'Create a function that returns the cumulative hazard of leaving a given state 
+#'Compute the cumulative hazard of leaving a given state 
 #'
+#'\code{joint_cum_hazard_function} returns the cumulative
+#'hazard of leaving state \code{i} to any state that can be
+#'reached directly from \code{i}, at each of the time points in \code{t}.
 #'
-#'@param t
-#'@param competing_transitions
-#'@param spline_list
+#'This function is not meant to be called by the user.
+#'
+#'@param t A vector of time points.
+#'@param competing_transitions The transitions that can occur when the process
+#'is in state \code{i}.
+#'@param spline_list A list whose elements are spline functions 
+#'approximating the cumulative hazard of making each possible transition from 
+#'state \code{i}.
 #'@return A vector with the cumulative hazard of leaving a given state evaluated at given time points.
 #'
 #'@author rc28

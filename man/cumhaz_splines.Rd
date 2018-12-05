@@ -2,7 +2,7 @@
 % Please edit documentation in R/probtrans_auxiliary_functions.R
 \name{cumhaz_splines}
 \alias{cumhaz_splines}
-\title{Create a spline approximation for each vector of cumulative hazards}
+\title{Spline approximations of the cumulative hazards functions}
 \usage{
 cumhaz_splines(cumhaz)
 }
@@ -10,7 +10,10 @@ cumhaz_splines(cumhaz)
 A list with a spline function for each vector of cumulative hazards
 }
 \description{
-Create a spline approximation for each vector of cumulative hazards
+Creates a spline approximation for each vector of cumulative hazards.
+}
+\details{
+This function is not meant to be called by the user.
 }
 \author{
 rc28

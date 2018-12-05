@@ -2,15 +2,30 @@
 % Please edit documentation in R/probtrans_auxiliary_functions.R
 \name{joint_cum_hazard_function}
 \alias{joint_cum_hazard_function}
-\title{Create a function that returns the cumulative hazard of leaving a given state}
+\title{Compute the cumulative hazard of leaving a given state}
 \usage{
 joint_cum_hazard_function(t, competing_transitions, spline_list)
+}
+\arguments{
+\item{t}{A vector of time points.}
+
+\item{competing_transitions}{The transitions that can occur when the process
+is in state \code{i}.}
+
+\item{spline_list}{A list whose elements are spline functions 
+approximating the cumulative hazard of making each possible transition from 
+state \code{i}.}
 }
 \value{
 A vector with the cumulative hazard of leaving a given state evaluated at given time points.
 }
 \description{
-Create a function that returns the cumulative hazard of leaving a given state
+\code{joint_cum_hazard_function} returns the cumulative
+hazard of leaving state \code{i} to any state that can be
+reached directly from \code{i}, at each of the time points in \code{t}.
+}
+\details{
+This function is not meant to be called by the user.
 }
 \author{
 rc28
