@@ -42,7 +42,7 @@ Multiple groups can be defined with different prior mean and variance.
 The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
 }
 \details{
-The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)} 
+The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)}. 
 
 The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
 
