@@ -39,7 +39,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' This function estimates a Cox proportional in which the parameters follow normal distributions as discussed by Therneau et al. (2003). 
 #' Multiple groups can be defined with different prior mean and variance. 
 #' The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
-#' @param Z A matrix or data frame corresponding to the covariate columns in the 'long format' 
+#' @param Z A data frame corresponding to the covariate columns in the 'long format' 
 #' data (see details).
 #' @param surv The survival object (n x 2)
 #' @param transition A vector corresponding to the transitions column in the 'long format' data.
@@ -52,7 +52,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @param penalize.mu Wether to define an N(0,tau) hyperprior on the group means.
 #' @param sigma.hat Which estimator to use for the variances. Default df, other possibilities include MLE, REML and BLUP, see details.
 #' @param verbose Gives more output.
-#' @details The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)}. 
+#' @details The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
 #' 
 #' The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
 #' 
@@ -76,11 +76,8 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @export
 #' @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
-	if("data.frame"%in%class(Z)){
 		Z = as.matrix(Z)
 		Z.df <- TRUE
-	}else
-		Z.df <- FALSE
 	if(is.null(colnames(Z)))
 		colnames(Z) <- make.names(1:ncol(Z))
 	sigma.hat = match.arg(sigma.hat)

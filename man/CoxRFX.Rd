@@ -10,7 +10,7 @@ CoxRFX(Z, surv, transition, groups = rep(1, ncol(Z)),
   "MLE", "REML", "BLUP"), verbose = FALSE, ...)
 }
 \arguments{
-\item{Z}{A matrix or data frame corresponding to the covariate columns in the 'long format' 
+\item{Z}{A data frame corresponding to the covariate columns in the 'long format' 
 data (see details).}
 
 \item{surv}{The survival object (n x 2)}
@@ -45,7 +45,7 @@ Multiple groups can be defined with different prior mean and variance.
 The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
 }
 \details{
-The argument \code{Z} must be of class \code{c(data.frame,msdata)} or \code{c(matrix,msdata)}. 
+The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
 
 The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
 
