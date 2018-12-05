@@ -39,8 +39,10 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' This function estimates a Cox proportional in which the parameters follow normal distributions as discussed by Therneau et al. (2003). 
 #' Multiple groups can be defined with different prior mean and variance. 
 #' The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
-#' @param Z A matrix or data frame with the covariate data in 'long format' (see details).
+#' @param Z A matrix or data frame corresponding to the covariate columns in the 'long format' 
+#' data (see details).
 #' @param surv The survival object (n x 2)
+#' @param transition A vector corresponding to the transitions column in the 'long format' data.
 #' @param groups Optional groups as a factor (p) with l levels. Default = rep(1, n)
 #' @param which.mu Indicator which of the groups should have an offset. Default = unique(groups)
 #' @param tol The tolerance beyond which to stop
@@ -73,7 +75,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @author mg14
 #' @export
 #' @example inst/example/CoxRFX-example.R
-CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
+CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
 	if("data.frame"%in%class(Z)){
 		Z = as.matrix(Z)
 		Z.df <- TRUE
