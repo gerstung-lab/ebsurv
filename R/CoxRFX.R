@@ -75,8 +75,12 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @author mg14
 #' @export
 #' @example inst/example/CoxRFX-example.R
-CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
-  namesZ<-names(Z)	
+CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
+  ##
+  transition<-Z$transition
+  Z$transition<-NULL
+  namesZ<-names(Z)
+  ##
   Z = as.matrix(Z)
 	Z.df <- TRUE
 	if(is.null(colnames(Z)))
@@ -197,7 +201,7 @@ CoxRFX <- function(Z, surv, transition, groups = rep(1, ncol(Z)), which.mu = uni
 	attr(fit$terms,"specials")<-list(strata=NULL,cluster=NULL)
 	attr(fit$terms,"specials")$strata<-length(attr(fit$terms,"term.labels"))+1
 	fit$call <- call
-	class(fit) <- c("CoxRFX", class(fit))
+	class(fit) <- c("coxrfx", class(fit))
 	return(fit)
 }
 
@@ -568,8 +572,8 @@ WaldTest <- function(coxRFX, var=c("var2","var"), uncentered=TRUE){
 #' 
 #' @author mg14
 #' @export
-#' @method summary CoxRFX
-summary.CoxRFX <- function(object, ...){
+#' @method summary coxrfx
+summary.coxrfx <- function(object, ...){
 	which.mu <- names(object$mu)[object$mu!=0]
 	p <- z <- s <- object$mu
 	z[which.mu] <- object$mu[which.mu]/sqrt(diag(as.matrix(object$mu.var2)))

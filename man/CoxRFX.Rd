@@ -4,18 +4,16 @@
 \alias{CoxRFX}
 \title{Cox proportional hazards model with random effects}
 \usage{
-CoxRFX(Z, surv, transition, groups = rep(1, ncol(Z)),
-  which.mu = unique(groups), tol = 0.001, max.iter = 50,
-  sigma0 = 0.1, nu = 0, penalize.mu = FALSE, sigma.hat = c("df",
-  "MLE", "REML", "BLUP"), verbose = FALSE, ...)
+CoxRFX(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
+  tol = 0.001, max.iter = 50, sigma0 = 0.1, nu = 0,
+  penalize.mu = FALSE, sigma.hat = c("df", "MLE", "REML", "BLUP"),
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{Z}{A data frame corresponding to the covariate columns in the 'long format' 
 data (see details).}
 
 \item{surv}{The survival object (n x 2)}
-
-\item{transition}{A vector corresponding to the transitions column in the 'long format' data.}
 
 \item{groups}{Optional groups as a factor (p) with l levels. Default = rep(1, n)}
 
@@ -34,6 +32,8 @@ data (see details).}
 \item{sigma.hat}{Which estimator to use for the variances. Default df, other possibilities include MLE, REML and BLUP, see details.}
 
 \item{verbose}{Gives more output.}
+
+\item{transition}{A vector corresponding to the transitions column in the 'long format' data.}
 }
 \value{
 A coxph object with a few extra fields: $groups, $Z, $surv, $sigma2 (the variances), $mu (the means), $Hinv (the inverse Hessian of the penalised likelihood), $V = Hinv I Hinv, the covariance of all coefficients and means, 

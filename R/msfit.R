@@ -20,6 +20,7 @@ msfit <- function(object, ...){
 msfit.coxrfx<-function (object, newdata, trans) 
 {
   variance<- FALSE
+  vartype <-"aalen"
   if (!is.null((object$call)$weights) || !is.null(object$weights)) 
     stop("msfit cannot (yet) compute the result for a weighted model")
   Terms <- terms(object)
@@ -32,7 +33,6 @@ msfit.coxrfx<-function (object, newdata, trans)
   resp <- attr(Terms, "variables")[attr(Terms, "response")]
   nvar <- length(object$coefficients)
   score <- exp(object$linear.predictors)
-  vartype <- match.arg(vartype)
   if (is.na(vartype)) 
     stop("Invalid variance type specified")
   has.strata <- !is.null(attr(object$terms, "specials")$strata)
