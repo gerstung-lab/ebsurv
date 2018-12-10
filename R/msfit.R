@@ -13,7 +13,7 @@ msfit <- function(object, ...){
   UseMethod("msfit")
 }
 #' @return An object of class "msfit"
-#'
+#' 
 #' @rdname msfit
 #' @method msfit coxrfx
 #' @S3method msfit coxrfx
@@ -327,7 +327,6 @@ msfit.coxrfx<-function (object, newdata, trans)
   class(res) <- "msfit"
   return(res)
 }
-#' @return An object of class "msfit"
 #'
 #' @rdname msfit
 #' @method msfit default
@@ -656,5 +655,3 @@ msfit.default<-function (object, newdata, variance = TRUE, vartype = c("aalen",
   class(res) <- "msfit"
   return(res)
 }
-
-#' @return An object of class "msfit"

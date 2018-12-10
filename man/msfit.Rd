@@ -21,8 +21,6 @@ a multi-state Cox model.}
 }
 \value{
 An object of class "msfit"
-
-An object of class "msfit"
 }
 \description{
 This function computes subject-specific or overall cumulative transition
