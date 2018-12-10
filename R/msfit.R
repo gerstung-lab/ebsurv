@@ -3,21 +3,20 @@
 #'This function computes subject-specific or overall cumulative transition
 #'hazards for each of the possible transitions in the multi-state model.
 #'
-#'@param object An object describing the fit of
-#'a multi-state Cox model.
-#'@param ... other arguments
-#'
-#' @rdname msfit
-#' @export msfit
-msfit <- function(object, ...){
-  UseMethod("msfit")
-}
+#' @param object An object describing the fit of
+#' a multi-state Cox model.
+#' @param ... other arguments
 #' @return An object of class "msfit"
+#' @export
+msfit_generic <- function(object, ...){
+  UseMethod("msfit_generic")
+}
 #' 
-#' @rdname msfit
-#' @method msfit coxrfx
-#' @S3method msfit coxrfx
-msfit.coxrfx<-function (object, newdata, trans) 
+#' Compute subject-specific transition hazards
+#' under a random effects Cox model
+#' 
+#' @export
+msfit_generic.coxrfx<-function (object, newdata, trans) 
 {
   variance<- FALSE
   vartype <-"aalen"
@@ -328,10 +327,11 @@ msfit.coxrfx<-function (object, newdata, trans)
   return(res)
 }
 #'
-#' @rdname msfit
-#' @method msfit default
-#' @S3method msfit default
-msfit.default<-function (object, newdata, variance = TRUE, vartype = c("aalen", 
+#' Compute subject-specific transition hazards
+#' under a fixed effects Cox model
+#'
+#' @export
+msfit_generic.default<-function (object, newdata, variance = TRUE, vartype = c("aalen", 
                                                         "greenwood"), trans) 
 {
   if (!is.null((object$call)$weights) || !is.null(object$weights)) 
