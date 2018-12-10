@@ -323,7 +323,7 @@ msfit_generic.coxrfx<-function (object, newdata, trans)
   }
   if (variance) 
     res <- list(Haz = Haz, varHaz = varHaz, trans = trans) else res <- list(Haz = Haz, trans = trans)
-  class(res) <- "msfit"
+  class(res) <- c("msfit","coxrfx")
   return(res)
 }
 #'
