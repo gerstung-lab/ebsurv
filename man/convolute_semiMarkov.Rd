@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{convolute_semiMarkov}
 \alias{convolute_semiMarkov}
-\title{Convolute two vectors}
+\title{Convolution function for homogeneous semi-Markov models}
 \usage{
 convolute_semiMarkov(time_vector, integrand_1, integrand_2)
 }
@@ -10,5 +10,5 @@ convolute_semiMarkov(time_vector, integrand_1, integrand_2)
 \item{time_vector, integrand_1, integrand_2}{Numeric vectors.}
 }
 \description{
-Convolute two vectors
+Convolution function for homogeneous semi-Markov models
 }

@@ -18,3 +18,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// convolute_Markov
+NumericVector convolute_Markov(NumericVector time_vector, NumericVector diff_vector, NumericVector probtrans_vector_1, NumericVector probtrans_vector_2);
+RcppExport SEXP _ebsurv_convolute_Markov(SEXP time_vectorSEXP, SEXP diff_vectorSEXP, SEXP probtrans_vector_1SEXP, SEXP probtrans_vector_2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type time_vector(time_vectorSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type diff_vector(diff_vectorSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type probtrans_vector_1(probtrans_vector_1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type probtrans_vector_2(probtrans_vector_2SEXP);
+    rcpp_result_gen = Rcpp::wrap(convolute_Markov(time_vector, diff_vector, probtrans_vector_1, probtrans_vector_2));
+    return rcpp_result_gen;
+END_RCPP
+}
