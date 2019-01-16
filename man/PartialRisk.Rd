@@ -4,7 +4,7 @@
 \alias{PartialRisk}
 \title{Partial risk components}
 \usage{
-PartialRisk(fit, newZ = fit$Z, groups = fit$groups)
+PartialRisk(fit, newZ = fit$Z, groups = fit$groups, trans)
 }
 \arguments{
 \item{fit}{The CoxRFX fit}

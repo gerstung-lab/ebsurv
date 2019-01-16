@@ -201,6 +201,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	attr(fit$terms,"specials")<-list(strata=NULL,cluster=NULL)
 	attr(fit$terms,"specials")$strata<-length(attr(fit$terms,"term.labels"))+1
 	fit$call <- call
+	fit$transition<-transition
 	class(fit) <- c("coxrfx", class(fit))
 	return(fit)
 }
@@ -213,11 +214,12 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 #' 
 #' @author mg14
 #' @export
-PartialRisk <- function(fit, newZ=fit$Z, groups=fit$groups) {
-	sapply(levels(groups), function(x) {
-				ix <- groups == x
-				as.matrix(newZ[,ix, drop=FALSE]) %*% coef(fit)[ix] 
-			})
+PartialRisk <- function(fit, newZ=fit$Z, groups=fit$groups,trans) {
+  pr<-sapply(levels(groups)[grep(paste0("_",trans),levels(groups),fixed=TRUE)], function(x) {
+    ix <- groups == x
+    as.matrix(newZ[fit$transition==trans,ix, drop=FALSE]) %*% coef(fit)[ix] 
+  })
+  return(list(pr=pr,gr=levels(groups)[grep(paste0("_",trans),levels(groups),fixed=TRUE)]))
 }
 
 #' Variance (confidence intervals) of partial risk components
@@ -249,20 +251,20 @@ PartialRiskVar <- function(fit, newZ=fit$Z, groups=fit$groups, var = c("var2","v
 #' 
 #' @author mg14
 #' @export
-VarianceComponents <- function(fit, newZ = fit$Z[setdiff(1:nrow(fit$Z), fit$na.action),], groups = fit$groups, type = c("diag","rowSums"), var=c("var2","var")){
-	var <- match.arg(var)
-	risk <- PartialRisk(fit = fit, newZ = newZ, groups = groups)
-	type <- match.arg(type)
-	#residual <- predict(fit, se.fit=TRUE)$se.fit^2
-	newZ <- as.matrix(newZ - rep(colMeans(newZ), each=nrow(newZ)))
-	error <- rowSums((newZ %*% fit[[var]]) * newZ)
-	
-	c <- cov(risk, use="complete")
-	if(type=="diag")
-		x <- diag(c)
-	else
-		x <- rowSums(c)
-	return(c(x, mean.error=mean(error)))
+VarianceComponents <- function(fit, newZ = fit$Z[setdiff(1:nrow(fit$Z), fit$na.action),], groups = fit$groups, type = c("diag","rowSums"), var=c("var2","var"),trans){
+  var <- match.arg(var)
+  risk <- PartialRisk(fit = fit, newZ = newZ, groups = groups,trans=trans)$pr
+  type <- match.arg(type)
+  #residual <- predict(fit, se.fit=TRUE)$se.fit^2
+  newZ <- as.matrix(newZ - rep(colMeans(newZ), each=nrow(newZ)))
+  error <- rowSums((newZ %*% fit[[var]]) * newZ)
+  
+  c <- cov(risk, use="complete")
+  if(type=="diag")
+    x <- diag(c)
+  else
+    x <- rowSums(c)
+  return(list(out1=c(x, mean.error=mean(error)),out2=PartialRisk(fit = fit, newZ = newZ, groups = groups,trans=trans)$gr))
 }
 
 #' Plot variance components
@@ -281,14 +283,15 @@ VarianceComponents <- function(fit, newZ = fit$Z[setdiff(1:nrow(fit$Z), fit$na.a
 #' 
 #' @author mg14
 #' @export
-PlotVarianceComponents <- function(fit, col=1:nlevels(fit$groups), groups = fit$groups, type="rowSums", conf.int=FALSE, absolute=TRUE, digits=2, var=c("var2","var"), order=TRUE) {
+PlotVarianceComponents <- function(fit, col=1:nlevels(fit$groups), groups = fit$groups, type="rowSums", conf.int=FALSE, absolute=TRUE, digits=2, var=c("var2","var"), order=TRUE,trans) {
 	var <- match.arg(var)
 	if(is.null(names(col)))
 		names(col) <- levels(groups)
-	v <- VarianceComponents(fit, groups=groups, type=type)
+	vc_object<-VarianceComponents(fit, groups=groups, type=type,trans=trans)
+	v <- vc_object$out1
 	if(is.logical(order))
 		if(order==TRUE)
-			o <- order(v[levels(groups)], decreasing=TRUE)
+			o <- order(v[levels(factor(vc_object$out2))], decreasing=TRUE)
 		else 
 			o <- TRUE
 	else 
@@ -307,7 +310,7 @@ PlotVarianceComponents <- function(fit, col=1:nlevels(fit$groups), groups = fit$
 		ci <- NULL
 		rp <- rn <- NULL
 	}
-	pie(vp, col=col[names(vp)], border=NA, labels=paste(names(vp), " (", round(vp, digits),rp,")",sep=""), radius = sqrt(sum(v)), init.angle=90)
+	pie(vp, col=col[1:length(vp)], border=NA, labels=paste(names(vp), " (", round(vp, digits),rp,")",sep=""), radius = sqrt(sum(v)), init.angle=90)
 	
 	if(length(vn)>0){
 		par(new=T)

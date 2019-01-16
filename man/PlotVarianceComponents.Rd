@@ -7,7 +7,7 @@
 PlotVarianceComponents(fit, col = 1:nlevels(fit$groups),
   groups = fit$groups, type = "rowSums", conf.int = FALSE,
   absolute = TRUE, digits = 2, var = c("var2", "var"),
-  order = TRUE)
+  order = TRUE, trans)
 }
 \arguments{
 \item{fit}{The CoxRFX fit}

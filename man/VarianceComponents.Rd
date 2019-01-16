@@ -6,7 +6,7 @@
 \usage{
 VarianceComponents(fit, newZ = fit$Z[setdiff(1:nrow(fit$Z),
   fit$na.action), ], groups = fit$groups, type = c("diag", "rowSums"),
-  var = c("var2", "var"))
+  var = c("var2", "var"), trans)
 }
 \arguments{
 \item{fit}{The CoxRFX fit}
