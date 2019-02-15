@@ -310,7 +310,7 @@ PlotVarianceComponents <- function(fit, col=1:nlevels(fit$groups), groups = fit$
 		ci <- NULL
 		rp <- rn <- NULL
 	}
-	pie(vp, col=col[1:length(vp)], border=NA, labels=paste(names(vp), " (", round(vp, digits),rp,")",sep=""), radius = sqrt(sum(v)), init.angle=90)
+	pie(vp, col=col[1:length(vp)], border=NA, labels=names(vp), radius = sqrt(sum(v)), init.angle=90)
 	
 	if(length(vn)>0){
 		par(new=T)
