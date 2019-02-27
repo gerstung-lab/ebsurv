@@ -46,7 +46,8 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @param which.mu Indicator which of the groups should have an offset.
 #' @param tol The tolerance beyond which to stop
 #' @param max.iter The maximal number of iterations
-#' @param sigma0 The variance of a si-chisq hyperprior on the variances.
+#' @param sigma0 A vector with the initial value of the variance hyperparameter for each group of coefficients.
+#' Or a single value, in case the initial value of the variance hyperparameter is meant to be the same for all groups.
 #' @param nu The df of the variance hyperprior. Default = 0, that is no hyperprior.
 #' @param penalize.mu Wether to define an N(0,tau) hyperprior on the group means.
 #' @param sigma.hat Which estimator to use for the variances. Default df, other possibilities include MLE, REML and BLUP, see details.
