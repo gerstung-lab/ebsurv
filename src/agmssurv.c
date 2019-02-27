@@ -59,10 +59,20 @@ void agmssurv(
 {
     int i,j,k,l;
     double hazard, varhaz;
+    /*double *start = malloc(100000*sizeof(double));
+    double *stop = malloc(100000*sizeof(double));
+    double *event = malloc(100000*sizeof(double));*/
     double *start, *stop, *event;
     int n, p, var, H, K, nt, method;
+    /*double *a = malloc(100000*sizeof(double));
+    double *a2 = malloc(100000*sizeof(double));
+    double *tmp = malloc(100000*sizeof(double));
+    double *eta = malloc(100000*sizeof(double));*/
     double *a, *a2, *tmp, *eta;
     int k1, k2, k12, K12;
+    /*double *covar = malloc(100000*sizeof(double));
+    double *imatinv = malloc(100000*sizeof(double));
+    double *covar2 = malloc(100000*sizeof(double));*/
     double *covar, *imatinv, *covar2;
     int idx, thestrat, person;
     double time, weight=0, denom, e_denom;
@@ -227,4 +237,15 @@ void agmssurv(
 			}
 		}
 	}
+	
+	/*free(start);
+	free(stop);
+	free(event);
+	free(a);
+	free(a2);
+	free(tmp);
+	free(eta);
+	free(covar);
+	free(imatinv);
+	free(covar2);*/
 }
