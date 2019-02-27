@@ -13,11 +13,13 @@ CoxRFX(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 \item{Z}{A data frame corresponding to the covariate columns in the 'long format' 
 data (see details).}
 
-\item{surv}{The survival object (n x 2)}
+\item{surv}{The survival object.}
 
-\item{groups}{Optional groups as a factor (p) with l levels. Default = rep(1, n)}
+\item{groups}{A character or numeric vector whose i(th) element gives the 'group' of the regression
+coefficient associated with the i(th) covariate column of Z. See details.}
 
-\item{which.mu}{Indicator which of the groups should have an offset. Default = unique(groups)}
+\item{which.mu}{The names or numbers of the groups of regression efficients whose
+hyperparameter mu is not fixed at zero.}
 
 \item{tol}{The tolerance beyond which to stop}
 
@@ -26,15 +28,9 @@ data (see details).}
 \item{sigma0}{A vector with the initial value of the variance hyperparameter for each group of coefficients.
 Or a single value, in case the initial value of the variance hyperparameter is meant to be the same for all groups.}
 
-\item{nu}{The df of the variance hyperprior. Default = 0, that is no hyperprior.}
-
-\item{penalize.mu}{Wether to define an N(0,tau) hyperprior on the group means.}
-
 \item{sigma.hat}{Which estimator to use for the variances. Default df, other possibilities include MLE, REML and BLUP, see details.}
 
 \item{verbose}{Gives more output.}
-
-\item{transition}{A vector corresponding to the transitions column in the 'long format' data.}
 }
 \value{
 A coxph object with a few extra fields: $groups, $Z, $surv, $sigma2 (the variances), $mu (the means), $Hinv (the inverse Hessian of the penalised likelihood), $V = Hinv I Hinv, the covariance of all coefficients and means, 
