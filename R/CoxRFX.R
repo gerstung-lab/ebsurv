@@ -42,8 +42,10 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @param Z A data frame corresponding to the covariate columns in the 'long format' 
 #' data (see details).
 #' @param surv The survival object.
-#' @param groups Optional groups as a factor (p) with l levels.
-#' @param which.mu Indicator which of the groups should have an offset.
+#' @param groups A character or numeric vector whose i(th) element gives the 'group' of the regression
+#'coefficient associated with the i(th) covariate column of Z. See details.
+#' @param which.mu The names or numbers of the groups of regression efficients whose
+#' hyperparameter mu is not fixed at zero.
 #' @param tol The tolerance beyond which to stop
 #' @param max.iter The maximal number of iterations
 #' @param sigma0 A vector with the initial value of the variance hyperparameter for each group of coefficients.
