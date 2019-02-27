@@ -161,7 +161,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	fit$iter[1] <- iter
 	fit$sigma2 = sigma0ld
 	names(fit$sigma2) <- uniqueGroups
-	fit$sigma2.mu = sigma2.mu
+	#fit$sigma2.mu = sigma2.mu
 	fit$mu = mu
 	fit$Z = Z[,order(o)]
 	fit$surv = surv
