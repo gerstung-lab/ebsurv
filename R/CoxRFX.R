@@ -75,7 +75,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @author mg14
 #' @export
 #' @example inst/example/CoxRFX-example.R
-CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, nu = 0,  penalize.mu = FALSE, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
+CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
   ##
   transition<-Z$transition
   Z$transition<-NULL
@@ -101,7 +101,8 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	beta = rep(1,ncol(Z)+length(which.mu))
 	beta0ld = rep(0,ncol(Z)+length(which.mu))
 	sigma2.mu = sigma0
-	nu=0 
+	nu=0
+	penalize.mu = FALSE
 	if(!is.null(which.mu)) 
 		if(!penalize.mu)
 			sumTerm <- "sumZ" 
