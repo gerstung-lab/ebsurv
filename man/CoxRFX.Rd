@@ -23,7 +23,8 @@ data (see details).}
 
 \item{max.iter}{The maximal number of iterations}
 
-\item{sigma0}{The variance of a si-chisq hyperprior on the variances.}
+\item{sigma0}{A vector with the initial value of the variance hyperparameter for each group of coefficients.
+Or a single value, in case the initial value of the variance hyperparameter is meant to be the same for all groups.}
 
 \item{nu}{The df of the variance hyperprior. Default = 0, that is no hyperprior.}
 
