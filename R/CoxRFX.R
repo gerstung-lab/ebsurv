@@ -43,7 +43,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' data (see details).
 #' @param surv The survival object.
 #' @param groups Optional groups as a factor (p) with l levels.
-#' @param which.mu Indicator which of the groups should have an offset. Default = unique(groups)
+#' @param which.mu Indicator which of the groups should have an offset.
 #' @param tol The tolerance beyond which to stop
 #' @param max.iter The maximal number of iterations
 #' @param sigma0 The variance of a si-chisq hyperprior on the variances.
