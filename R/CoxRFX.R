@@ -42,7 +42,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @param Z A data frame corresponding to the covariate columns in the 'long format' 
 #' data (see details).
 #' @param surv The survival object.
-#' @param groups Optional groups as a factor (p) with l levels. Default = rep(1, n)
+#' @param groups Optional groups as a factor (p) with l levels.
 #' @param which.mu Indicator which of the groups should have an offset. Default = unique(groups)
 #' @param tol The tolerance beyond which to stop
 #' @param max.iter The maximal number of iterations
