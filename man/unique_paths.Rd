@@ -15,7 +15,7 @@ There are as many columns as the number of possible paths until absorption.
 when the process has tree-like structure.
 }
 \details{
-This function is not meant to be called by the user.
+This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
 }
 \author{
 rc28

@@ -14,7 +14,8 @@ A vector with the unique sequence of states between two states.
 two states (if there is one) when the process has a tree-like structure.
 }
 \details{
-This function is not meant to be called by the user.
+This function is used by 'probtrans_by_convolution_Markov' and 'probtrans_by_convolution_semiMarkov'.
+It is not meant to be called by the user.
 }
 \author{
 rc28

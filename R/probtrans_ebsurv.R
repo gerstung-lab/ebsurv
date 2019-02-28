@@ -1,12 +1,12 @@
 
 #'Spline approximations of the cumulative hazards functions
 #'
-#'Creates a spline approximation for each vector of cumulative hazards.
+#'Creates a spline approximation for the vector of cumulative hazards of each transition.
 #'
-#'This function is not meant to be called by the user.
+#'This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
 #'
 #'@param cumhaz
-#'@return A list with a spline function for each vector of cumulative hazards 
+#'@return A list of estimated cumulative hazard functions (one for each transition).
 #'
 #'@author rc28
 #'@export
@@ -25,7 +25,7 @@ cumhaz_splines<-function(cumhaz){
 #'\code{unique_paths} finds all possible sequences of states until absorption
 #'when the process has tree-like structure.
 #'
-#'This function is not meant to be called by the user.
+#'This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
 #'
 #'@param from_state
 #'@param tmat
@@ -67,7 +67,8 @@ unique_paths<-function(from_state,tmat){
 #'\code{successful_transitions} finds the unique path between 
 #'two states (if there is one) when the process has a tree-like structure.
 #'
-#'This function is not meant to be called by the user.
+#'This function is used by 'probtrans_by_convolution_Markov' and 'probtrans_by_convolution_semiMarkov'.
+#'It is not meant to be called by the user.
 #'
 #'@param unique_paths_object
 #'@param to_state

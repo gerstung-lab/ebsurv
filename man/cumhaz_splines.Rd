@@ -7,13 +7,13 @@
 cumhaz_splines(cumhaz)
 }
 \value{
-A list with a spline function for each vector of cumulative hazards
+A list of estimated cumulative hazard functions (one for each transition).
 }
 \description{
-Creates a spline approximation for each vector of cumulative hazards.
+Creates a spline approximation for the vector of cumulative hazards of each transition.
 }
 \details{
-This function is not meant to be called by the user.
+This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
 }
 \author{
 rc28
