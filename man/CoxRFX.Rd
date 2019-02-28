@@ -124,5 +124,5 @@ A. Perperoglou (2014). Cox models with dynamic ridge penalties on time-varying e
 R. Schall (1991). Estimation in generalized linear models with random effects. Biometrika, 78:719-727. http://dx.doi.org/10.1093/biomet/78.4.719
 }
 \author{
-mg14
+mg14 & rc28
 }

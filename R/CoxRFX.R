@@ -72,7 +72,7 @@ ecoxph <- function(X,surv, tol=1e-3, max.iter=50){
 #' @return A coxph object with a few extra fields: $groups, $Z, $surv, $sigma2 (the variances), $mu (the means), $Hinv (the inverse Hessian of the penalised likelihood), $V = Hinv I Hinv, the covariance of all coefficients and means, 
 #' $C the map between centred (beta', mu) to beta. 
 #' 
-#' @author mg14
+#' @author mg14 & rc28
 #' @export
 #' @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
