@@ -130,7 +130,7 @@ joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
 #'
 #'@export
 probtrans_ebsurv<-function(cumhaz,model){
-  probtrans_object<-lapply(rownames(cumhaz$trans), probtrans_by_convolution,tmat=cumhaz$trans,cumhaz=cumhaz,model=model)
+  probtrans_object<-lapply(rownames(cumhaz$trans)[1], probtrans_by_convolution,tmat=cumhaz$trans,cumhaz=cumhaz,model=model)
   probtrans_object$trans<-cumhaz$trans
   probtrans_object$direction<-"forward"
   probtrans_object$predt<-0
@@ -153,7 +153,7 @@ probtrans_by_convolution<-function(tmat,cumhaz,from_state,model){
   all_states<-na.omit(unique(as.vector(unique_paths_object)))
   #all_target_states<-all_states[-which(all_states==from_state)]
   maximum_time<-max(cumhaz$Haz$time)
-  time<-seq(0,maximum_time,length.out=50000)
+  time<-seq(0,maximum_time,length.out=1000)
   #time<-sort(c(0,sort(coxph.detail(fit)$time)-1,sort(coxph.detail(fit)$time)+1,maximum_time))
   if(model=="semiMarkov"){
     transprobs_for_all_states<-sapply(all_states, probtrans_by_convolution_semiMarkov,cumhaz=cumhaz,tmat=tmat,from_state=from_state,spline_list=spline_list,unique_paths_object=unique_paths_object,time=time)
