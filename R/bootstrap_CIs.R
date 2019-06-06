@@ -85,18 +85,15 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
     
   }
 
-  probtrans_boot_CIs_for_target_state<-function(target_state){
-    target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,item=target_state))
-    apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
-  }
   probtrans_CIs<-lapply(colnames(tmat),probtrans_boot_CIs_for_target_state)
   names(probtrans_CIs)<-colnames(tmat)
   return(probtrans_CIs)
 }
 
-#' Return all the bootstrap transition probabilities for target state `item` from a list with bootstrap transition probabilities for multiple states.
+#' Ancillary function of \code{boot_probtrans}.
 #' 
-#' Ancillary function of \code{boot_probtrans}, not meant to be called by the user.
+#' Returns all the bootstrap transition probabilities for target state `item` from a list with bootstrap transition probabilities for multiple states.
+#' This function is not meant to be called by the user.
 #' 
 #' @param list_object
 #' @param item
@@ -108,4 +105,18 @@ extract_function<-function(list_object,item){
   as.vector(list_object[item])
 }
 
+#' Ancillary function of \code{boot_probtrans}.
+#' 
+#' Computes 95\% highest density bootstrap confidence 
+#' intervals for the transition probabilities to \code{target_state}. This 
+#' function is not meant to be called by the user.
+#' 
+#' @param target_state
+#' @return 95\% highest density confidence intervals. 
+#' @author rc28
+#' @export
 
+probtrans_boot_CIs_for_target_state<-function(target_state){
+  target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,item=target_state))
+  apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
+}

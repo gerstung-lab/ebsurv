@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrap_CIs.R
 \name{extract_function}
 \alias{extract_function}
-\title{Return all the bootstrap transition probabilities for target state `item` from a list with bootstrap transition probabilities for multiple states.}
+\title{Ancillary function of \code{boot_probtrans}.}
 \usage{
 extract_function(list_object, item)
 }
@@ -10,7 +10,8 @@ extract_function(list_object, item)
 Bootstrap transition probabilities for target state `item`.
 }
 \description{
-Ancillary function of \code{boot_probtrans}, not meant to be called by the user.
+Returns all the bootstrap transition probabilities for target state `item` from a list with bootstrap transition probabilities for multiple states.
+This function is not meant to be called by the user.
 }
 \author{
 rc28
