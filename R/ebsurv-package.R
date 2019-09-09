@@ -7,7 +7,6 @@
 #' @title High-dimensional extensions of the Cox proportional hazards model
 #' @author Moritz Gerstung, European Bioinformatics Institute EMBL-EBI
 #' @keywords package
-#' @import mg14
 #' @import parallel
 #' @import survival
 #' @import RColorBrewer
