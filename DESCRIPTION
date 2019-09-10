@@ -19,7 +19,6 @@ Depends:
 Imports:
     glmnet,
     MASS,
-    mg14,
     mvtnorm,
     mice,
     Rcpp,
