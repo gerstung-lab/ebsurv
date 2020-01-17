@@ -5,9 +5,6 @@
 \alias{ebsurv-package}
 \title{High-dimensional extensions of the Cox proportional hazards model}
 \description{
-High-dimensional extensions of the Cox proportional hazards model
-}
-\details{
 This package includes two extensions of the Cox proportional hazards model for high-dimensional regression and tools for non-parametric 
 simulation of survival data. The main models are a random effects model and complementary pairs stability selection.#'
 }
