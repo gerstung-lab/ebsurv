@@ -5,7 +5,7 @@
 \title{Compute subject-specific transition probabilities
 using convolution.}
 \usage{
-probtrans_ebsurv(cumhaz, model)
+probtrans_ebsurv(initial_state, cumhaz, model)
 }
 \arguments{
 \item{cumhaz}{An 'msfit' object}
