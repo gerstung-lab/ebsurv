@@ -5,7 +5,7 @@
 \title{Bootstrap confidence intervals for regression coefficients}
 \usage{
 boot_coxrfx(mstate_data_expanded, which_group, min_nr_samples = 100,
-  output = "CIs")
+  output = "CIs", ...)
 }
 \arguments{
 \item{mstate_data_expanded}{Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs).}
@@ -15,6 +15,8 @@ boot_coxrfx(mstate_data_expanded, which_group, min_nr_samples = 100,
 \item{min_nr_samples}{The confidence interval of any coefficient is based on a number of bootstrap samples which at least as high as this argument. See details.}
 
 \item{output}{Determines the sort of output. See value.}
+
+\item{...}{Further arguments to the CoxRFX function.}
 }
 \value{
 For each regression coefficient, the confidence intervals and the number of bootstrap samples on which they are based, if the `output` argument is equal to `CIs`; if `output` is equal to `CIs_and_coxrfx_fits`, also the CoxRFX objects for each bootstrap sample.
