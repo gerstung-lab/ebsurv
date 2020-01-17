@@ -4,7 +4,6 @@
 #' simulation of survival data. The main models are a random effects model and complementary pairs stability selection.#' 
 #' @name ebsurv-package
 #' @docType package
-#' @title High-dimensional extensions of the Cox proportional hazards model
 #' @author Moritz Gerstung, European Bioinformatics Institute EMBL-EBI
 #' @keywords package
 #' @import parallel
