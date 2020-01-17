@@ -76,11 +76,12 @@ probtrans_boot_CIs_for_target_state<-function(target_state){
 #' @param which_group A character vector with the same meaning as the `groups` argument of `CoxRFX` but named (with the covariate names).
 #' @param min_nr_samples The confidence interval of any coefficient is based on a number of bootstrap samples which at least as high as this argument. See details.
 #' @param output Determines the sort of output. See value.
+#' @param ... Further arguments to the CoxRFX function.
 #' @return For each regression coefficient, the confidence intervals and the number of bootstrap samples on which they are based, if the `output` argument is equal to `CIs`; if `output` is equal to `CIs_and_coxrfx_fits`, also the CoxRFX objects for each bootstrap sample.  
 #' @author rc28
 #' @export
 
-boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output="CIs"){
+boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output="CIs",...){
   coxrfx_fits_boot<-vector("list")
   rownames(mstate_data_expanded)<-1:nrow(mstate_data_expanded)
   boot_matrix<-matrix(nrow=0,ncol = ncol(mstate_data_expanded)-8,dimnames = list(NULL,names(mstate_data_expanded)[-(1:8)]))
@@ -92,12 +93,29 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
     boot_samples<-c(boot_samples_trans_1,boot_samples_trans_2,boot_samples_trans_3) 
     
     mstate_data_expanded.boot<-mstate_data_expanded[boot_samples,]
+    
+    ##exclude covariates without variance and binary covariates with less than 0.05 cases
+    # vars_to_exclude<-vector("list",3)
+    # for(i in 1:3){
+    #   string_split<-strsplit(names(mstate_data_expanded.boot),"[.]")
+    #   var_indices<-sapply(string_split,function(x) x[length(x)]==as.character(i))
+    #   dummy_dataset<-mstate_data_expanded.boot[mstate_data_expanded.boot$trans==i,var_indices]
+    #   which_have_variance<-apply(dummy_dataset, 2, function(x) var(x)>0)
+    #   vars_to_exclude[[i]]<-names(dummy_dataset)[!which_have_variance]
+    #   dummy_dataset<-dummy_dataset[which_have_variance]
+    #   non_categorical_vars<-paste0(c("age_log","hb","anc_log","plt_log","bm_blasts_logit","ring_sideroblasts_logit","ipss","date"),paste0(".",as.character(i)))
+    #   percentage_of_ones<-apply(dummy_dataset[!names(dummy_dataset)%in%non_categorical_vars], 2, function(x) sum(x)/length(x))
+    #   which_less_than_five_percent<-which(percentage_of_ones<0.05)
+    #   vars_to_exclude[[i]]<-c(vars_to_exclude[[i]],names(percentage_of_ones)[which_less_than_five_percent])
+    # }
+    # mstate_data_expanded.boot<-mstate_data_expanded.boot[!names(mstate_data_expanded.boot)%in%unlist(vars_to_exclude)]
+    # 
+    
     covariate_df<-mstate_data_expanded.boot[-(1:8)]
-    covariate_df<-covariate_df[,which(apply(covariate_df, 2, var)>0)]
     groups2<-which_group[names(covariate_df)]
     covariate_df$transition<-mstate_data_expanded.boot$trans
     
-    coxrfx_fits_boot[[j]]<-CoxRFX(covariate_df,Surv(mstate_data_expanded.boot$time,mstate_data_expanded.boot$status),groups =groups2,max.iter = 200 )
+    coxrfx_fits_boot[[j]]<-CoxRFX(covariate_df,Surv(mstate_data_expanded.boot$time,mstate_data_expanded.boot$status),groups =groups2,... )
     
     if(coxrfx_fits_boot[[j]]$iter[1]!=as.list(coxrfx_fits_boot[[j]]$call)$max.iter & sum(is.na(coxrfx_fits_boot[[j]]$coefficients))==0){
       boot_matrix<-rbind(boot_matrix,rep(NA,ncol(boot_matrix)))
