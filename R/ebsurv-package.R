@@ -1,6 +1,6 @@
-#' Empirical Bayes multi-state Cox model
+#'Empirical Bayes multi-state Cox model
 #' 
-#' This package implements an empirical Bayes,
+#'This package implements an empirical Bayes,
 #'multi-state Cox model.Different groups of regression
 #'coefficients can be defined, with coefficients of the
 #'same group sharing the same Gaussian prior. It takes
