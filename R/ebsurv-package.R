@@ -10,7 +10,7 @@
 #' 
 #' @name ebsurv-package
 #' @docType package
-#' @author Moritz Gerstung, European Bioinformatics Institute EMBL-EBI
+#' @author Rui Costa, Moritz Gerstung (EMBL-EBI)
 #' @keywords package
 #' @import parallel
 #' @import survival
