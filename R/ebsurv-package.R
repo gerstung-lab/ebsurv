@@ -1,7 +1,13 @@
-#' High-dimensional extensions of the Cox proportional hazards model
+#' Empirical Bayes multi-state Cox model
 #' 
-#' This package includes two extensions of the Cox proportional hazards model for high-dimensional regression and tools for non-parametric 
-#' simulation of survival data. The main models are a random effects model and complementary pairs stability selection.#' 
+#' This package implements an empirical Bayes,
+#'multi-state Cox model.Different groups of regression
+#'coefficients can be defined, with coefficients of the
+#'same group sharing the same Gaussian prior. It takes
+#'as input a data set in 'long format' and generates
+#'estimates of relative hazards, cumulative hazard
+#'functions and transition probabilities.
+#' 
 #' @name ebsurv-package
 #' @docType package
 #' @author Moritz Gerstung, European Bioinformatics Institute EMBL-EBI
