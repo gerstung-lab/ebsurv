@@ -8,7 +8,7 @@ Maintainer: Rui Costa <rui.costa@ebi.ac.uk>
 Description: This package implements an empirical Bayes,
     multi-state Cox model.Different groups of regression
     coefficients can be defined, with coefficients of the
-    same group sharing the same Gaussian prior.It takes
+    same group sharing the same Gaussian prior. It takes
     as input a data set in 'long format' and generates
     estimates of relative hazards, cumulative hazard
     functions and transition probabilities.
