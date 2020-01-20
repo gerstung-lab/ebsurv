@@ -4,8 +4,13 @@
 \alias{boot_coxrfx}
 \title{Bootstrap confidence intervals for regression coefficients}
 \usage{
-boot_coxrfx(mstate_data_expanded, which_group, min_nr_samples = 100,
-  output = "CIs", ...)
+boot_coxrfx(
+  mstate_data_expanded,
+  which_group,
+  min_nr_samples = 100,
+  output = "CIs",
+  ...
+)
 }
 \arguments{
 \item{mstate_data_expanded}{Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs).}

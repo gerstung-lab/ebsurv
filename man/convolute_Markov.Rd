@@ -4,8 +4,12 @@
 \alias{convolute_Markov}
 \title{Convolution function for homogeneous Markov models}
 \usage{
-convolute_Markov(time_vector, diff_vector, probtrans_vector_1,
-  probtrans_vector_2)
+convolute_Markov(
+  time_vector,
+  diff_vector,
+  probtrans_vector_1,
+  probtrans_vector_2
+)
 }
 \arguments{
 \item{time_vector, integrand_1, integrand_2}{Numeric vectors.}

@@ -5,9 +5,14 @@
 \title{Compute subject-specific or overall transition
 probabilities under a random effects Cox model}
 \usage{
-\method{probtrans_mstate}{default}(object, predt,
-  direction = c("forward", "fixedhorizon"), method = c("aalen",
-  "greenwood"), variance = TRUE, covariance = FALSE)
+\method{probtrans_mstate}{default}(
+  object,
+  predt,
+  direction = c("forward", "fixedhorizon"),
+  method = c("aalen", "greenwood"),
+  variance = TRUE,
+  covariance = FALSE
+)
 }
 \description{
 Compute subject-specific or overall transition

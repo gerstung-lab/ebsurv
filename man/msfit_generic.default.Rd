@@ -5,8 +5,13 @@
 \title{Compute subject-specific transition hazards
 under a fixed effects Cox model}
 \usage{
-\method{msfit_generic}{default}(object, newdata, variance = TRUE,
-  vartype = c("aalen", "greenwood"), trans)
+\method{msfit_generic}{default}(
+  object,
+  newdata,
+  variance = TRUE,
+  vartype = c("aalen", "greenwood"),
+  trans
+)
 }
 \description{
 Compute subject-specific transition hazards

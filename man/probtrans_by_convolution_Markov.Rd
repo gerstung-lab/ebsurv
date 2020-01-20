@@ -4,8 +4,15 @@
 \alias{probtrans_by_convolution_Markov}
 \title{Compute transition probabilities for a given starting state and target state.}
 \usage{
-probtrans_by_convolution_Markov(tmat, cumhaz, from_state, to_state,
-  spline_list, unique_paths_object, time)
+probtrans_by_convolution_Markov(
+  tmat,
+  cumhaz,
+  from_state,
+  to_state,
+  spline_list,
+  unique_paths_object,
+  time
+)
 }
 \arguments{
 \item{tmat}{Transition matrix.}

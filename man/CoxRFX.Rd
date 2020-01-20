@@ -4,9 +4,18 @@
 \alias{CoxRFX}
 \title{Cox proportional hazards model with random effects}
 \usage{
-CoxRFX(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
-  tol = 0.001, max.iter = 50, sigma0 = 0.1, sigma.hat = c("df",
-  "MLE", "REML", "BLUP"), verbose = FALSE, ...)
+CoxRFX(
+  Z,
+  surv,
+  groups = rep(1, ncol(Z)),
+  which.mu = unique(groups),
+  tol = 0.001,
+  max.iter = 50,
+  sigma0 = 0.1,
+  sigma.hat = c("df", "MLE", "REML", "BLUP"),
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{Z}{A data frame corresponding to the covariate columns in the 'long format' 

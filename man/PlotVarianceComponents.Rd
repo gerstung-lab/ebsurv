@@ -4,10 +4,20 @@
 \alias{PlotVarianceComponents}
 \title{Plot variance components}
 \usage{
-PlotVarianceComponents(fit, col = 1:nlevels(fit$groups),
-  groups = fit$groups, type = "rowSums", conf.int = FALSE,
-  absolute = TRUE, digits = 2, var = c("var2", "var"),
-  order = TRUE, trans, CIs = NULL, ...)
+PlotVarianceComponents(
+  fit,
+  col = 1:nlevels(fit$groups),
+  groups = fit$groups,
+  type = "rowSums",
+  conf.int = FALSE,
+  absolute = TRUE,
+  digits = 2,
+  var = c("var2", "var"),
+  order = TRUE,
+  trans,
+  CIs = NULL,
+  ...
+)
 }
 \arguments{
 \item{fit}{The CoxRFX fit}

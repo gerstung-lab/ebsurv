@@ -4,8 +4,13 @@
 \alias{MakeTimeDependent}
 \title{Split a data.frame by a time-dependent variable for use in a coxph model}
 \usage{
-MakeTimeDependent(dataFrame, timeEvent, timeStop = dataFrame$time,
-  timeStart = rep(0, nrow(dataFrame)), status = dataFrame$status)
+MakeTimeDependent(
+  dataFrame,
+  timeEvent,
+  timeStop = dataFrame$time,
+  timeStart = rep(0, nrow(dataFrame)),
+  status = dataFrame$status
+)
 }
 \arguments{
 \item{dataFrame}{A data frame}

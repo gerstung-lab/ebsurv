@@ -4,9 +4,16 @@
 \alias{VarianceComponentsCI}
 \title{Confidence intervals of variance components}
 \usage{
-VarianceComponentsCI(fit, newZ = fit$Z, groups = fit$groups,
-  q = c(0.025, 0.5, 0.975), type = c("rowSums", "diag"),
-  absolute = TRUE, n = 200, mc.cores = 1)
+VarianceComponentsCI(
+  fit,
+  newZ = fit$Z,
+  groups = fit$groups,
+  q = c(0.025, 0.5, 0.975),
+  type = c("rowSums", "diag"),
+  absolute = TRUE,
+  n = 200,
+  mc.cores = 1
+)
 }
 \arguments{
 \item{fit}{The CoxRFX model}

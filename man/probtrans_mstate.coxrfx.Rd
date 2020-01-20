@@ -5,8 +5,7 @@
 \title{Compute subject-specific or overall transition
 probabilities under a fixed effects Cox model}
 \usage{
-\method{probtrans_mstate}{coxrfx}(object, predt, direction = c("forward",
-  "fixedhorizon"))
+\method{probtrans_mstate}{coxrfx}(object, predt, direction = c("forward", "fixedhorizon"))
 }
 \description{
 Compute subject-specific or overall transition

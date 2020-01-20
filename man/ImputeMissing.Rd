@@ -5,11 +5,9 @@
 \alias{ImputeXMissing}
 \title{Covariance-based imputation of missing variables}
 \usage{
-ImputeMissing(X, newX = X, use = "pairwise.complete.obs",
-  bound = TRUE)
+ImputeMissing(X, newX = X, use = "pairwise.complete.obs", bound = TRUE)
 
-ImputeXMissing(X, newX = X, use = "pairwise.complete.obs",
-  bound = TRUE)
+ImputeXMissing(X, newX = X, use = "pairwise.complete.obs", bound = TRUE)
 }
 \arguments{
 \item{X}{orignial data set}

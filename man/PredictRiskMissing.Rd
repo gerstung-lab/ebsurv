@@ -4,8 +4,7 @@
 \alias{PredictRiskMissing}
 \title{Predict risk with missing data}
 \usage{
-PredictRiskMissing(fit, newZ = fit$Z, var = c("var2", "var"),
-  bound = TRUE)
+PredictRiskMissing(fit, newZ = fit$Z, var = c("var2", "var"), bound = TRUE)
 }
 \arguments{
 \item{fit}{A CoxRFX fit}
