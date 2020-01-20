@@ -14,6 +14,6 @@ estimates of relative hazards, cumulative hazard
 functions and transition probabilities.
 }
 \author{
-Rui Costa, Moritz Gerstung (EMBL-EBI)
+Rui Costa, Moritz Gerstung
 }
 \keyword{package}

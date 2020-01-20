@@ -10,7 +10,7 @@
 #' 
 #' @name ebsurv-package
 #' @docType package
-#' @author Rui Costa, Moritz Gerstung (EMBL-EBI)
+#' @author Rui Costa, Moritz Gerstung
 #' @keywords package
 #' @import parallel
 #' @import survival
