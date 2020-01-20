@@ -13,7 +13,7 @@ Description: This package implements an empirical Bayes,
     estimates of relative hazards, cumulative hazard
     functions and transition probabilities.
 Depends:
-    R (>= 3.5.1),
+    R (>= 3.5.0),
     survival,
     parallel,
     RColorBrewer,
