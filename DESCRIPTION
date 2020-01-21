@@ -2,7 +2,7 @@ Package: ebsurv
 Type: Package
 Title: Empirical Bayes multi-state Cox model
 Version: 0.0.73
-Date: Thu Nov 23 21:34:01 GMT 2017
+Date: Wed Jan 21 21:34:01 GMT 2020
 Author: Rui Costa, Moritz Gerstung
 Maintainer: Rui Costa <rui.costa@ebi.ac.uk>
 Description: This package implements an empirical Bayes,
