@@ -6,12 +6,21 @@
 \title{Empirical Bayes multi-state Cox model}
 \description{
 This package implements an empirical Bayes,
-multi-state Cox model.Different groups of regression
+multi-state Cox model. Different groups of regression
 coefficients can be defined, with coefficients of the
 same group sharing the same Gaussian prior. It takes
 as input a data set in 'long format' and generates
 estimates of relative hazards, cumulative hazard
 functions and transition probabilities.
+}
+\details{
+\tabular{ll}{
+Package: \tab ebsurv\cr
+Type: \tab Package\cr
+Version: \tab 0.0.73\cr
+Date: \tab 2020-01-21\cr
+License: \tab GPL 3\cr
+}
 }
 \author{
 Rui Costa, Moritz Gerstung
