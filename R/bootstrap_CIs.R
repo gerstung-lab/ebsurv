@@ -1,14 +1,17 @@
 
 #' Bootstrap confidence intervals for transition probabilities
 #' 
-#' Generates interval estimates for transition probabilities computed using \code{probtrans_ebsurv} (semi-Markov version).
+#' Generates 95\% bootstrap interval estimates for transition probabilities computed using \code{probtrans_ebsurv} (semi-Markov version).
 #' 
 #' @param coxrfx_fits_boot The list of CoxRFX objects obtained by running \code{boot_coxrfx}.
 #' @param patient_data (Single) patient data in `long format`, possibly with `expanded` covariates
-#' (as obtained by running mstate::expand.covs).
-#' @param tmat Transition matrix.
+#' (as obtained by running \code{mstate::expand.covs}).
+#' @param tmat Transition matrix for the multi-state model, as obtained by running
+#' \code{mstate::transMat}.
 #' @return Interval estimates for transition probabilities. 
 #' @author rc28
+#' @seealso \code{\link{probtrans_ebsurv}}; \code{\link{boot_coxrfx}}; 
+#' \code{\link[mstate]{transMat}}; \code{\link[mstate]{expand.covs}}
 #' @export
 
 boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
