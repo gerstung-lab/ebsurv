@@ -1,7 +1,7 @@
 
 #' Bootstrap confidence intervals for transition probabilities
 #' 
-#' Generates 95\% bootstrap interval estimates for transition probabilities computed using \code{probtrans_ebsurv} (semi-Markov version).
+#' Generates 95\% highest density bootstrap interval estimates for transition probabilities computed using \code{probtrans_ebsurv} (semi-Markov version).
 #' 
 #' @param coxrfx_fits_boot The list of CoxRFX objects obtained by running \code{boot_coxrfx}.
 #' @param patient_data (Single) patient data in `long format`, possibly with `expanded` covariates
@@ -35,39 +35,52 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
     
   }
 
-  probtrans_CIs<-lapply(colnames(tmat),probtrans_boot_CIs_for_target_state)
+  probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state)
   names(probtrans_CIs)<-colnames(tmat)
   return(probtrans_CIs)
 }
 
-#' Ancillary function of \code{boot_probtrans}.
+#' Ancillary function to \code{boot_probtrans}.
 #' 
-#' Returns all the bootstrap transition probabilities for target state `item` from a list with bootstrap transition probabilities for multiple states.
+#' Extracts the bootstrap estimates of transition probabilities for
+#' target state `tstate` from a list
+#' with bootstrap estimates of transition probabilities into multiple states.
 #' This function is not meant to be called by the user.
 #' 
-#' @param list_object
-#' @param item
-#' @return Bootstrap transition probabilities for target state `item`. 
+#' @param list_object A list in which each individual element is a single
+#' bootstrap estimate of the probability of transition
+#' into different states.
+#' @param tstate The state whose bootstrap estimates of transition probabilities we wish to extract
+#' from \code{list_object}. 
+#' @return Bootstrap estimates of transition probabilities into target state `tstate`. 
+#' @details This function is an ancillary function of \code{CIs_for_target_state}, which
+#' in turn is an ancillary function of \code{boot_probtrans}.
 #' @author rc28
+#' @seealso \code{\link{CIs_for_target_state}}; \code{\link{boot_probtrans}} 
 #' @export
 
-extract_function<-function(list_object,item){
-  as.vector(list_object[item])
+extract_function<-function(list_object,tstate){
+  as.vector(list_object[tstate])
 }
 
 #' Ancillary function of \code{boot_probtrans}.
 #' 
 #' Computes 95\% highest density bootstrap confidence 
-#' intervals for the transition probabilities to \code{target_state}. This 
+#' intervals for the transition probabilities into \code{target_state}, 
+#' given a list object with boostrap estimates of transition probabilities into multiple states. This 
 #' function is not meant to be called by the user.
 #' 
-#' @param target_state
-#' @return 95\% highest density confidence intervals. 
+#' @param target_state The target state for whose transition probabilties the confidence intervals
+#' are computed.
+#' @return 95\% highest density bootstrap confidence intervals for the transition
+#' probabilities into \code{target_state}. 
+#' @details Uses function \code{extract_function}.
 #' @author rc28
+#' @seealso \code{\link{boot_probtrans}}; \code{\link{extract_function}}.
 #' @export
 
-probtrans_boot_CIs_for_target_state<-function(target_state){
-  target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,item=target_state))
+CIs_for_target_state<-function(target_state){
+  target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,tstate=target_state))
   apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
 }
 

@@ -2,16 +2,33 @@
 % Please edit documentation in R/bootstrap_CIs.R
 \name{extract_function}
 \alias{extract_function}
-\title{Ancillary function of \code{boot_probtrans}.}
+\title{Ancillary function to \code{boot_probtrans}.}
 \usage{
-extract_function(list_object, item)
+extract_function(list_object, tstate)
+}
+\arguments{
+\item{list_object}{A list in which each individual element is a single
+bootstrap estimate of the probability of transition
+into different states.}
+
+\item{tstate}{The state whose bootstrap estimates of transition probabilities we wish to extract
+from \code{list_object}.}
 }
 \value{
-Bootstrap transition probabilities for target state `item`.
+Bootstrap estimates of transition probabilities into target state `tstate`.
 }
 \description{
-Returns all the bootstrap transition probabilities for target state `item` from a list with bootstrap transition probabilities for multiple states.
+Extracts the bootstrap estimates of transition probabilities for
+target state `tstate` from a list
+with bootstrap estimates of transition probabilities into multiple states.
 This function is not meant to be called by the user.
+}
+\details{
+This function is an ancillary function of \code{CIs_for_target_state}, which
+in turn is an ancillary function of \code{boot_probtrans}.
+}
+\seealso{
+\code{\link{CIs_for_target_state}}; \code{\link{boot_probtrans}}
 }
 \author{
 rc28
