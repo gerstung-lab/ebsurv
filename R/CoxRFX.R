@@ -239,3 +239,14 @@ print.CoxRFX <- function(x, ...){
 	summary.CoxRFX(x)
 }
 
+#' Convert factor to integer.
+#' @param F A factor
+#' @return A data.frame() with columns corresponding to levels() in the factor. 
+#' 
+#' @author mg14
+#' @export
+MakeInteger <- function(F){
+  res <- as.data.frame(lapply(levels(F), `==`, F))
+  colnames(res) <- levels(F)
+  res + 0
+}
