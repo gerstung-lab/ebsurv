@@ -2,7 +2,7 @@
 % Please edit documentation in R/CoxRFX.R
 \name{CoxRFX}
 \alias{CoxRFX}
-\title{Cox proportional hazards model with random effects}
+\title{Empirical Bayes, multi-state Cox model}
 \usage{
 CoxRFX(
   Z,
@@ -18,25 +18,30 @@ CoxRFX(
 )
 }
 \arguments{
-\item{Z}{A data frame corresponding to the covariate columns in the 'long format' 
-data (see details).}
+\item{Z}{A data frame consisting of the covariate columns of a data set in 'long format'.}
 
-\item{surv}{The survival object.}
+\item{surv}{A `survival' object created with \code{survival::Surv}.}
 
-\item{groups}{A character or numeric vector whose i(th) element gives the 'group' of the regression
-coefficient associated with the i(th) covariate column of Z. See details.}
+\item{groups}{A character or numeric vector whose \eqn{i}th element gives the group of the regression
+coefficient associated with the \eqn{i}th covariate column of Z (coefficients belonging to the same group 
+share the same Gaussian prior).}
 
-\item{which.mu}{The names or numbers of the groups of regression efficients whose
-hyperparameter mu is not fixed at zero.}
+\item{which.mu}{A vector with names or numbers of coefficient groups (see 
+argument \code{groups}). If the name or number of a group of coefficients is
+given in this argument, \code{CoxRFX} will estimate the mean of its Gaussian distribution;
+otherwise the mean will be fixed at zero.}
 
-\item{tol}{The tolerance beyond which to stop}
+\item{tol}{Convergence criterium of the EM algorithm. The algorithm stops unless
+there is at least one parameter (or hyperparameter) for which it holds that the
+current estimate differs in absolute terms by more than \code{tol} from the
+previous estimate.}
 
-\item{max.iter}{The maximal number of iterations}
+\item{max.iter}{The maximum number of iterations in the EM algorithm.}
 
 \item{sigma0}{A vector with the initial value of the variance hyperparameter for each group of coefficients.
 Or a single value, in case the initial value of the variance hyperparameter is meant to be the same for all groups.}
 
-\item{sigma.hat}{Which estimator to use for the variances. Default df, other possibilities include MLE, REML and BLUP, see details.}
+\item{sigma.hat}{Which estimator to use for the variance hyperparameters (see details).}
 
 \item{verbose}{Gives more output.}
 }
@@ -45,20 +50,21 @@ A coxph object with a few extra fields: $groups, $Z, $surv, $sigma2 (the varianc
 $C the map between centred (beta', mu) to beta.
 }
 \description{
-This function estimates a Cox proportional in which the parameters follow normal distributions as discussed by Therneau et al. (2003). 
-Multiple groups can be defined with different prior mean and variance. 
-The variances of the joint distributions are efficiently estimated by an EM-type algorithm.
+This function estimates a multi-state Cox model with one or more Gaussian priors
+imposed on the regression coefficients (see Therneau et al., 2003).
+Multiple groups of coefficients can be defined: coefficients within a group share 
+the same (possibly unknown) mean and variance. The parameters and hyperparameters are
+efficiently estimated by an EM-type algorithm.
 }
 \details{
 The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
 
-The values of the means mu_g are estimated using the rowSums of Z (within in group) as auxillary variables. 
+Different estimators exist for the variance hyperparameters: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
+Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
+Simulations suggest that the 'df' method is the most accurate.
 
-Different estimators exist for the variances sigma2_g: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). In the M-step of the algorithm, this uses sigma^2_g = beta_g beta_g^T/df_g, where the degrees 
-of freedom df_g = tr H_{gg} are the trace of the Hessian matrix over the elements of group g. Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
-Simulations indicate that the 'df' method is most accurate.
-
-The model is equivalent to coxme(surv ~ (Z1|1) + rowSums(Z1) + (Z2|1) + rowSums(Z2) + ...); the coxme routine numerically optimises the integrated partial likelihood, which may
+The model can also be fitted using package \code{coxme}; the \code{coxme}
+routine numerically optimises the integrated partial likelihood, which may
 be more accurate, but is computationally expensive.
 }
 \examples{

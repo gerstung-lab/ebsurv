@@ -86,14 +86,19 @@ CIs_for_target_state<-function(target_state){
 
 #' Bootstrap confidence intervals for regression coefficients
 #' 
-#' This function computes non-parametric bootstrap confidence intervals for the regression coefficients estimated by CoxRFX.
+#' This function computes 95\% highest density bootstrap confidence intervals (non-parametric) for the regression coefficients estimated by CoxRFX.
 #' 
 #' @param mstate_data_expanded Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs).
-#' @param which_group A character vector with the same meaning as the `groups` argument of `CoxRFX` but named (with the covariate names).
-#' @param min_nr_samples The confidence interval of any coefficient is based on a number of bootstrap samples which at least as high as this argument. See details.
+#' @param which_group A character vector with the same meaning as the `groups` argument of the function \code{CoxRFX} but named (with the covariate names).
+#' @param min_nr_samples The confidence interval of any coefficient is based on a number of bootstrap samples at least as high as this argument. See details.
 #' @param output Determines the sort of output. See value.
 #' @param ... Further arguments to the CoxRFX function.
-#' @return For each regression coefficient, the confidence intervals and the number of bootstrap samples on which they are based, if the `output` argument is equal to `CIs`; if `output` is equal to `CIs_and_coxrfx_fits`, also the CoxRFX objects for each bootstrap sample.  
+#' @return For each regression coefficient, the confidence intervals and the number of bootstrap samples on which they are based, if the `output` argument is equal to `CIs`; if `output` is equal to `CIs_and_coxrfx_fits`, also the \code{CoxRFX} objects for each bootstrap sample.  
+#' @details In a given bootstrap sample there might not be enough information to generate 
+#' estimates for all coefficients. If a covariate has little or no variation in a given bootstrap sample, 
+#' no estimate of its coefficient will be computed. The present function will
+#' keep taking bootstrap samples until every coefficient has been estimated
+#' at least \code{min_nr_samples} times.
 #' @author rc28
 #' @export
 
