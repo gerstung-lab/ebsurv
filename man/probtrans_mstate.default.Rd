@@ -11,7 +11,8 @@ probabilities under a random effects Cox model}
   direction = c("forward", "fixedhorizon"),
   method = c("aalen", "greenwood"),
   variance = TRUE,
-  covariance = FALSE
+  covariance = FALSE,
+  ...
 )
 }
 \description{

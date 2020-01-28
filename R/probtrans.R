@@ -19,7 +19,7 @@ probtrans_mstate <- function(object, ...){
 probtrans_mstate.default<-function(object, predt,
                                   direction=c("forward","fixedhorizon"),
                                   method=c("aalen","greenwood"), 
-                                  variance=TRUE, covariance=FALSE){
+                                  variance=TRUE, covariance=FALSE,...){
   return(probtrans(object,predt,direction,method,variance,covariance))
 }
 #'
@@ -29,7 +29,7 @@ probtrans_mstate.default<-function(object, predt,
 #' @export
 probtrans_mstate.coxrfx<-function(object, predt, 
                                    direction=c("forward",
-                                               "fixedhorizon")){
+                                               "fixedhorizon"),...){
   return(probtrans(object,predt,direction,method="aalen",variance=FALSE
                    ,covariance=FALSE))
 }
