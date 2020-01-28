@@ -26,7 +26,7 @@
 #' @param verbose Gives more output.
 #' @details The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
 #' 
-#' Different estimators exist for the variance hyperparameters: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
+#' Different estimators exist for the variance hyperparameters: the default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
 #' Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
 #' Simulations suggest that the 'df' method is the most accurate.
 #' 
@@ -40,12 +40,13 @@
 #' 
 #' R. Schall (1991). Estimation in generalized linear models with random effects. Biometrika, 78:719-727. http://dx.doi.org/10.1093/biomet/78.4.719
 
-#' @return A coxph object with a few extra fields: $groups, $Z, $surv, $sigma2 (the variances), $mu (the means), $Hinv (the inverse Hessian of the penalised likelihood), $V = Hinv I Hinv, the covariance of all coefficients and means, 
-#' $C the map between centred (beta', mu) to beta. 
+#' @return A coxph object (see \code{survival::coxph.object}) with a few extra fields: the inputs $groups, $Z, and $surv;
+#' and the hyperparameters $sigma2 (variances) and $mu (means). 
 #' 
-#' @author mg14 & rc28
+#' @author Moritz Gerstung & Rui Costa
+#' @seealso \code{\link{coxph.object}}; \code{\link{coxme}}; \code{\link{Surv}}.
 #' @export
-#' @example inst/example/CoxRFX-example.R
+# @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
   ##
   transition<-Z$transition

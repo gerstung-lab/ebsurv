@@ -46,8 +46,8 @@ Or a single value, in case the initial value of the variance hyperparameter is m
 \item{verbose}{Gives more output.}
 }
 \value{
-A coxph object with a few extra fields: $groups, $Z, $surv, $sigma2 (the variances), $mu (the means), $Hinv (the inverse Hessian of the penalised likelihood), $V = Hinv I Hinv, the covariance of all coefficients and means, 
-$C the map between centred (beta', mu) to beta.
+A coxph object (see \code{survival::coxph.object}) with a few extra fields: the inputs $groups, $Z, and $surv;
+and the hyperparameters $sigma2 (variances) and $mu (means).
 }
 \description{
 This function estimates a multi-state Cox model with one or more Gaussian priors
@@ -59,77 +59,13 @@ efficiently estimated by an EM-type algorithm.
 \details{
 The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
 
-Different estimators exist for the variance hyperparameters: The default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
+Different estimators exist for the variance hyperparameters: the default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
 Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
 Simulations suggest that the 'df' method is the most accurate.
 
 The model can also be fitted using package \code{coxme}; the \code{coxme}
 routine numerically optimises the integrated partial likelihood, which may
 be more accurate, but is computationally expensive.
-}
-\examples{
-#' ### Parameters
-#' First define some parameters
-#+ parameters
-set.seed(42)
-nParam = 250 # Parameters
-nObs = 1000 # Observations
-nGroups <- 5
-groups <- factor(paste("Group", rep(1:nGroups, each=nParam/nGroups)))
-
-#' Now draw coefficients
-#+ coefficients
-require(mvtnorm)
-mu <- seq(-0.5,0.5,l=nGroups) # Coefficient mean within each group 
-sd <- seq(0.1,1, l=nGroups)  # Standard deviations
-a <- rnorm(nParam, mean = rep(mu, each=50), sd = rep(sd, each=50)) # Normal coefficients
-beta = rbeta(nParam, 1, 20)
-Z <- rmvnorm(nObs, mean=rep(0,nParam), sigma = diag(beta) + 1e-3) # Normal covariates with a bit of correlation
-Z[] <- Z > quantile(Z, 0.75) ## Make binary
-cor(Z[,1:5])
-
-#' Simulated risk
-#+ risk
-risk = Z \%*\% a
-a <- a / sd(risk) # standardize
-mu <- mu / sd(risk) # standardize
-sd <- sd / sd(risk) # standardize
-risk <- risk / sd(risk) # standardize
-head(risk)
-
-#' By group
-#+ groups
-riskComponents <- sapply(levels(groups), function(g)  Z[,groups==g] \%*\% a[groups==g])
-cov(riskComponents)
-rowSums(cov(riskComponents))
-
-#' ### Simulate survival
-#+ survival
-surv = CoxHD:::SimSurv(risk = risk)
-plot(survfit(surv ~1))
-
-#' Maximal concordance
-survConcordance(surv ~ risk)
-
-#' ### Fit model
-#+ fit
-fit <-  CoxRFX(Z, surv, groups = groups) ## takes about 30 s
-fit
-plot(fit)
-
-#' Coefficients
-WaldTest(fit)
-plot(a, coef(fit), col=fit$groups)
-segments(a, coef(fit) - 2*sqrt(diag(fit$var2)),a, coef(fit) + 2*sqrt(diag(fit$var2)), col=fit$groups)
-abline(0,1)
-
-#' Means
-plot(mu, fit$mu, col=1:nlevels(groups))
-segments(mu,fit$mu - 2*sqrt(diag(fit$mu.var2)) , mu, fit$mu + 2*sqrt(diag(fit$mu.var2)), col=1:nlevels(groups))
-abline(0,1)
-
-#' Variances
-plot(sd^2, fit$sigma2)
 }
 \references{
 Terry M Therneau, Patricia M Grambsch & V. Shane Pankratz (2003) Penalized Survival Models and Frailty, Journal of Computational and Graphical Statistics, 12:1, 156-175, http://dx.doi.org/10.1198/1061860031365
@@ -138,6 +74,9 @@ A. Perperoglou (2014). Cox models with dynamic ridge penalties on time-varying e
 
 R. Schall (1991). Estimation in generalized linear models with random effects. Biometrika, 78:719-727. http://dx.doi.org/10.1093/biomet/78.4.719
 }
+\seealso{
+\code{\link{coxph.object}}; \code{\link{coxme}}; \code{\link{Surv}}.
+}
 \author{
-mg14 & rc28
+Moritz Gerstung & Rui Costa
 }
