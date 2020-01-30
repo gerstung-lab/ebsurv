@@ -1,14 +1,15 @@
 
-#'Spline approximations of the cumulative hazards functions
+#'Spline approximations of the cumulative hazard functions
 #'
 #'Creates a spline approximation for the vector of cumulative hazards of each transition.
 #'
-#'This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
+#'This function is used by the function \code{probtrans_by_convolution}. It is not meant to be called by the user.
 #'
-#'@param cumhaz
+#'@param cumhaz An object of class \code{msfit}, created by 
+#'\code{\link{msfit_generic}} or \code{\link{msfit}}.
 #'@return A list of estimated cumulative hazard functions (one for each transition).
-#'
-#'@author rc28
+#'@seealso \code{\link{msfit_generic}}; \code{\link{msfit}}; \code{\link{probtrans_by_convolution}}.
+#'@author Rui Costa
 #'@export
 
 cumhaz_splines<-function(cumhaz){
@@ -23,16 +24,23 @@ cumhaz_splines<-function(cumhaz){
 #'Find all possible paths until absorption from a given starting state
 #'
 #'\code{unique_paths} finds all possible sequences of states until absorption
-#'when the process has tree-like structure.
+#'when the process has a tree-like structure.
 #'
-#'This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
+#'This function is used by the function \code{\link{probtrans_by_convolution}}. 
+#'It is not meant to be called by the user.
 #'
-#'@param from_state
-#'@param tmat
+#'@param from_state Initial state.
+#'@param tmat A transition matrix describing the states and transitions in 
+#' the multi-state model, as can be obtained by running
+#' \code{\link{transMat}}. 
+#' See argument \code{trans} in \code{\link{msprep}} (\code{mstate}
+#' package) for more detailed information.
 #'@return A matrix where each column is a sequence of states taken by the process until absorption. 
 #'There are as many columns as the number of possible paths until absorption.
 #'
-#'@author rc28
+#'@author Rui Costa
+#'@seealso \code{\link{probtrans_by_convolution}};
+#' \code{\link{transMat}}.
 #'@export
 
 unique_paths<-function(from_state,tmat){

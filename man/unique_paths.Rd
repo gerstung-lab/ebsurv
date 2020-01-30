@@ -6,17 +6,31 @@
 \usage{
 unique_paths(from_state, tmat)
 }
+\arguments{
+\item{from_state}{Initial state.}
+
+\item{tmat}{A transition matrix describing the states and transitions in 
+the multi-state model, as can be obtained by running
+\code{\link{transMat}}. 
+See argument \code{trans} in \code{\link{msprep}} (\code{mstate}
+package) for more detailed information.}
+}
 \value{
 A matrix where each column is a sequence of states taken by the process until absorption. 
 There are as many columns as the number of possible paths until absorption.
 }
 \description{
 \code{unique_paths} finds all possible sequences of states until absorption
-when the process has tree-like structure.
+when the process has a tree-like structure.
 }
 \details{
-This function is used by the function 'probtrans_by_convolution'. It is not meant to be called by the user.
+This function is used by the function \code{\link{probtrans_by_convolution}}. 
+It is not meant to be called by the user.
+}
+\seealso{
+\code{\link{probtrans_by_convolution}};
+\code{\link{transMat}}.
 }
 \author{
-rc28
+Rui Costa
 }
