@@ -13,20 +13,32 @@ joint_cum_hazard_function(t, competing_transitions, spline_list)
 is in state \code{i}.}
 
 \item{spline_list}{A list whose elements are spline functions 
-approximating the cumulative hazard of making each possible transition from 
-state \code{i}.}
+approximating the cumulative hazard of making each possible transition in
+the process. This is normally a list
+object created by running \code{cumhaz_splines}.}
 }
 \value{
 A vector with the cumulative hazard of leaving a given state evaluated at given time points.
 }
 \description{
+This function is not meant to be called by the user. It is
+an internal function of \code{probtrans_by_convolution_Markov}
+and \code{probtrans_by_convolution_semiMarkov}.
+
 \code{joint_cum_hazard_function} returns the cumulative
 hazard of leaving state \code{i} to any state that can be
 reached directly from \code{i}, at each of the time points in \code{t}.
+There is no explicit argument \code{i}: this state 
+is entirely defined by the transitions
+that can occur when the patient is in it (and these 
+transitions
+are given in the argument \code{competing_transitions}).
 }
-\details{
-This function is not meant to be called by the user.
+\seealso{
+\code{\link{probtrans_by_convolution_Markov}};
+\code{\link{probtrans_by_convolution_semiMarkov}};
+\code{\link{cumhaz_splines}}.
 }
 \author{
-rc28
+Rui Costa
 }

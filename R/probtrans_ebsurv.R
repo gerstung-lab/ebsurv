@@ -70,19 +70,31 @@ unique_paths<-function(from_state,tmat){
   }
 }
 
-#'Find the unique sequence of states between two states
+#'Find the unique possible path until an 
+#'absorbing state
 #'
-#'\code{successful_transitions} finds the unique path between 
-#'two states (if there is one) when the process has a tree-like structure.
+#'From a \code{unique_paths} object that
+#'shows all possible paths until 
+#'absorption from an initial state, 
+#'\code{successful_transitions} picks the path
+#'that finishes in \code{to_state}, if there is one. 
+#'The initial state is the one defined in the 
+#'argument \code{from_state} 
+#'to the function \code{unique_paths}. 
+#'The process must have a tree-like structure.
 #'
-#'This function is used by 'probtrans_by_convolution_Markov' and 'probtrans_by_convolution_semiMarkov'.
+#'This function is used by \code{probtrans_by_convolution_Markov} and \code{probtrans_by_convolution_semiMarkov}.
 #'It is not meant to be called by the user.
 #'
-#'@param unique_paths_object
-#'@param to_state
+#'@param unique_paths_object An object created by running 
+#'\code{\link{unique_paths}}.
+#'@param to_state An absorbing state.
 #'@return A vector with the unique sequence of states between two states. 
 #'
-#'@author rc28
+#'@author Rui Costa
+#'@seealso \code{\link{unique_paths}};
+#' \code{\link{probtrans_by_convolution_Markov}};
+#' \code{\link{probtrans_by_convolution_semiMarkov}}.
 #'@export
 
 successful_transitions<-function(unique_paths_object,to_state){
@@ -103,21 +115,34 @@ successful_transitions<-function(unique_paths_object,to_state){
 
 #'Compute the cumulative hazard of leaving a given state 
 #'
+#'@description
+#'This function is not meant to be called by the user. It is
+#'an internal function of \code{probtrans_by_convolution_Markov}
+#'and \code{probtrans_by_convolution_semiMarkov}.
+#'
 #'\code{joint_cum_hazard_function} returns the cumulative
 #'hazard of leaving state \code{i} to any state that can be
 #'reached directly from \code{i}, at each of the time points in \code{t}.
+#'There is no explicit argument \code{i}: this state 
+#'is entirely defined by the transitions
+#'that can occur when the patient is in it (and these 
+#'transitions
+#'are given in the argument \code{competing_transitions}).
 #'
-#'This function is not meant to be called by the user.
 #'
 #'@param t A vector of time points.
 #'@param competing_transitions The transitions that can occur when the process
 #'is in state \code{i}.
 #'@param spline_list A list whose elements are spline functions 
-#'approximating the cumulative hazard of making each possible transition from 
-#'state \code{i}.
+#'approximating the cumulative hazard of making each possible transition in
+#'the process. This is normally a list
+#'object created by running \code{cumhaz_splines}.
 #'@return A vector with the cumulative hazard of leaving a given state evaluated at given time points.
 #'
-#'@author rc28
+#'@author Rui Costa
+#'@seealso \code{\link{probtrans_by_convolution_Markov}};
+#'\code{\link{probtrans_by_convolution_semiMarkov}};
+#' \code{\link{cumhaz_splines}}.
 #'@export
 
 joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
@@ -130,7 +155,7 @@ joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
 
 #'Compute subject-specific transition probabilities
 #'using convolution.
-#'
+#'@param initial_state
 #'@param cumhaz An 'msfit' object
 #'@param model Either 'Markov' or 'semiMarkov'
 #'

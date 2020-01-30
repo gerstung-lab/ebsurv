@@ -2,21 +2,40 @@
 % Please edit documentation in R/probtrans_ebsurv.R
 \name{successful_transitions}
 \alias{successful_transitions}
-\title{Find the unique sequence of states between two states}
+\title{Find the unique possible path until an 
+absorbing state}
 \usage{
 successful_transitions(unique_paths_object, to_state)
+}
+\arguments{
+\item{unique_paths_object}{An object created by running 
+\code{\link{unique_paths}}.}
+
+\item{to_state}{An absorbing state.}
 }
 \value{
 A vector with the unique sequence of states between two states.
 }
 \description{
-\code{successful_transitions} finds the unique path between 
-two states (if there is one) when the process has a tree-like structure.
+From a \code{unique_paths} object that
+shows all possible paths until 
+absorption from an initial state, 
+\code{successful_transitions} picks the path
+that finishes in \code{to_state}, if there is one. 
+The initial state is the one defined in the 
+argument \code{from_state} 
+to the function \code{unique_paths}. 
+The process must have a tree-like structure.
 }
 \details{
-This function is used by 'probtrans_by_convolution_Markov' and 'probtrans_by_convolution_semiMarkov'.
+This function is used by \code{probtrans_by_convolution_Markov} and \code{probtrans_by_convolution_semiMarkov}.
 It is not meant to be called by the user.
 }
+\seealso{
+\code{\link{unique_paths}};
+\code{\link{probtrans_by_convolution_Markov}};
+\code{\link{probtrans_by_convolution_semiMarkov}}.
+}
 \author{
-rc28
+Rui Costa
 }
