@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{convolute_semiMarkov}
 \alias{convolute_semiMarkov}
-\title{Convolution function for homogeneous semi-Markov models}
+\title{Convolution function for semi-Markov models}
 \usage{
 convolute_semiMarkov(time_vector, integrand_1, integrand_2)
 }
@@ -10,5 +10,14 @@ convolute_semiMarkov(time_vector, integrand_1, integrand_2)
 \item{time_vector, integrand_1, integrand_2}{Numeric vectors.}
 }
 \description{
-Convolution function for homogeneous semi-Markov models
+Internal function of 
+\code{probtrans_by_convolution_semiMarkov}. It is written in C++
+and is not meant to be called
+directly by the user.
+}
+\seealso{
+\code{\link{probtrans_by_convolution_semiMarkov}}.
+}
+\author{
+Moritz Gerstung & Rui Costa
 }

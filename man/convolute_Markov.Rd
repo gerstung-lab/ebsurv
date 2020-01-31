@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{convolute_Markov}
 \alias{convolute_Markov}
-\title{Convolution function for homogeneous Markov models}
+\title{Convolution function for Markov models}
 \usage{
 convolute_Markov(
   time_vector,
@@ -12,8 +12,17 @@ convolute_Markov(
 )
 }
 \arguments{
-\item{time_vector, integrand_1, integrand_2}{Numeric vectors.}
+\item{time_vector, diff_vector, probtrans_vector_1, probtrans_vector_2}{Numeric vectors.}
 }
 \description{
-Convolution function for homogeneous Markov models
+Internal function of 
+\code{probtrans_by_convolution_Markov}. It is written in C++ and is
+ not meant to be called
+directly by the user.
+}
+\seealso{
+\code{\link{probtrans_by_convolution_Markov}}.
+}
+\author{
+Moritz Gerstung & Rui Costa
 }

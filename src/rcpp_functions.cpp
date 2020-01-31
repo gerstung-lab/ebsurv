@@ -1,9 +1,16 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Convolution function for homogeneous semi-Markov models
+//' Convolution function for semi-Markov models
+//' 
+//' @description Internal function of 
+//' \code{probtrans_by_convolution_semiMarkov}. It is written in C++
+//' and is not meant to be called
+//' directly by the user.
 //' 
 //' @param time_vector,integrand_1,integrand_2 Numeric vectors.
+//' @author Moritz Gerstung & Rui Costa
+//' @seealso \code{\link{probtrans_by_convolution_semiMarkov}}.
 //' @export
 // [[Rcpp::export]]
 NumericVector convolute_semiMarkov(NumericVector time_vector, NumericVector integrand_1, NumericVector integrand_2 ) {
@@ -17,9 +24,16 @@ NumericVector convolute_semiMarkov(NumericVector time_vector, NumericVector inte
   }
   return overallSurvival;
 }
-//' Convolution function for homogeneous Markov models
+//' Convolution function for Markov models
 //' 
-//' @param time_vector,integrand_1,integrand_2 Numeric vectors.
+//' @description Internal function of 
+//' \code{probtrans_by_convolution_Markov}. It is written in C++ and is
+//'  not meant to be called
+//' directly by the user.
+//' 
+//' @param time_vector,diff_vector,probtrans_vector_1,probtrans_vector_2 Numeric vectors.
+//' @author Moritz Gerstung & Rui Costa
+//' @seealso \code{\link{probtrans_by_convolution_Markov}}.
 //' @export
 // [[Rcpp::export]]
 NumericVector convolute_Markov(NumericVector time_vector, NumericVector diff_vector, NumericVector probtrans_vector_1, NumericVector probtrans_vector_2 ) {
