@@ -2,19 +2,36 @@
 % Please edit documentation in R/probtrans_ebsurv.R
 \name{probtrans_by_convolution}
 \alias{probtrans_by_convolution}
-\title{Compute all transition probabilities from a given state.}
+\title{Compute all transition probabilities from a given state
+using convolution}
 \usage{
 probtrans_by_convolution(tmat, cumhaz, from_state, model)
 }
 \arguments{
-\item{tmat}{Transition matrix.}
+\item{tmat}{A transition matrix extracted from the \code{cumhaz} argument to 
+\code{probtrans_ebsurv}.}
 
-\item{cumhaz}{'msfit' object.}
+\item{cumhaz}{\code{msfit} object (argument passed on from \code{probtrans_ebsurv}).}
 
-\item{from_state}{Initial state.}
+\item{from_state}{Initial state (argument passed on from \code{probtrans_ebsurv}).}
 
-\item{model}{}
+\item{model}{'Markov' or 'semiMarkov' (argument passed on from \code{probtrans_ebsurv}).}
 }
 \description{
-Compute all transition probabilities from a given state.
+\code{probtrans_by_convolution} is an internal function of \code{probtrans_ebsurv} and
+is not meant to be called directly by the user.
+It is itself a wrapper for the functions \code{probtrans_by_convolution_Markov}
+and \code{probtrans_by_convolution_semiMarkov}, which are the workhorses of the 
+convolution algorithm.
+}
+\details{
+For more information on the arguments of this function 
+see \code{\link{probtrans_ebsurv}}.
+}
+\seealso{
+\code{\link{probtrans_ebsurv}};\code{\link{probtrans_by_convolution_Markov}};
+\code{\link{probtrans_by_convolution_semiMarkov}}.
+}
+\author{
+Rui Costa & Moritz Gerstung
 }

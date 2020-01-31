@@ -155,11 +155,31 @@ joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
 
 #'Compute subject-specific transition probabilities
 #'using convolution.
-#'@param initial_state
-#'@param cumhaz An 'msfit' object
-#'@param model Either 'Markov' or 'semiMarkov'
+#'@details
+#'The Markov model is a non-homogeneous Markov model 
+#'in which the transition hazard rates depend only on
+#'time since the initiating event. The semi-Markov model
+#' has a single time scale: the sojourn time in the current 
+#' state. This is sometimes called homogeneous semi-Markov
+#' model. 
+#' 
+#' The algorithm behing \code{probtrans_ebsurv} is based 
+#' on the convolution of density and survival functions and
+#' is suitable for processes with a tree-like transition
+#' structure only.
 #'
-#'@return An object of class 'probtrans'
+#'@param initial_state The present function 
+#'estimates transition probabilities from the state given
+#'in this argument.
+#'@param cumhaz An \code{msfit} object created by running
+#'\code{mstate} or \code{mstate_generic}.
+#'@param model Either 'Markov' or
+#' 'semiMarkov'. See details.
+#'
+#'@return An object of class 'probtrans'. See the 'value' 
+#'section in the help page of \code{mstate::probtrans}.
+#'@author Rui Costa & Moritz Gerstung
+#'@seealso \code{\link{probtrans}};
 #'
 #'@export
 probtrans_ebsurv<-function(initial_state,cumhaz,model){
@@ -171,13 +191,29 @@ probtrans_ebsurv<-function(initial_state,cumhaz,model){
   return(probtrans_object) 
 }
 
-#'Compute all transition probabilities from a given state.
+#'Compute all transition probabilities from a given state
+#'using convolution
 #'
-#'@param tmat Transition matrix.
-#'@param cumhaz 'msfit' object.
-#'@param from_state Initial state.
-#'@param model
+#'@description
+#'\code{probtrans_by_convolution} is an internal function of \code{probtrans_ebsurv} and
+#'is not meant to be called directly by the user.
+#'It is itself a wrapper for the functions \code{probtrans_by_convolution_Markov}
+#'and \code{probtrans_by_convolution_semiMarkov}, which are the workhorses of the 
+#'convolution algorithm.
 #'
+#'@details For more information on the arguments of this function 
+#'see \code{\link{probtrans_ebsurv}}.
+#'
+#'@param tmat A transition matrix extracted from the \code{cumhaz} argument to 
+#'\code{probtrans_ebsurv}. 
+#'
+#'@param cumhaz \code{msfit} object (argument passed on from \code{probtrans_ebsurv}).
+#'@param from_state Initial state (argument passed on from \code{probtrans_ebsurv}).
+#'@param model 'Markov' or 'semiMarkov' (argument passed on from \code{probtrans_ebsurv}).
+#'
+#'@author Rui Costa & Moritz Gerstung
+#'@seealso \code{\link{probtrans_ebsurv}};\code{\link{probtrans_by_convolution_Markov}};
+#'\code{\link{probtrans_by_convolution_semiMarkov}}.
 #'@export
 
 probtrans_by_convolution<-function(tmat,cumhaz,from_state,model){
@@ -203,19 +239,33 @@ probtrans_by_convolution<-function(tmat,cumhaz,from_state,model){
   
 }
 
-#'Compute transition probabilities for a given starting state and target state.
+#'Compute transition probabilities under a non-homogeneous Markov model using
+#'a convolution algorithm.
 #'
+#'@description
 #'Compute transition probabilities for a given starting state and target state
-#'under a inhomogeneous Markov model
+#'under a non-homogeneous Markov model, using a convolution algorithm.
+#'
+#'\code{probtrans_by_convolution_Markov} is an internal function of
+#'\code{probtrans_by_convolution} and is not meant to be called directly by the user.
 #'
 #'@param tmat Transition matrix.
-#'@param cumhaz 'msfit' object.
+#'@param cumhaz \code{msfit} object.
 #'@param from_state Initial state.
 #'@param to_state Target state.
-#'@param spline_list
-#'@param unique_paths_object
-#'@param time
+#'@param spline_list A list whose elements are spline functions 
+#'approximating the cumulative hazard of making each possible transition in
+#'the process. This is normally a list
+#'object created by running \code{cumhaz_splines}.
+#'@param unique_paths_object An object created by running \code{unique_paths}.
+#'@param time A vector of ordered time points.
 #'
+#'@seealso \code{\link{probtrans_ebsurv}};
+#'\code{\link{probtrans_by_convolution_semiMarkov}}; 
+#'\code{\link{probtrans_by_convolution}};
+#'\code{\link{unique_paths}};
+#'\code{\link{cumhaz_splines}}.
+#'@author Rui Costa & Moritz Gerstung
 #'@export
 probtrans_by_convolution_Markov<-function(tmat,cumhaz,from_state,to_state,spline_list,unique_paths_object,time){
   row_of_tmat_of_current_state<-which(rownames(tmat)==from_state)
@@ -254,20 +304,36 @@ probtrans_by_convolution_Markov<-function(tmat,cumhaz,from_state,to_state,spline
   return(probtrans_vector_1)
 }
 
-#'Compute transition probabilities for a given starting state and target state.
+#'Compute transition probabilities under a semi-Markov model using
+#'a convolution algorithm.
 #'
+#'@description
 #'Compute transition probabilities for a given starting state and target state
-#'under a homogeneous semi-Markov model
+#'under a semi-Markov model with a single time scale (sojourn time),
+#'using a convolution algorithm.
+#'
+#'\code{probtrans_by_convolution_semiMarkov} is an internal function of
+#'\code{probtrans_by_convolution} and is not meant to be called directly by the user.
 #'
 #'@param tmat Transition matrix.
-#'@param cumhaz 'msfit' object.
+#'@param cumhaz \code{msfit} object.
 #'@param from_state Initial state.
 #'@param to_state Target state.
-#'@param spline_list
-#'@param unique_paths_object
-#'@param time
+#'@param spline_list A list whose elements are spline functions 
+#'approximating the cumulative hazard of making each possible transition in
+#'the process. This is normally a list
+#'object created by running \code{cumhaz_splines}.
+#'@param unique_paths_object An object created by running \code{unique_paths}.
+#'@param time A vector of ordered time points.
 #'
+#'@seealso \code{\link{probtrans_ebsurv}};
+#'\code{\link{probtrans_by_convolution_Markov}}; 
+#'\code{\link{probtrans_by_convolution}};
+#'\code{\link{unique_paths}};
+#'\code{\link{cumhaz_splines}}.
+#'@author Rui Costa & Moritz Gerstung
 #'@export
+
 probtrans_by_convolution_semiMarkov<-function(tmat,cumhaz,from_state,to_state,spline_list,unique_paths_object,time){
   row_of_tmat_of_current_state<-which(rownames(tmat)==from_state)
   competing_transitions<-na.omit(tmat[row_of_tmat_of_current_state,])

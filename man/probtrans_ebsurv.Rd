@@ -8,14 +8,40 @@ using convolution.}
 probtrans_ebsurv(initial_state, cumhaz, model)
 }
 \arguments{
-\item{cumhaz}{An 'msfit' object}
+\item{initial_state}{The present function 
+estimates transition probabilities from the state given
+in this argument.}
 
-\item{model}{Either 'Markov' or 'semiMarkov'}
+\item{cumhaz}{An \code{msfit} object created by running
+\code{mstate} or \code{mstate_generic}.}
+
+\item{model}{Either 'Markov' or
+'semiMarkov'. See details.}
 }
 \value{
-An object of class 'probtrans'
+An object of class 'probtrans'. See the 'value' 
+section in the help page of \code{mstate::probtrans}.
 }
 \description{
 Compute subject-specific transition probabilities
 using convolution.
+}
+\details{
+The Markov model is a non-homogeneous Markov model 
+in which the transition hazard rates depend only on
+time since the initiating event. The semi-Markov model
+has a single time scale: the sojourn time in the current 
+state. This is sometimes called homogeneous semi-Markov
+model. 
+
+The algorithm behing \code{probtrans_ebsurv} is based 
+on the convolution of density and survival functions and
+is suitable for processes with a tree-like transition
+structure only.
+}
+\seealso{
+\code{\link{probtrans}};
+}
+\author{
+Rui Costa & Moritz Gerstung
 }
