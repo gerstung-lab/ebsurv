@@ -201,7 +201,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 #' @param ... Currently unused
 #' @return NULL
 #' 
-#' @author mg14
+#' @author Moritz Gerstung
 #' @export
 #' @method summary coxrfx
 summary.coxrfx <- function(object, ...){
@@ -238,7 +238,7 @@ summary.coxrfx <- function(object, ...){
 #' @param ... Currently unused
 #' @return NULL
 #' 
-#' @author mg14
+#' @author Moritz Gerstung
 #' @method print CoxRFX
 #' @export
 print.CoxRFX <- function(x, ...){
@@ -246,10 +246,12 @@ print.CoxRFX <- function(x, ...){
 }
 
 #' Convert factor to integer.
-#' @param F A factor
-#' @return A data.frame() with columns corresponding to levels() in the factor. 
-#' 
-#' @author mg14
+#' @param F A factor vector.
+#' @return A data.frame with columns corresponding to levels in the factor. 
+#' @details An internal function of \code{CoxRFX}, not meant
+#' to called directly by the user.
+#' @author Moritz Gerstung
+#' @seealso \code{\link{CoxRFX}}
 #' @export
 MakeInteger <- function(F){
   res <- as.data.frame(lapply(levels(F), `==`, F))

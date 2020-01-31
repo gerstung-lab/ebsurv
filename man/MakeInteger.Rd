@@ -7,14 +7,21 @@
 MakeInteger(F)
 }
 \arguments{
-\item{F}{A factor}
+\item{F}{A factor vector.}
 }
 \value{
-A data.frame() with columns corresponding to levels() in the factor.
+A data.frame with columns corresponding to levels in the factor.
 }
 \description{
 Convert factor to integer.
 }
+\details{
+An internal function of \code{CoxRFX}, not meant
+to called directly by the user.
+}
+\seealso{
+\code{\link{CoxRFX}}
+}
 \author{
-mg14
+Moritz Gerstung
 }

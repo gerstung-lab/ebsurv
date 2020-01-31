@@ -9,7 +9,7 @@
 #' @param tmat Transition matrix for the multi-state model, as obtained by running
 #' \code{mstate::transMat}.
 #' @return Interval estimates for transition probabilities. 
-#' @author rc28
+#' @author Rui Costa
 #' @seealso \code{\link{probtrans_ebsurv}}; \code{\link{boot_coxrfx}}; 
 #' \code{\link[mstate]{transMat}}; \code{\link[mstate]{expand.covs}}
 #' @export
@@ -55,7 +55,7 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
 #' @return Bootstrap estimates of transition probabilities into target state `tstate`. 
 #' @details This function is an ancillary function of \code{CIs_for_target_state}, which
 #' in turn is an ancillary function of \code{boot_probtrans}.
-#' @author rc28
+#' @author Rui Costa
 #' @seealso \code{\link{CIs_for_target_state}}; \code{\link{boot_probtrans}} 
 #' @export
 
@@ -75,7 +75,7 @@ extract_function<-function(list_object,tstate){
 #' @return 95\% highest density bootstrap confidence intervals for the transition
 #' probabilities into \code{target_state}. 
 #' @details Uses function \code{extract_function}.
-#' @author rc28
+#' @author Rui Costa
 #' @seealso \code{\link{boot_probtrans}}; \code{\link{extract_function}}.
 #' @export
 
@@ -99,7 +99,7 @@ CIs_for_target_state<-function(target_state){
 #' no estimate of its coefficient will be computed. The present function will
 #' keep taking bootstrap samples until every coefficient has been estimated
 #' at least \code{min_nr_samples} times.
-#' @author rc28
+#' @author Rui Costa
 #' @export
 
 boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output="CIs",...){
