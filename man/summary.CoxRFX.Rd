@@ -32,5 +32,5 @@ R. J. Gray (1992). Flexible Methods for Analyzing Survival Data Using Splines, w
 T. M. Therneau, P. M. Grambsch, and V. S. Pankratz (2003). Penalized Survival Models and Frailty. Journal of Computational and Graphical Statistics, 12:156-175. http://dx.doi.org/10.1198/1061860031365
 }
 \author{
-mg14
+Moritz Gerstung
 }

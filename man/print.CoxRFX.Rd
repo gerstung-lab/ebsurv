@@ -15,5 +15,5 @@
 This function implicitly calls summary.CoxRFX().
 }
 \author{
-mg14
+Moritz Gerstung
 }

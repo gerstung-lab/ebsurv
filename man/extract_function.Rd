@@ -31,5 +31,5 @@ in turn is an ancillary function of \code{boot_probtrans}.
 \code{\link{CIs_for_target_state}}; \code{\link{boot_probtrans}}
 }
 \author{
-rc28
+Rui Costa
 }

@@ -27,5 +27,5 @@ Uses function \code{extract_function}.
 \code{\link{boot_probtrans}}; \code{\link{extract_function}}.
 }
 \author{
-rc28
+Rui Costa
 }

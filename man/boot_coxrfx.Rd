@@ -37,5 +37,5 @@ keep taking bootstrap samples until every coefficient has been estimated
 at least \code{min_nr_samples} times.
 }
 \author{
-rc28
+Rui Costa
 }
