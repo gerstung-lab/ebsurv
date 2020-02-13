@@ -14,17 +14,16 @@ Description: This package implements an empirical Bayes,
     functions and transition probabilities.
 Depends:
     R (>= 3.5.0),
-    survival,
+    survival (== 2.44-1.1),
     parallel,
     RColorBrewer,
-    mstate
+    mstate (== 0.2.11)
 Imports:
     glmnet,
     MASS,
     mvtnorm,
     mice,
     Rcpp,
-    mstate (>= 0.2.11)
 Suggests:
     coxme
 License: GPL-3
