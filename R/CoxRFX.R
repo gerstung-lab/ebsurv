@@ -49,8 +49,8 @@
 # @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
   ##
-  transition<-Z$transition
-  Z$transition<-NULL
+  stratum<-Z$stratum
+  Z$stratum<-NULL
   namesZ<-names(Z)
   ##
   Z = as.matrix(Z)
@@ -86,7 +86,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 		sigma0ld <- sigma2
 		mu0ld <- mu
 		formula <- formula(paste("surv ~", paste(c(sapply(1:nGroups, function(i) paste("ridge(ZZ[[",i,"]], theta=1/sigma2[",i,"], scale=FALSE)", sep="")), 
-								sumTerm,"strata(transition)"), 
+								sumTerm,"strata(stratum)"), 
 						collapse=" + ")))
 		fit <- coxph(formula, ...)
 		if(any(is.na(coef(fit)))){
@@ -163,7 +163,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	call <- match.call()
 	if(Z.df){
 		call["data"] <- call["Z"]
-		formula <- as.formula(paste(as.character(call["surv"]),"~",paste(colnames(Z)[j], collapse="+"),"+strata(transition)"))
+		formula <- as.formula(paste(as.character(call["surv"]),"~",paste(colnames(Z)[j], collapse="+"),"+strata(stratum)"))
 	}else{
 		formula <- as.formula(paste(as.character(call["surv"]),"~",as.character(call["Z"])))
 	}
@@ -174,7 +174,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	attr(fit$terms,"specials")<-list(strata=NULL,cluster=NULL)
 	attr(fit$terms,"specials")$strata<-length(attr(fit$terms,"term.labels"))+1
 	fit$call <- call
-	fit$transition<-transition
+	fit$stratum<-stratum
 	class(fit) <- c("coxrfx", class(fit))
 	return(fit)
 }
