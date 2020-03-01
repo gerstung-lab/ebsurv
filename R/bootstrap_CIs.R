@@ -105,7 +105,7 @@ CIs_for_target_state<-function(target_state){
 boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output="CIs",...){
   coxrfx_fits_boot<-vector("list")
   rownames(mstate_data_expanded)<-1:nrow(mstate_data_expanded)
-  boot_matrix<-matrix(nrow=0,ncol = ncol(mstate_data_expanded)-8,dimnames = list(NULL,names(mstate_data_expanded)[-(1:8)]))
+  boot_matrix<-matrix(nrow=0,ncol = ncol(mstate_data_expanded)-8+length(unique(which_group)),dimnames = list(NULL,names(mstate_data_expanded)[-(1:8)]))
   j<-1
   repeat{
     boot_samples_trans_1<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==1,]),replace = T)
@@ -134,7 +134,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
     
     covariate_df<-mstate_data_expanded.boot[-(1:8)]
     groups2<-which_group[names(covariate_df)]
-    covariate_df$transition<-mstate_data_expanded.boot$trans
+    covariate_df$stratum<-mstate_data_expanded.boot$trans
     
     coxrfx_fits_boot[[j]]<-CoxRFX(covariate_df,Surv(mstate_data_expanded.boot$time,mstate_data_expanded.boot$status),groups =groups2,... )
     
