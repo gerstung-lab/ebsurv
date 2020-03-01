@@ -17,7 +17,8 @@ Depends:
     survival (== 2.44-1.1),
     parallel,
     RColorBrewer,
-    mstate (== 0.2.11)
+    mstate (== 0.2.11),
+    HDInterval
 Imports:
     glmnet,
     MASS,
