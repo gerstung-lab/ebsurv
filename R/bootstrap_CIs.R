@@ -25,7 +25,7 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state){
     mstate_data_expanded.boot$time<-coxrfx_fits_boot[[i]]$surv[,1]
     mstate_data_expanded.boot$status<-coxrfx_fits_boot[[i]]$surv[,2]
     patient_data2<-patient_data[names(patient_data)%in%names(covariate_df)]
-    patient_data2$strata<-patient_data$strata
+    patient_data2$strata<-patient_data$stratum
     
     environment(coxrfx_fits_boot[[1]]$formula)$covariate_df<-covariate_df
     
