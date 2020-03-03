@@ -14,7 +14,7 @@
 #' \code{\link[mstate]{transMat}}; \code{\link[mstate]{expand.covs}}
 #' @export
 
-boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
+boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state){
   msfit_objects_boot<-vector("list",length(coxrfx_fits_boot))
   probtrans_objects_boot<-vector("list",length(coxrfx_fits_boot))
   for(i in 1:length(coxrfx_fits_boot)){
@@ -30,7 +30,7 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
     environment(coxrfx_fits_boot[[1]]$formula)$covariate_df<-covariate_df
     
     msfit_objects_boot[[i]]<-msfit_generic(coxrfx_fits_boot[[i]],patient_data2,trans=tmat)
-    probtrans_objects_boot[[i]]<-probtrans_ebsurv(msfit_objects_boot[[i]],"semiMarkov")[[1]]
+    probtrans_objects_boot[[i]]<-probtrans_ebsurv(initial_state,msfit_objects_boot[[i]],"semiMarkov")[[1]]
     probtrans_objects_boot[[i]]<-probtrans_objects_boot[[i]][sapply(seq(from=0,to=max(probtrans_objects_boot[[i]]$time),length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[i]]$time-x))),]
     
   }
