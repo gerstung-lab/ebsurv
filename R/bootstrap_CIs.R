@@ -20,7 +20,7 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
   for(i in 1:length(coxrfx_fits_boot)){
     print(i)
     covariate_df<-as.data.frame(coxrfx_fits_boot[[i]]$Z)
-    covariate_df$transition<-coxrfx_fits_boot[[i]]$transition
+    covariate_df$stratum<-coxrfx_fits_boot[[i]]$stratum
     mstate_data_expanded.boot<-list()
     mstate_data_expanded.boot$time<-coxrfx_fits_boot[[i]]$surv[,1]
     mstate_data_expanded.boot$status<-coxrfx_fits_boot[[i]]$surv[,2]
