@@ -79,7 +79,7 @@ extract_function<-function(list_object,tstate){
 #' @seealso \code{\link{boot_probtrans}}; \code{\link{extract_function}}.
 #' @export
 
-CIs_for_target_state<-function(target_state){
+CIs_for_target_state<-function(target_state,probtrans_objects_boot){
   target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,tstate=target_state))
   apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
 }
