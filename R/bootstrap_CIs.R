@@ -35,7 +35,7 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state){
     
   }
 
-  probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state)
+  probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state,probtrans_objects_boot=probtrans_objects_boot)
   names(probtrans_CIs)<-colnames(tmat)
   return(probtrans_CIs)
 }
