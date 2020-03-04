@@ -20,12 +20,12 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state){
   for(i in 1:length(coxrfx_fits_boot)){
     print(i)
     covariate_df<-as.data.frame(coxrfx_fits_boot[[i]]$Z)
-    covariate_df$stratum<-coxrfx_fits_boot[[i]]$stratum
+    covariate_df$strata<-coxrfx_fits_boot[[i]]$strata
     mstate_data_expanded.boot<-list()
     mstate_data_expanded.boot$time<-coxrfx_fits_boot[[i]]$surv[,1]
     mstate_data_expanded.boot$status<-coxrfx_fits_boot[[i]]$surv[,2]
     patient_data2<-patient_data[names(patient_data)%in%names(covariate_df)]
-    patient_data2$strata<-patient_data$stratum
+    patient_data2$strata<-patient_data$strata
     
     environment(coxrfx_fits_boot[[1]]$formula)$covariate_df<-covariate_df
     
@@ -134,7 +134,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
     
     covariate_df<-mstate_data_expanded.boot[-(1:8)]
     groups2<-which_group[names(covariate_df)]
-    covariate_df$stratum<-mstate_data_expanded.boot$trans
+    covariate_df$strata<-mstate_data_expanded.boot$trans
     
     coxrfx_fits_boot[[j]]<-CoxRFX(covariate_df,Surv(mstate_data_expanded.boot$time,mstate_data_expanded.boot$status),groups =groups2,... )
     
