@@ -1,0 +1,512 @@
+genotypes <- allGenotypes[,colSums(allGenotypes)>0]
+centers <- sapply(unique(1:5), function(i) mdsClinicalData$center==i) + 0
+colnames(centers) <- paste("center",1:5, sep="")
+centers <- sapply(unique(1:5), function(i) mdsClinicalData$center==i) + 0
+colnames(centers) <- paste("center",1:5, sep="")
+cyto = mdsClinicalData[,grepl("CYTO_",colnames(mdsClinicalData))]
+colnames(cyto) = c( "chr3" ,   "del5q" ,"del7_7q" ,"tri8"   , "del11" , "del12", "alt17q"  , "tri19"   ,"del20q" ,"delY", "other" , "complex")
+ascat =  mdsClinicalData[,grepl("SEQ_",colnames(mdsClinicalData))]
+colnames(ascat) = c("tri8"  , "del5"  ,"del7_7q" , "del11q" ,"del12p", "alt17q"  , "tri19" , "del20q","other")
+cytoMerged = cyto
+for(c in colnames(cyto))
+if(c %in% colnames(ascat))
+cytoMerged[,c][is.na(cytoMerged[,c])] = ascat[,c][is.na(cytoMerged[,c])]
+#indicator variables for simplified who classes
+whoSimple = data.frame(
+ra = mdsClinicalData$WHO.category %in% c("RA","RT"),
+rars = mdsClinicalData$WHO.category == "RARS",
+rars_t = mdsClinicalData$WHO.category == "RARS-T",
+rcmd = mdsClinicalData$WHO.category == "RCMD",
+rcmd_rs = mdsClinicalData$WHO.category == "RCMD-RS",
+raeb = mdsClinicalData$WHO.category %in% c("RAEB", "RAEB 1", "RAEB 2"),
+d5q = mdsClinicalData$WHO.category == "5q-",
+cmml =  mdsClinicalData$WHO.category == "CMML",
+mds_mpn = mdsClinicalData$WHO.category == "MDSMPN",
+mds_u = mdsClinicalData$WHO.category =="MDS-U",
+mds_aml = mdsClinicalData$WHO.category ==  "AML-MDS"
+) + 0
+# factor vector for simplified WHO classes
+whoSimpleFactor = factor(rowSums(whoSimple * rep(1:ncol(whoSimple), each=nrow(whoSimple))), labels = c("RA","RARS","RARS-T","RCMD","RCMD-RS","RAEB","5q-","CMML","MDS-MPN","MDS-U","MDS-AML"))
+d <- genotypes >= 3 #only oncogeneic mut
+d <- d[,colSums(d) >0] # only genes mutated at least once
+rawData <- data.frame(d,
+cytoMerged,
+age_log = log(as.numeric(as.character(mdsClinicalData$AGE))),
+sex = mdsClinicalData$Gender,
+pb_cytopenia = as.numeric(mdsClinicalData$PB.CYTOPENIA),
+hb = as.numeric(mdsClinicalData$HB),
+anc_log = log(as.numeric(as.character(mdsClinicalData$ANC))+1e-3),
+plt_log = log(as.numeric(mdsClinicalData$PLT)),
+bm_blasts_logit = car::logit(as.numeric(as.character(mdsClinicalData$X..BM.BLASTS))),
+ring_sideroblasts_logit = car::logit(as.numeric(as.character(mdsClinicalData$X..RING.SIDEROBLASTS))),
+ipss = as.numeric(mdsClinicalData$IPSS.norm),
+who_simple_factor = MakeInteger(whoSimpleFactor), #essentially the same as 'whoSimple' above
+center = MakeInteger(as.factor(mdsClinicalData$center)), #essentially the same as 'centers' above
+date = as.numeric(as.Date(mdsClinicalData$DATE.OF.DIAGNOSIS, format="%d/%m/%Y"))/10000
+)
+poorMansImpute <- function(x) {x[is.na(x)] <- mean(x, na.rm=TRUE); return(x)}
+imputedData <- as.data.frame(sapply(rawData,poorMansImpute))
+imputedData<-imputedData[!(is.na(mdsClinicalData$DATE.OF.DIAGNOSIS)|is.na(mdsClinicalData$DATE.LAST.FU)|is.na(mdsClinicalData$OUTCOME)|is.na(mdsClinicalData$AML.PROGRESSION)),]
+mdsClinicalData<-mdsClinicalData[!(is.na(mdsClinicalData$DATE.OF.DIAGNOSIS)|is.na(mdsClinicalData$DATE.LAST.FU)|is.na(mdsClinicalData$OUTCOME)|is.na(mdsClinicalData$AML.PROGRESSION)),]
+mdsClinicalData[c("DATE.OF.SAMPLE","DATE.OF.DIAGNOSIS","DATE.LAST.FU","DATE.AML.PROGRESSION")]<-sapply(mdsClinicalData[c("DATE.OF.SAMPLE","DATE.OF.DIAGNOSIS","DATE.LAST.FU","DATE.AML.PROGRESSION")], function(x) as.numeric(as.Date(x,format="%d/%m/%Y")))
+#Remove patient whose last follow-up time is the same as the date of diagnosis (excludes one patient).
+imputedData<- imputedData[mdsClinicalData$DATE.OF.DIAGNOSIS!=mdsClinicalData$DATE.LAST.FU,]
+mdsClinicalData<- mdsClinicalData[mdsClinicalData$DATE.OF.DIAGNOSIS!=mdsClinicalData$DATE.LAST.FU,]
+#Remove patients who progressed to AML but have no date of AML progression (excludes 4).
+imputedData<-imputedData[!(mdsClinicalData$AML.PROGRESSION==1&is.na(mdsClinicalData$DATE.AML.PROGRESSION)),]
+mdsClinicalData<-mdsClinicalData[!(mdsClinicalData$AML.PROGRESSION==1&is.na(mdsClinicalData$DATE.AML.PROGRESSION)),]
+#Remove patients whose date of AML progression is equal to the date of death (excludes 2).
+imputedData<-imputedData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$OUTCOME==1&mdsClinicalData$DATE.AML.PROGRESSION==mdsClinicalData$DATE.LAST.FU),]
+mdsClinicalData<-mdsClinicalData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$OUTCOME==1&mdsClinicalData$DATE.AML.PROGRESSION==mdsClinicalData$DATE.LAST.FU),]
+#Remove patients who died before they progressed (excludes 12).
+imputedData<-imputedData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$DATE.AML.PROGRESSION>mdsClinicalData$DATE.LAST.FU),]
+mdsClinicalData<-mdsClinicalData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$DATE.AML.PROGRESSION>mdsClinicalData$DATE.LAST.FU),]
+imputedData<-as.data.frame(lapply(imputedData,function(x) as.numeric(x)))
+imputedData[,c("age_log","hb","anc_log","plt_log","bm_blasts_logit","ring_sideroblasts_logit","date")]<-scale(imputedData[,c("age_log","hb","anc_log","plt_log","bm_blasts_logit","ring_sideroblasts_logit","date")],center = T,scale = F)
+# imputedData<-scale(imputedData,center = T,scale = F)
+mutation_vars<-names(imputedData)[1:55]
+clinical_vars<-names(imputedData[56:81])
+imputedData<-imputedData[,-which(apply(imputedData, 2, function(x) length(unique(x)))==1)]
+percentage_of_ones_fun<-function(x){
+sum(x)/length(x)
+}
+percentage_of_ones<-apply(imputedData[-c(55:63,79)],2,percentage_of_ones_fun)
+which_less_than_five_percent<-which(percentage_of_ones<0.05)
+imputedData<-imputedData[-which_less_than_five_percent]
+imputedData<-imputedData[,!names(imputedData)%in%c("who_simple_factor.MDS.MPN")]
+mstate.data<-data.frame()
+for(i in 1:nrow(mdsClinicalData)){
+id<-rep(i,2)
+from<-c(1,1)
+to<-c(2,3)
+trans<-c(1,2)
+Tstart<-c(0,0)
+if(mdsClinicalData$AML.PROGRESSION[i]==1){
+Tstop<-rep(mdsClinicalData$DATE.AML.PROGRESSION[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i],2)
+time<-Tstop-Tstart
+status<-c(1,0)
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,                                              trans=trans,Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+if(mdsClinicalData$DATE.LAST.FU[i]>mdsClinicalData$DATE.AML.PROGRESSION[i]){
+id<-i
+from<-2
+to<-4
+trans<-3
+Tstart<-Tstop[1]
+Tstop<-mdsClinicalData$DATE.LAST.FU[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i]
+time<-Tstop-Tstart
+status<-mdsClinicalData$OUTCOME[i]
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,trans=trans,
+Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+}
+next
+}else{
+Tstop<-rep(mdsClinicalData$DATE.LAST.FU[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i],2)
+time<-Tstop-Tstart
+status<-c(0,mdsClinicalData$OUTCOME[i])
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,
+trans=trans,Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+}
+}
+#check that no rows have NA's
+mstate.data[apply(mstate.data,1,function(x) sum(is.na(x))>0),]
+mstate.data<-cbind(mstate.data,imputedData[mstate.data$id,])
+tmat<-transMat(x=list(c(2,3),c(4),c(),c()),names=c("MDS","AML","death","death_after_AML"))
+class(mstate.data)<-c("data.frame","msdata")
+attr(mstate.data,"trans")<-tmat
+#competing risks:
+# mstate.data<-mstate.data[!mstate.data$trans==3,]
+# tmat<-transMat(x=list(c(2,3),c(),c()),names=c("health","AML","death"))
+# class(mstate.data)<-c("data.frame","msdata")
+# attr(mstate.data,"trans")<-tmat
+mstate.data[,c(5,6,7)]<-mstate.data[,c(5,6,7)]/365.25
+mstate.data.expanded<-expand.covs(mstate.data,covs = names(mstate.data)[-(1:8)])[,-(9:length(mstate.data))]
+boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat){
+msfit_objects_boot<-vector("list",length(coxrfx_fits_boot))
+probtrans_objects_boot<-vector("list",length(coxrfx_fits_boot))
+for(i in 1:length(coxrfx_fits_boot)){
+print(i)
+covariate_df<-as.data.frame(coxrfx_fits_boot[[i]]$Z)
+covariate_df$transition<-coxrfx_fits_boot[[i]]$transition
+mstate.data.expanded.boot<-list()
+mstate.data.expanded.boot$time<-coxrfx_fits_boot[[i]]$surv[,1]
+mstate.data.expanded.boot$status<-coxrfx_fits_boot[[i]]$surv[,2]
+patient_data2<-patient_data[names(patient_data)%in%names(covariate_df)]
+patient_data2$strata<-patient_data$strata
+environment(coxrfx_fits_boot[[1]]$formula)$covariate_df<-covariate_df
+msfit_objects_boot[[i]]<-msfit_generic(coxrfx_fits_boot[[i]],patient_data2,trans=tmat)
+probtrans_objects_boot[[i]]<-probtrans_ebsurv(msfit_objects_boot[[i]],"semiMarkov")[[1]]
+probtrans_objects_boot[[i]]<-probtrans_objects_boot[[i]][sapply(seq(from=0,to=max(probtrans_objects_boot[[i]]$time),length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[i]]$time-x))),]
+}
+extract_function<-function(list_object,item){
+as.vector(list_object[item])
+}
+probtrans_boot_CIs_for_target_state<-function(target_state){
+target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,item=target_state))
+apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
+}
+probtrans_CIs<-lapply(colnames(tmat),probtrans_boot_CIs_for_target_state)
+names(probtrans_CIs)<-colnames(tmat)
+return(probtrans_CIs)
+}
+name_fun<-function(x){
+strsplit(x,"[.]")[[1]][1]
+}
+first_word_of_mutation_vars<-unique(sapply(mutation_vars, function(x) strsplit(x,"[.]")[[1]][1]))
+first_word_of_clinical_vars<-unique(sapply(clinical_vars, function(x) strsplit(x,"[.]")[[1]][1]))
+names_list<-list(mutations=first_word_of_mutation_vars,clinical=first_word_of_clinical_vars)
+stratum_fun<-function(x){
+strsplit_length<-length(strsplit(x,"[.]")[[1]])
+as.numeric(strsplit(x,"[.]")[[1]][strsplit_length])
+}
+group_function<-function(x){
+stratum<-stratum_fun(x)
+if(stratum==3){
+return("single_group_3")
+}
+x<-strsplit(x,"[.]")[[1]][1]
+paste0(c("mutations","clinical")[sapply(names_list, function(y,x) x%in%y, x=x)],"_",stratum)
+}
+which_group<-sapply(names(mstate.data.expanded)[-(1:8)],group_function)
+CIs<-boot_coxrfx(mstate_data_expanded,which_group,min_nr_samples=5,output="CIs_and_coxrfx_fits")
+CIs
+CIs$CIs
+library(ebsurv)
+ebsurv::boot_coxrfx
+?boot_coxrfx
+?probtrans_ebsurv
+?probtrans
+?ebsurv::msfit_generic.coxrfx
+library(ebsurv)
+?ebsurv::boot_probtrans
+library(ebsurv)
+?ebsurv::extract_function
+library(ebsurv)
+?ebsurv::extract_function
+library(ebsurv)
+?ebsurv::probtrans_boot_CIs_for_target_state
+library(ebsurv)
+?ebsurv::probtrans_boot_CIs_for_target_state
+library(ebsurv)
+library(ebsurv)
+?ebsurv::probtrans_boot_CIs_for_target_state
+install_github("gerstung-lab/CoxHD/tree/ebsurv")
+devtools::install_github("gerstung-lab/CoxHD/tree/ebsurv")
+devtools::install_github("gerstung-lab/CoxHD/ebsurv")
+devtools::install_github("gerstung-lab/CoxHD/",ref = "ebsurv")
+devtools::install_github("gerstung-lab/CoxHD",ref = "ebsurv")
+?ebsurv::boot_probtrans
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+?ebsurv::extract_function
+?ebsurv::probtrans_boot_CIs_for_target_state
+?ebsurv::boot_probtrans
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+?ebsurv::boot_coxrfx
+library(ebsurv)
+24*365*5
+24*365*6
+25000000(24*365*6)
+25000000/(24*365*6)
+383000/(24*365*6)
+citation()
+?survival
+citation("survival")
+citation("survival",bibtex=TRUE)
+print(citation("survival"),bibtex=T)
+print(citation("mstate"),bibtex=T)
+print(citation("msm"),bibtex=T)
+library(ebsurv)
+knitr::opts_chunk$set(echo = TRUE,fig.width=12, fig.height=8)
+library(ebsurv)
+library(caret)
+library(plotrix)
+library(mg14)
+library(hot.deck)
+library(glmnet)
+library(randomForestSRC)
+setwd("~/Google Drive/RWORK/MDS-multistage/code")
+mdsClinicalData <- read.table("../data/mds.paper.clin.txt", header=T, sep="\t", fill=T, na.strings = c("NA","na")) ## Import clinical data
+mdsClinicalData <- mdsClinicalData [!duplicated(mdsClinicalData$PDID),] ## remove duplicated observations
+mdsClinicalData[mdsClinicalData==""] = NA #replace empty string with NAs
+mdsClinicalData = mdsClinicalData[mdsClinicalData$X0.no.mut.1.seq.2.removedbyqc.3.failed <2,] ## What is 'X0.no.mut.seq.2.removedbyqc.3.failed'? Why should it be lower than 2
+mdsClinicalData$IPSS.norm = factor(tolower(as.character(mdsClinicalData$IPSS.norm)), levels=c("low", "int-1", "int-2", "high")) # removes factor level "Low", keeping factor level "low"
+mdsGeneticData <- read.table("../data/MDS.TPD.20Nov2012.csv", sep=",", header=T, fill=T, quote = "\"") ## Genotypes
+levels(mdsGeneticData$Gene)[levels(mdsGeneticData$Gene)=="SFRS2"] = "SRSF2" #correct typo in level name
+levels(mdsGeneticData$Gene)[levels(mdsGeneticData$Gene)=="ENSG00000091592"] = "NLRP1" #change level name
+IDs <- mdsClinicalData$PDID#sort(setdiff(c(as.character(mds_clin$PDID), levels(mds_gen$SAMPLE.NAME)), as.character(mds_clin$PDID)[mds_clin$X0.no.mut.1.seq.2.removedbyqc.3.failed.4.remove.from.clinical > 1]))
+mdsGeneticData$Gene <- factor(sub(" Coding" ,"", as.character(mdsGeneticData$Gene))) #what is this for? There isn't any " Coding" in mdsGeneticData$Gene originally!
+allGenotypes <- matrix(0,nrow = length(IDs), ncol = length(levels(mdsGeneticData$Gene)))
+rownames(allGenotypes) <- IDs
+colnames(allGenotypes) <- levels(mdsGeneticData$Gene)
+allGenotypes <- allGenotypes[rownames(allGenotypes)!="", colnames(allGenotypes)!=""]
+for(i in seq_along(mdsGeneticData$Gene)){
+if(mdsGeneticData$SAMPLE.NAME[i] %in% IDs)
+allGenotypes[as.character(mdsGeneticData$SAMPLE.NAME[i]), as.character(mdsGeneticData$Gene[i])] <- max(c(3,2,1)[as.numeric(mdsGeneticData$Decision[i])], allGenotypes[as.character(mdsGeneticData$SAMPLE.NAME[i]), as.character(mdsGeneticData$Gene[i])])
+}
+genotypes <- allGenotypes[,colSums(allGenotypes)>0]
+centers <- sapply(unique(1:5), function(i) mdsClinicalData$center==i) + 0
+colnames(centers) <- paste("center",1:5, sep="")
+cyto = mdsClinicalData[,grepl("CYTO_",colnames(mdsClinicalData))]
+colnames(cyto) = c( "chr3" ,   "del5q" ,"del7_7q" ,"tri8"   , "del11" , "del12", "alt17q"  , "tri19"   ,"del20q" ,"delY", "other" , "complex")
+ascat =  mdsClinicalData[,grepl("SEQ_",colnames(mdsClinicalData))]
+colnames(ascat) = c("tri8"  , "del5"  ,"del7_7q" , "del11q" ,"del12p", "alt17q"  , "tri19" , "del20q","other")
+cytoMerged = cyto
+for(c in colnames(cyto))
+if(c %in% colnames(ascat))
+cytoMerged[,c][is.na(cytoMerged[,c])] = ascat[,c][is.na(cytoMerged[,c])]
+#indicator variables for simplified who classes
+whoSimple = data.frame(
+ra = mdsClinicalData$WHO.category %in% c("RA","RT"),
+rars = mdsClinicalData$WHO.category == "RARS",
+rars_t = mdsClinicalData$WHO.category == "RARS-T",
+rcmd = mdsClinicalData$WHO.category == "RCMD",
+rcmd_rs = mdsClinicalData$WHO.category == "RCMD-RS",
+raeb = mdsClinicalData$WHO.category %in% c("RAEB", "RAEB 1", "RAEB 2"),
+d5q = mdsClinicalData$WHO.category == "5q-",
+cmml =  mdsClinicalData$WHO.category == "CMML",
+mds_mpn = mdsClinicalData$WHO.category == "MDSMPN",
+mds_u = mdsClinicalData$WHO.category =="MDS-U",
+mds_aml = mdsClinicalData$WHO.category ==  "AML-MDS"
+) + 0
+# factor vector for simplified WHO classes
+whoSimpleFactor = factor(rowSums(whoSimple * rep(1:ncol(whoSimple), each=nrow(whoSimple))), labels = c("RA","RARS","RARS-T","RCMD","RCMD-RS","RAEB","5q-","CMML","MDS-MPN","MDS-U","MDS-AML"))
+d <- genotypes >= 3 #only oncogeneic mut
+d <- d[,colSums(d) >0] # only genes mutated at least once
+rawData <- data.frame(d,
+cytoMerged,
+age_log = log(as.numeric(as.character(mdsClinicalData$AGE))),
+sex = mdsClinicalData$Gender,
+pb_cytopenia = as.numeric(mdsClinicalData$PB.CYTOPENIA),
+hb = as.numeric(mdsClinicalData$HB),
+anc_log = log(as.numeric(as.character(mdsClinicalData$ANC))+1e-3),
+plt_log = log(as.numeric(mdsClinicalData$PLT)),
+bm_blasts_logit = car::logit(as.numeric(as.character(mdsClinicalData$X..BM.BLASTS))),
+ring_sideroblasts_logit = car::logit(as.numeric(as.character(mdsClinicalData$X..RING.SIDEROBLASTS))),
+ipss = as.numeric(mdsClinicalData$IPSS.norm),
+who_simple_factor = MakeInteger(whoSimpleFactor), #essentially the same as 'whoSimple' above
+center = MakeInteger(as.factor(mdsClinicalData$center)), #essentially the same as 'centers' above
+date = as.numeric(as.Date(mdsClinicalData$DATE.OF.DIAGNOSIS, format="%d/%m/%Y"))/10000
+)
+poorMansImpute <- function(x) {x[is.na(x)] <- mean(x, na.rm=TRUE); return(x)}
+imputedData <- as.data.frame(sapply(rawData,poorMansImpute))
+imputedData<-imputedData[!(is.na(mdsClinicalData$DATE.OF.DIAGNOSIS)|is.na(mdsClinicalData$DATE.LAST.FU)|is.na(mdsClinicalData$OUTCOME)|is.na(mdsClinicalData$AML.PROGRESSION)),]
+mdsClinicalData<-mdsClinicalData[!(is.na(mdsClinicalData$DATE.OF.DIAGNOSIS)|is.na(mdsClinicalData$DATE.LAST.FU)|is.na(mdsClinicalData$OUTCOME)|is.na(mdsClinicalData$AML.PROGRESSION)),]
+mdsClinicalData[c("DATE.OF.SAMPLE","DATE.OF.DIAGNOSIS","DATE.LAST.FU","DATE.AML.PROGRESSION")]<-sapply(mdsClinicalData[c("DATE.OF.SAMPLE","DATE.OF.DIAGNOSIS","DATE.LAST.FU","DATE.AML.PROGRESSION")], function(x) as.numeric(as.Date(x,format="%d/%m/%Y")))
+#Remove patient whose last follow-up time is the same as the date of diagnosis (excludes one patient).
+imputedData<- imputedData[mdsClinicalData$DATE.OF.DIAGNOSIS!=mdsClinicalData$DATE.LAST.FU,]
+mdsClinicalData<- mdsClinicalData[mdsClinicalData$DATE.OF.DIAGNOSIS!=mdsClinicalData$DATE.LAST.FU,]
+#Remove patients who progressed to AML but have no date of AML progression (excludes 4).
+imputedData<-imputedData[!(mdsClinicalData$AML.PROGRESSION==1&is.na(mdsClinicalData$DATE.AML.PROGRESSION)),]
+mdsClinicalData<-mdsClinicalData[!(mdsClinicalData$AML.PROGRESSION==1&is.na(mdsClinicalData$DATE.AML.PROGRESSION)),]
+#Remove patients whose date of AML progression is equal to the date of death (excludes 2).
+imputedData<-imputedData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$OUTCOME==1&mdsClinicalData$DATE.AML.PROGRESSION==mdsClinicalData$DATE.LAST.FU),]
+mdsClinicalData<-mdsClinicalData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$OUTCOME==1&mdsClinicalData$DATE.AML.PROGRESSION==mdsClinicalData$DATE.LAST.FU),]
+#Remove patients who died before they progressed (excludes 12).
+imputedData<-imputedData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$DATE.AML.PROGRESSION>mdsClinicalData$DATE.LAST.FU),]
+mdsClinicalData<-mdsClinicalData[!(mdsClinicalData$AML.PROGRESSION==1&mdsClinicalData$DATE.AML.PROGRESSION>mdsClinicalData$DATE.LAST.FU),]
+imputedData<-as.data.frame(lapply(imputedData,function(x) as.numeric(x)))
+imputedData[,c("age_log","hb","anc_log","plt_log","bm_blasts_logit","ring_sideroblasts_logit","date")]<-scale(imputedData[,c("age_log","hb","anc_log","plt_log","bm_blasts_logit","ring_sideroblasts_logit","date")],center = T,scale = F)
+# imputedData<-scale(imputedData,center = T,scale = F)
+gene_vars<-names(imputedData)[1:43]
+cytogenetic_vars<-names(imputedData)[44:55]
+clinical_vars<-names(imputedData)[56:75]
+nuisance_vars<-names(imputedData)[76:81]
+imputedData<-imputedData[,-which(apply(imputedData, 2, function(x) length(unique(x)))==1)]
+percentage_of_ones_fun<-function(x){
+sum(x)/length(x)
+}
+percentage_of_ones<-apply(imputedData[!names(imputedData)%in%c("age_log","pb_cytopenia","hb","anc_log","plt_log","bm_blasts_logit","ring_sideroblasts_logit","ipss","date",cytogenetic_vars)], 2, percentage_of_ones_fun)
+which_less_than_five_percent<-which(percentage_of_ones<0.05)
+bin_vars_to_exclude<-names(percentage_of_ones)[which_less_than_five_percent]
+imputedData<-imputedData[!names(imputedData)%in%bin_vars_to_exclude]
+mstate.data<-data.frame()
+for(i in 1:nrow(mdsClinicalData)){
+id<-rep(i,2)
+from<-c(1,1)
+to<-c(2,3)
+trans<-c(1,2)
+Tstart<-c(0,0)
+if(mdsClinicalData$AML.PROGRESSION[i]==1){
+Tstop<-rep(mdsClinicalData$DATE.AML.PROGRESSION[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i],2)
+time<-Tstop-Tstart
+status<-c(1,0)
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,                                              trans=trans,Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+if(mdsClinicalData$DATE.LAST.FU[i]>mdsClinicalData$DATE.AML.PROGRESSION[i]){
+id<-i
+from<-2
+to<-4
+trans<-3
+Tstart<-Tstop[1]
+Tstop<-mdsClinicalData$DATE.LAST.FU[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i]
+time<-Tstop-Tstart
+status<-mdsClinicalData$OUTCOME[i]
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,trans=trans,
+Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+}
+next
+}else{
+Tstop<-rep(mdsClinicalData$DATE.LAST.FU[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i],2)
+time<-Tstop-Tstart
+status<-c(0,mdsClinicalData$OUTCOME[i])
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,
+trans=trans,Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+}
+}
+#check that no rows have NA's
+mstate.data[apply(mstate.data,1,function(x) sum(is.na(x))>0),]
+mstate.data<-cbind(mstate.data,imputedData[mstate.data$id,])
+tmat<-transMat(x=list(c(2,3),c(4),c(),c()),names=c("MDS","AML","death","death_after_AML"))
+class(mstate.data)<-c("data.frame","msdata")
+attr(mstate.data,"trans")<-tmat
+#competing risks:
+# mstate.data<-mstate.data[!mstate.data$trans==3,]
+# tmat<-transMat(x=list(c(2,3),c(),c()),names=c("health","AML","death"))
+# class(mstate.data)<-c("data.frame","msdata")
+# attr(mstate.data,"trans")<-tmat
+mstate.data[,c(5,6,7)]<-mstate.data[,c(5,6,7)]/365.25
+mstate.data<-data.frame()
+for(i in 1:nrow(mdsClinicalData)){
+id<-rep(i,2)
+from<-c(1,1)
+to<-c(2,3)
+trans<-c(1,2)
+Tstart<-c(0,0)
+if(mdsClinicalData$AML.PROGRESSION[i]==1){
+Tstop<-rep(mdsClinicalData$DATE.AML.PROGRESSION[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i],2)
+time<-Tstop-Tstart
+status<-c(1,0)
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,                                              trans=trans,Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+if(mdsClinicalData$DATE.LAST.FU[i]>mdsClinicalData$DATE.AML.PROGRESSION[i]){
+id<-i
+from<-2
+to<-4
+trans<-3
+Tstart<-Tstop[1]
+Tstop<-mdsClinicalData$DATE.LAST.FU[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i]
+time<-Tstop-Tstart
+status<-mdsClinicalData$OUTCOME[i]
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,trans=trans,
+Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+}
+next
+}else{
+Tstop<-rep(mdsClinicalData$DATE.LAST.FU[i]-mdsClinicalData$DATE.OF.DIAGNOSIS[i],2)
+time<-Tstop-Tstart
+status<-c(0,mdsClinicalData$OUTCOME[i])
+mstate.data<-rbind(mstate.data,data.frame(id=id,from=from,to=to,
+trans=trans,Tstart=Tstart,Tstop=Tstop,time=time,status=status))
+}
+}
+#check that no rows have NA's
+mstate.data[apply(mstate.data,1,function(x) sum(is.na(x))>0),]
+mstate.data<-cbind(mstate.data,imputedData[mstate.data$id,])
+tmat<-transMat(x=list(c(2,3),c(4),c(),c()),names=c("MDS","AML","death","death_after_AML"))
+class(mstate.data)<-c("data.frame","msdata")
+attr(mstate.data,"trans")<-tmat
+names_list<-list(genes=gene_vars,cytogenetic=cytogenetic_vars,clinical=clinical_vars,nuisance=nuisance_vars)
+stratum_fun<-function(x){
+strsplit_length<-length(strsplit(x,"[.]")[[1]])
+as.numeric(strsplit(x,"[.]")[[1]][strsplit_length])
+}
+group_function<-function(x){
+stratum<-stratum_fun(x)
+string_split<-strsplit(x,"[.]")[[1]]
+string_split_length<-length(string_split)
+x<-paste0(string_split[-string_split_length],collapse = ".")
+paste0(c("genes","cytogenetic","clinical","nuisance")[sapply(names_list, function(y,x) x%in%y, x=x)],"_",stratum)
+}
+#expand covariates
+mstate.data.expanded<-expand.covs(mstate.data,covs = names(mstate.data)[-(1:8)])[,-(9:length(mstate.data))]
+#argument 'groups' of coxrfx
+groups<-sapply(names(mstate.data.expanded)[-(1:8)],group_function)
+names(groups)<-names(mstate.data.expanded)[-(1:8)]
+#argument 'Z' of coxrfx
+Z<-mstate.data.expanded[-(1:8)]
+Z$transition<-mstate.data.expanded$trans
+#argument 'surv' of coxrfx
+surv<-Surv(mstate.data.expanded$time,mstate.data.expanded$status)
+#surv<-Surv(mstate.data.expanded$Tstart,mstate.data.expanded$Tstop,mstate.data.expanded$status)
+#fit random effects model
+coxrfx_object<-CoxRFX(Z,surv,groups,max.iter = 200,which.mu = NULL)
+?boot_coxrfx
+?CoxRFX
+boot_coefs<-boot_coxrfx(mstate.data.expanded,groups,max.iter=200,which.mu=NULL)
+coxrfx_object$coefficients
+length(coxrfx_object$coefficients)
+117/3
+groups
+coxrfx_object$mu
+coxrfx_object$sigma2
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+exp(3)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+traceback()
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+install_github("gerstung-lab/CoxHD”,ref = "ebsurv")
+install_github("gerstung-lab/CoxHD",ref = "ebsurv")
+devtools::install_github("gerstung-lab/CoxHD",ref = "ebsurv")
+library(ebsurv)
+library(ebsurv)
+?`ebsurv-pa`ebsurv-package`
+?`ebsurv-package`
+library(ebsurv)
+library(ebsurv)
+library("ebsurv")
+?library
+library("ebsurv",lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library/00LOCK-ebsurv/00new/ebsurv/libs")
+library(ebsurv)
+library(ebsurv)
+devtools::install_github("gerstung-lab/CoxHD", ref = "ebsurv")
+library(ebsurv)
+.libPaths()
+?devtools::install_github
+library(ebsurv)
+install.packages("rstudioapi")
+install.packages("rstudioapi")
+install.packages("rstudioapi")
+library(ebsurv)
+install.packages(c("knitr", "testthat"))
+library(ebsurv)
+?update.packages
+update.packages(repos='http://cran.rstudio.com/', ask=FALSE, checkBuilt=TRUE)
+library(ebsurv)
+library(ebsurv)
+library(ebsurv)
+?install.packages
+?install_github
+?devtools::install_github
+library(ebsurv)
+?`ebsurv-package`
+library(ebsurv)
+?`ebsurv-package`
+library(ebsurv)
+detach("package:mstate", unload = TRUE)
+library(mstate)
+library(ebsurv)
+library(ebsurv)
