@@ -7,6 +7,8 @@
 #' @param patient_data (Single) patient data in `long format`, possibly with `expanded` covariates
 #' (as obtained by running \code{mstate::expand.covs}).
 #' @param tmat Transition matrix for the multi-state model, as obtained by running
+#' @param initial_state The initial state for which transition probability estimates should be computed
+#' @param max_time The maximum time for which estimates should be computed
 #' \code{mstate::transMat}.
 #' @return Interval estimates for transition probabilities. 
 #' @author Rui Costa
@@ -14,7 +16,7 @@
 #' \code{\link[mstate]{transMat}}; \code{\link[mstate]{expand.covs}}
 #' @export
 
-boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state){
+boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state,max_time){
   msfit_objects_boot<-vector("list",length(coxrfx_fits_boot))
   probtrans_objects_boot<-vector("list",length(coxrfx_fits_boot))
   for(i in 1:length(coxrfx_fits_boot)){
@@ -27,17 +29,17 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state){
     patient_data2<-patient_data[names(patient_data)%in%names(covariate_df)]
     patient_data2$strata<-patient_data$strata
     
-    environment(coxrfx_fits_boot[[1]]$formula)$covariate_df<-covariate_df
+    #environment(coxrfx_fits_boot[[1]]$formula)$covariate_df<-covariate_df
     
     msfit_objects_boot[[i]]<-msfit_generic(coxrfx_fits_boot[[i]],patient_data2,trans=tmat)
     probtrans_objects_boot[[i]]<-probtrans_ebsurv(initial_state,msfit_objects_boot[[i]],"semiMarkov")[[1]]
-    probtrans_objects_boot[[i]]<-probtrans_objects_boot[[i]][sapply(seq(from=0,to=max(probtrans_objects_boot[[i]]$time),length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[i]]$time-x))),]
+    probtrans_objects_boot[[i]]<-probtrans_objects_boot[[i]][sapply(seq(from=0,to=max_time,length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[i]]$time-x))),]
     
   }
 
   probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state,probtrans_objects_boot=probtrans_objects_boot)
   names(probtrans_CIs)<-colnames(tmat)
-  return(probtrans_CIs)
+  return(list(probtrans_CIs=probtrans_CIs,probtrans_objects_boot=probtrans_objects_boot, msfit_objects_boot=msfit_objects_boot))
 }
 
 #' Ancillary function to \code{boot_probtrans}.
@@ -105,7 +107,7 @@ CIs_for_target_state<-function(target_state,probtrans_objects_boot){
 boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output="CIs",...){
   coxrfx_fits_boot<-vector("list")
   rownames(mstate_data_expanded)<-1:nrow(mstate_data_expanded)
-  boot_matrix<-matrix(nrow=0,ncol = ncol(mstate_data_expanded)-8,dimnames = list(NULL,names(mstate_data_expanded)[-(1:8)]))
+  boot_matrix<-matrix(nrow=0,ncol = sum(!names(mstate_data_expanded)%in%c("id","from","to","trans","Tstart","Tstop","time","status","strata","type")),dimnames = list(NULL,names(mstate_data_expanded)[!names(mstate_data_expanded)%in%c("id","from","to","trans","Tstart","Tstop","time","status","strata","type")]))
   j<-1
   repeat{
     boot_samples_trans_1<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==1,]),replace = T)
@@ -132,9 +134,8 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
     # mstate_data_expanded.boot<-mstate_data_expanded.boot[!names(mstate_data_expanded.boot)%in%unlist(vars_to_exclude)]
     # 
     
-    covariate_df<-mstate_data_expanded.boot[-(1:8)]
-    groups2<-which_group[names(covariate_df)]
-    covariate_df$strata<-mstate_data_expanded.boot$trans
+    covariate_df<-mstate_data_expanded.boot[!names(mstate_data_expanded.boot)%in%c("id","from","to","trans","Tstart","Tstop","time","status","type")]
+    groups2<-which_group[names(covariate_df)[names(covariate_df)!="strata"]]
     
     coxrfx_fits_boot[[j]]<-CoxRFX(covariate_df,Surv(mstate_data_expanded.boot$time,mstate_data_expanded.boot$status),groups =groups2,... )
     
