@@ -6,10 +6,9 @@
 #' @param coxrfx_fits_boot The list of CoxRFX objects obtained by running \code{boot_coxrfx}.
 #' @param patient_data (Single) patient data in `long format`, possibly with `expanded` covariates
 #' (as obtained by running \code{mstate::expand.covs}).
-#' @param tmat Transition matrix for the multi-state model, as obtained by running
+#' @param tmat Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}
 #' @param initial_state The initial state for which transition probability estimates should be computed
 #' @param max_time The maximum time for which estimates should be computed
-#' \code{mstate::transMat}.
 #' @return Interval estimates for transition probabilities. 
 #' @author Rui Costa
 #' @seealso \code{\link{probtrans_ebsurv}}; \code{\link{boot_coxrfx}}; 
@@ -159,3 +158,109 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
   }
 }
 
+#' Bootstrap samples and bootstrap interval estimates
+#' 
+#' This function computes bootstrap samples of regression coefficients,
+#' cumulative hazard functions, and transition probability functions.
+#' 
+#' @param mstate_data_expanded Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs).
+#' @param which_group A character vector with the same meaning as the `groups` argument of the function \code{CoxRFX} but named (with the covariate names).
+#' @param min_nr_samples The confidence interval of any coefficient is based on a number of bootstrap samples at least as high as this argument. See details.
+#' @param patient_data The covariate data for which the estimates of cumulative hazards and transition probabilities are computed. 
+#' Must contain: one row of data for each transition, all the covariate columns in the fitted model, and also the 'strata' column. 
+#' @param initial_state The initial state for which transition probability estimates should be computed
+#' @param max_time The maximum time for which estimates should be computed
+#' @param tmat Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}
+#' @param backup_file Path to file. Objects generated while the present function is running are stored in this file. 
+#' This avoids losing all estimates if and when the algorithm breaks down. See argument \code{input_file}. 
+#' @param input_file Path to \code{backup_file} (see argument \code{backup_file}). If this argument is given, all other arguments should be \code{NULL}.
+#' @param time_model The model of time-dependency: either 'Markov' or 'semiMarkov'.
+#' @param coxrfx_arguments Named list with arguments to the \code{CoxRFX} function other than \code{Z},\code{surv} and \code{groups}.
+#' @param msfit_arguments Named list with arguments to the \code{msfit_generic.coxrfx} function other than \code{object},\code{newdata} and \code{trans}.
+#' @param probtrans_arguments Named list with arguments to the \code{probtrans_ebsurv} function other than \code{initia_state},\code{cumhaz} and \code{model}.
+#' @return A list with: 95\% bootstrap intervals for each regression coefficient and for transition probabilities; 
+#' bootstrap samples of regression coefficients, cumulative hazards and transition probabilities.
+#' @details In a given bootstrap sample there might not be enough information to generate 
+#' estimates for all coefficients. If a covariate has little or no variation in a given bootstrap sample, 
+#' no estimate of its coefficient will be computed. The present function will
+#' keep taking bootstrap samples until every coefficient has been estimated
+#' at least \code{min_nr_samples} times.
+#' @author Rui Costa
+#' @export
+
+
+boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=NULL,
+                      patient_data=NULL,initial_state=NULL,max_time=NULL,tmat=NULL,
+                      backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_arguments=NULL,
+                      msfit_arguments=NULL,probtrans_arguments=NULL,...){
+  if(!is.null(file)){
+    load(file)
+  }else{
+    coxrfx_fits_boot<-vector("list")
+    msfit_objects_boot<-vector("list")
+    probtrans_objects_boot<-vector("list")
+    rownames(mstate_data_expanded)<-1:nrow(mstate_data_expanded)
+    boot_matrix<-matrix(nrow=0,
+                        ncol = sum(!names(mstate_data_expanded)%in%c("id","from","to","trans",
+                                                                     "Tstart","Tstop","strata","time",
+                                                                     "status","type")),
+                        dimnames = list(NULL,names(mstate_data_expanded)[!names(mstate_data_expanded)%in%c("id","from","to","trans",
+                                                                                                           "Tstart","Tstop","strata","time",
+                                                                                                           "status","type")]))
+    j<-1  
+  }
+  
+  repeat{
+    boot_samples_trans_1<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==1,]),replace = T)
+    boot_samples_trans_2<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==2,]),replace = T)
+    boot_samples_trans_3<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==3,]),replace = T)
+    boot_samples<-c(boot_samples_trans_1,boot_samples_trans_2,boot_samples_trans_3) 
+    
+    mstate_data_expanded.boot<-mstate_data_expanded[boot_samples,]
+    covariate_df<-mstate_data_expanded.boot[!names(mstate_data_expanded.boot)%in%c("id","from","to","trans",
+                                                                                   "Tstart","Tstop","time","status","type")]
+    groups2<-which_group[names(covariate_df)[names(covariate_df)!="strata"]]
+    if(time_model=="semiMarkov"){
+      surv_object<-Surv(mstate_data_expanded.boot$time,mstate_data_expanded.boot$status) 
+    }else if(time_model=="Markov"){
+      surv_object<-Surv(mstate_data_expanded.boot$Tstart,mstate_data_expanded.boot$Tstop,mstate_data_expanded.boot$status) 
+    }
+    coxrfx_fits_boot[[j]]<-CoxRFX(c(list(Z=covariate_df,surv=surv_object,groups=groups2),coxrfx_arguments))
+    
+    if(coxrfx_fits_boot[[j]]$iter[1]!=as.list(coxrfx_fits_boot[[j]]$call)$max.iter & sum(is.na(coxrfx_fits_boot[[j]]$coefficients))==0){
+      boot_matrix<-rbind(boot_matrix,rep(NA,ncol(boot_matrix)))
+      boot_matrix[j,names(coxrfx_fits_boot[[j]]$coefficients)]<-coxrfx_fits_boot[[j]]$coefficients
+      print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
+      
+      msfit_objects_boot[[j]]<-msfit_generic(c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_arguments))
+      probtrans_objects_boot[[j]]<-probtrans_ebsurv(c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model="semiMarkov"),probtrans_arguments))[[1]]
+      probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][sapply(seq(from=0,to=max_time,length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[j]]$time-x))),]
+      print(j)
+      if(j %%5==0){
+        boot_ebsurv_object_saved<-list(coxrfx_fits_boot=coxrfx_fits_boot,
+                                      probtrans_objects_boot=probtrans_objects_boot, 
+                                      msfit_objects_loo=msfit_objects_loo,patient_IDs=patient_IDs)
+        save(boot_ebsurv_object_saved, file =file)
+      }
+      j<-j+1
+    } 
+    if(min(apply(boot_matrix, 2, function(x) sum(!is.na(x))))==min_nr_samples) break
+    
+  }
+  
+  CIs<-apply(boot_matrix,2,HDInterval::hdi,credMass=0.95)
+  CIs<-rbind(CIs,apply(boot_matrix, 2, function(x) sum(!is.na(x))))
+  dimnames(CIs)[[1]][3]<-"n_samples"
+  
+  probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state,msfit_objects_boot=msfit_objects_boot,
+                        probtrans_objects_boot=probtrans_objects_boot)
+  names(probtrans_CIs)<-colnames(tmat)
+  
+  
+  
+  return(list(coefficients_CIs=CIs,coxrfx_fits_boot=coxrfx_fits_boot,
+              probtrans_CIs=probtrans_CIs,
+              probtrans_objects_boot=probtrans_objects_boot, 
+              msfit_objects_boot=msfit_objects_boot))
+  
+}
