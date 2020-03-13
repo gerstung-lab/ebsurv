@@ -275,3 +275,90 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
   
 }
 
+#' Leave-one-out estimation
+#' 
+#' This function computes leave-one-out estimation of regression coefficients,
+#' cumulative hazard functions, and transition probability functions.
+#' 
+#' @param mstate_data Data in `long format`.
+#' @param mstate_data_expanded Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs).
+#' @param which_group A character vector with the same meaning as the `groups` argument of the function \code{CoxRFX} but named (with the covariate names).
+#' @param patient_IDs The IDs of the patients whose cumulative hazards and transition probabilities one wishes to estimate.
+#' @param initial_state The initial state for which transition probability estimates should be computed
+#' @param max_time The maximum time for which estimates should be computed
+#' @param tmat Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}
+#' @param backup_file Path to file. Objects generated while the present function is running are stored in this file. 
+#' This avoids losing all estimates if and when the algorithm breaks down. See argument \code{input_file}. 
+#' @param input_file Path to \code{backup_file} (see argument \code{backup_file}). If this argument is given, all other arguments should be \code{NULL}.
+#' @param time_model The model of time-dependency: either 'Markov' or 'semiMarkov'.
+#' @param coxrfx_args Named list with arguments to the \code{CoxRFX} function other than \code{Z},\code{surv} and \code{groups}.
+#' @param msfit_args Named list with arguments to the \code{msfit_generic.coxrfx} function other than \code{object},\code{newdata} and \code{trans}.
+#' @param probtrans_args Named list with arguments to the \code{probtrans_ebsurv} function other than \code{initia_state},\code{cumhaz} and \code{model}.
+#' @return A list with: 95\% bootstrap intervals for each regression coefficient and for transition probabilities; 
+#' bootstrap samples of regression coefficients, cumulative hazards and transition probabilities.
+#' @details In a given bootstrap sample there might not be enough information to generate 
+#' estimates for all coefficients. If a covariate has little or no variation in a given bootstrap sample, 
+#' no estimate of its coefficient will be computed. The present function will
+#' keep taking bootstrap samples until every coefficient has been estimated
+#' at least \code{min_nr_samples} times.
+#' @author Rui Costa
+#' @export
+
+
+loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
+                     patient_IDs,initial_state,max_time,tmat,
+                     backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=NULL,
+                     msfit_args=NULL,probtrans_args=NULL,...){
+  list2env(coxrfx_args,envir = environment())
+  if(!is.null(input_file)){
+    load(input_file)
+    indices<-j:length(patient_IDs)
+  }else{
+    coxrfx_fits_loo<-vector("list")
+    msfit_objects_loo<-vector("list")
+    probtrans_objects_loo<-vector("list")
+    indices<-1:length(patient_IDs)
+  }
+  tol<-unlist(mget("tol",ifnotfound = list(function(tol) 0.001)))
+  max.iter<- unlist(mget("max.iter",ifnotfound = list(function(max.iter) 50)))
+  sigma0<- unlist(mget("sigma0",ifnotfound = list(function(sigma0) 0.1)))
+  sigma.hat<- unlist(mget("sigma.hat",ifnotfound = list(function(sigma.hat) "df")))
+  verbose<- unlist(mget("verbose",ifnotfound = list(function(verbose) FALSE)))
+  
+  for(j in indices){ 
+    mstate_data_expanded_loo<-mstate_data_expanded[mstate_data_expanded$id!=patient_IDs[j],]
+    covariate_df<-mstate_data_expanded_loo[!names(mstate_data_expanded_loo)%in%c("id","from","to","trans","Tstart","Tstop","time","status","type")]
+    groups2<-which_group[names(covariate_df)[names(covariate_df)!="strata"]]
+    if(time_model=="semiMarkov"){
+      surv_object<-Surv(mstate_data_expanded_loo$time,mstate_data_expanded_loo$status) 
+    }else if(time_model=="Markov"){
+      surv_object<-Surv(mstate_data_expanded_loo$Tstart,mstate_data_expanded_loo$Tstop,mstate_data_expanded_loo$status) 
+    }
+    which.mu<-unlist(mget("which.mu",ifnotfound = list(function(which.mu) unique(groups2))))
+    coxrfx_fits_loo[[j]]<-CoxRFX(covariate_df,surv_object,groups2,which.mu =which.mu,
+                                 tol = tol,
+                                 max.iter = max.iter,
+                                 sigma0 = sigma0,
+                                 sigma.hat = sigma.hat,
+                                 verbose = verbose,coxrfx_args)
+    if(sum(is.na(coxrfx_fits_loo[[j]]$coefficients))==0){
+      patient_data<-mstate_data[mstate_data$id==patient_IDs[j],,drop=F][1,][rep(1,3),]
+      patient_data$trans<-1:length(unique(mstate_data$trans))
+      patient_data<-expand.covs(patient_data,
+                                covs = names(patient_data)[!names(patient_data)%in%c("id","from","to","trans","strata","Tstart","Tstop","time","status","type")])
+      patient_data<-patient_data[names(mstate_data_expanded)]
+      msfit_objects_loo[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_loo[[j]],newdata=patient_data,trans=tmat),msfit_args))
+      probtrans_objects_loo[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_loo[[j]],model=time_model),probtrans_args))
+      if(j %%5==0){
+        save(coxrfx_fits_loo,msfit_objects_loo,probtrans_objects_loo,j,file=backup_file)
+      }
+      print(j)
+    } 
+  }
+  
+  return(list(coxrfx_fits_loo=coxrfx_fits_loo,
+              probtrans_objects_loo=probtrans_objects_loo, 
+              msfit_objects_loo=msfit_objects_loo))
+}
+
+
