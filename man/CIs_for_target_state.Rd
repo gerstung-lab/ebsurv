@@ -4,7 +4,7 @@
 \alias{CIs_for_target_state}
 \title{Ancillary function of \code{boot_probtrans}.}
 \usage{
-CIs_for_target_state(target_state)
+CIs_for_target_state(target_state, probtrans_objects_boot)
 }
 \arguments{
 \item{target_state}{The target state for whose transition probabilties the confidence intervals

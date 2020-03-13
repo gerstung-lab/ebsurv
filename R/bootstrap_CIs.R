@@ -193,8 +193,10 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
                       patient_data=NULL,initial_state=NULL,max_time=NULL,tmat=NULL,
                       backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_arguments=NULL,
                       msfit_arguments=NULL,probtrans_arguments=NULL,...){
-  if(!is.null(file)){
-    load(file)
+  
+  list2env(coxrfx_arguments,envir = environment())
+  if(!is.null(input_file)){
+    load(input_file)
   }else{
     coxrfx_fits_boot<-vector("list")
     msfit_objects_boot<-vector("list")
@@ -209,7 +211,11 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
                                                                                                            "status","type")]))
     j<-1  
   }
-  
+  tol<-unlist(mget("tol",ifnotfound = list(function(tol) 0.001)))
+  max.iter<- unlist(mget("max.iter",ifnotfound = list(function(max.iter) 50)))
+  sigma0<- unlist(mget("sigma0",ifnotfound = list(function(sigma0) 0.1)))
+  sigma.hat<- unlist(mget("sigma.hat",ifnotfound = list(function(sigma.hat) "df")))
+  verbose<- unlist(mget("verbose",ifnotfound = list(function(verbose) FALSE)))
   repeat{
     boot_samples_trans_1<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==1,]),replace = T)
     boot_samples_trans_2<-sample(rownames(mstate_data_expanded[mstate_data_expanded$trans==2,]),replace = T)
@@ -225,22 +231,26 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
     }else if(time_model=="Markov"){
       surv_object<-Surv(mstate_data_expanded.boot$Tstart,mstate_data_expanded.boot$Tstop,mstate_data_expanded.boot$status) 
     }
-    coxrfx_fits_boot[[j]]<-CoxRFX(c(list(Z=covariate_df,surv=surv_object,groups=groups2),coxrfx_arguments))
+    which.mu<-unlist(mget("which.mu",ifnotfound = list(function(which.mu) unique(groups2))))
+    coxrfx_fits_boot[[j]]<-CoxRFX(covariate_df,surv_object,groups2,which.mu =which.mu,
+                                  tol = tol,
+                                  max.iter = max.iter,
+                                  sigma0 = sigma0,
+                                  sigma.hat = sigma.hat,
+                                  verbose = verbose,coxrfx_arguments)
+    #coxrfx_fits_boot[[j]]<-do.call("CoxRFX",c(list(Z=covariate_df,surv=surv_object,groups=groups2),coxrfx_arguments))
     
-    if(coxrfx_fits_boot[[j]]$iter[1]!=as.list(coxrfx_fits_boot[[j]]$call)$max.iter & sum(is.na(coxrfx_fits_boot[[j]]$coefficients))==0){
+    if(sum(is.na(coxrfx_fits_boot[[j]]$coefficients))==0){
       boot_matrix<-rbind(boot_matrix,rep(NA,ncol(boot_matrix)))
       boot_matrix[j,names(coxrfx_fits_boot[[j]]$coefficients)]<-coxrfx_fits_boot[[j]]$coefficients
-      print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       
-      msfit_objects_boot[[j]]<-msfit_generic(c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_arguments))
-      probtrans_objects_boot[[j]]<-probtrans_ebsurv(c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model="semiMarkov"),probtrans_arguments))[[1]]
+      msfit_objects_boot[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_arguments))
+      probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model="semiMarkov"),probtrans_arguments))[[1]]
       probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][sapply(seq(from=0,to=max_time,length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[j]]$time-x))),]
-      print(j)
+      print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       if(j %%5==0){
-        boot_ebsurv_object_saved<-list(coxrfx_fits_boot=coxrfx_fits_boot,
-                                      probtrans_objects_boot=probtrans_objects_boot, 
-                                      msfit_objects_loo=msfit_objects_loo,patient_IDs=patient_IDs)
-        save(boot_ebsurv_object_saved, file =file)
+        save(coxrfx_fits_boot,probtrans_objects_boot,
+             msfit_objects_boot,boot_matrix,j, file =backup_file)
       }
       j<-j+1
     } 
@@ -252,7 +262,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
   CIs<-rbind(CIs,apply(boot_matrix, 2, function(x) sum(!is.na(x))))
   dimnames(CIs)[[1]][3]<-"n_samples"
   
-  probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state,msfit_objects_boot=msfit_objects_boot,
+  probtrans_CIs<-lapply(colnames(tmat),CIs_for_target_state,
                         probtrans_objects_boot=probtrans_objects_boot)
   names(probtrans_CIs)<-colnames(tmat)
   

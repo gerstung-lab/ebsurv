@@ -4,7 +4,7 @@
 \alias{boot_probtrans}
 \title{Bootstrap confidence intervals for transition probabilities}
 \usage{
-boot_probtrans(coxrfx_fits_boot, patient_data, tmat)
+boot_probtrans(coxrfx_fits_boot, patient_data, tmat, initial_state, max_time)
 }
 \arguments{
 \item{coxrfx_fits_boot}{The list of CoxRFX objects obtained by running \code{boot_coxrfx}.}
@@ -12,8 +12,11 @@ boot_probtrans(coxrfx_fits_boot, patient_data, tmat)
 \item{patient_data}{(Single) patient data in `long format`, possibly with `expanded` covariates
 (as obtained by running \code{mstate::expand.covs}).}
 
-\item{tmat}{Transition matrix for the multi-state model, as obtained by running
-\code{mstate::transMat}.}
+\item{tmat}{Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}}
+
+\item{initial_state}{The initial state for which transition probability estimates should be computed}
+
+\item{max_time}{The maximum time for which estimates should be computed}
 }
 \value{
 Interval estimates for transition probabilities.
