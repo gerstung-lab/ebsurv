@@ -350,7 +350,7 @@ loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
       msfit_objects_loo[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_loo[[j]],newdata=patient_data,trans=tmat),msfit_args))
       probtrans_objects_loo[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_loo[[j]],model=time_model),probtrans_args))
       if(j %%5==0){
-        save(coxrfx_fits_loo,msfit_objects_loo,probtrans_objects_loo,j,file=backup_file)
+        save(patient_IDs,coxrfx_fits_loo,msfit_objects_loo,probtrans_objects_loo,j,file=backup_file)
       }
       print(j)
     } 
