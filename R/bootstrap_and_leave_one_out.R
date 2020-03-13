@@ -271,7 +271,8 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
   return(list(coefficients_CIs=CIs,coxrfx_fits_boot=coxrfx_fits_boot,
               probtrans_CIs=probtrans_CIs,
               probtrans_objects_boot=probtrans_objects_boot, 
-              msfit_objects_boot=msfit_objects_boot))
+              msfit_objects_boot=msfit_objects_boot,
+              patient_data=patient_data))
   
 }
 
@@ -358,7 +359,8 @@ loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
   
   return(list(coxrfx_fits_loo=coxrfx_fits_loo,
               probtrans_objects_loo=probtrans_objects_loo, 
-              msfit_objects_loo=msfit_objects_loo))
+              msfit_objects_loo=msfit_objects_loo,
+              patient_IDs=patient_IDs))
 }
 
 
