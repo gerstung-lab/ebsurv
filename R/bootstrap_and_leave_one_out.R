@@ -175,9 +175,9 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 #' This avoids losing all estimates if and when the algorithm breaks down. See argument \code{input_file}. 
 #' @param input_file Path to \code{backup_file} (see argument \code{backup_file}). If this argument is given, all other arguments should be \code{NULL}.
 #' @param time_model The model of time-dependency: either 'Markov' or 'semiMarkov'.
-#' @param coxrfx_arguments Named list with arguments to the \code{CoxRFX} function other than \code{Z},\code{surv} and \code{groups}.
-#' @param msfit_arguments Named list with arguments to the \code{msfit_generic.coxrfx} function other than \code{object},\code{newdata} and \code{trans}.
-#' @param probtrans_arguments Named list with arguments to the \code{probtrans_ebsurv} function other than \code{initia_state},\code{cumhaz} and \code{model}.
+#' @param coxrfx_args Named list with arguments to the \code{CoxRFX} function other than \code{Z},\code{surv} and \code{groups}.
+#' @param msfit_args Named list with arguments to the \code{msfit_generic.coxrfx} function other than \code{object},\code{newdata} and \code{trans}.
+#' @param probtrans_args Named list with arguments to the \code{probtrans_ebsurv} function other than \code{initia_state},\code{cumhaz} and \code{model}.
 #' @return A list with: 95\% bootstrap intervals for each regression coefficient and for transition probabilities; 
 #' bootstrap samples of regression coefficients, cumulative hazards and transition probabilities.
 #' @details In a given bootstrap sample there might not be enough information to generate 
@@ -191,10 +191,10 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 
 boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=NULL,
                       patient_data=NULL,initial_state=NULL,max_time=NULL,tmat=NULL,
-                      backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_arguments=NULL,
-                      msfit_arguments=NULL,probtrans_arguments=NULL,...){
+                      backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=NULL,
+                      msfit_args=NULL,probtrans_args=NULL,...){
   
-  list2env(coxrfx_arguments,envir = environment())
+  list2env(coxrfx_args,envir = environment())
   if(!is.null(input_file)){
     load(input_file)
   }else{
@@ -237,15 +237,15 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
                                   max.iter = max.iter,
                                   sigma0 = sigma0,
                                   sigma.hat = sigma.hat,
-                                  verbose = verbose,coxrfx_arguments)
-    #coxrfx_fits_boot[[j]]<-do.call("CoxRFX",c(list(Z=covariate_df,surv=surv_object,groups=groups2),coxrfx_arguments))
+                                  verbose = verbose,coxrfx_args)
+    #coxrfx_fits_boot[[j]]<-do.call("CoxRFX",c(list(Z=covariate_df,surv=surv_object,groups=groups2),coxrfx_args))
     
     if(sum(is.na(coxrfx_fits_boot[[j]]$coefficients))==0){
       boot_matrix<-rbind(boot_matrix,rep(NA,ncol(boot_matrix)))
       boot_matrix[j,names(coxrfx_fits_boot[[j]]$coefficients)]<-coxrfx_fits_boot[[j]]$coefficients
       
-      msfit_objects_boot[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_arguments))
-      probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model=time_model),probtrans_arguments))[[1]]
+      msfit_objects_boot[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_args))
+      probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model=time_model),probtrans_args))[[1]]
       probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][sapply(seq(from=0,to=max_time,length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[j]]$time-x))),]
       print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       if(j %%5==0){
