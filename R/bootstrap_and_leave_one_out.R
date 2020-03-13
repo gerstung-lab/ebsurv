@@ -245,7 +245,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
       boot_matrix[j,names(coxrfx_fits_boot[[j]]$coefficients)]<-coxrfx_fits_boot[[j]]$coefficients
       
       msfit_objects_boot[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_arguments))
-      probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model="semiMarkov"),probtrans_arguments))[[1]]
+      probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model=time_model),probtrans_arguments))[[1]]
       probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][sapply(seq(from=0,to=max_time,length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[j]]$time-x))),]
       print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       if(j %%5==0){
@@ -274,3 +274,4 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
               msfit_objects_boot=msfit_objects_boot))
   
 }
+
