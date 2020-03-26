@@ -220,12 +220,12 @@ summary.coxrfx <- function(object, ...){
 	df <- object$df[-(nlevels(object$groups)+1)]
 	p <- pchisq(chisq, df, lower.tail=FALSE)
 	show(format(data.frame(sigma2=v, chisq=chisq, df = df, p.val=p, sig=sig2star(p)), digits=2))
-	cat("\nPartial log hazard:\n")
-	newZ <- object$Z[setdiff(1:nrow(object$Z), object$na.action),]
-	p <- PartialRisk(object, newZ = newZ)
-	v <- VarianceComponents(object, newZ = newZ)
-	e <- colMeans(PartialRiskVar(object, newZ = newZ))
-	show(format(data.frame(`Cov[g,g]`=c(diag(cov(p)), TOTAL=NaN), `Sum(Cov[,g])`=c(rowSums(cov(p)),TOTAL=sum(cov(p))), `MSE`=c(e, TOTAL=v[length(v)]), check.names = FALSE),  digits=2))
+	# cat("\nPartial log hazard:\n")
+	# newZ <- object$Z[setdiff(1:nrow(object$Z), object$na.action),]
+	# p <- PartialRisk(object, newZ = newZ)
+	# v <- VarianceComponents(object, newZ = newZ)
+	# e <- colMeans(PartialRiskVar(object, newZ = newZ))
+	# show(format(data.frame(`Cov[g,g]`=c(diag(cov(p)), TOTAL=NaN), `Sum(Cov[,g])`=c(rowSums(cov(p)),TOTAL=sum(cov(p))), `MSE`=c(e, TOTAL=v[length(v)]), check.names = FALSE),  digits=2))
 }
 
 #' Print method for CoxRFX
