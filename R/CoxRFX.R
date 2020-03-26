@@ -219,9 +219,6 @@ summary.coxrfx <- function(object, ...){
 	chisq <- sapply(split(c^2/diag(object$Hinv)[1:length(c)], object$groups), sum)
 	df <- object$df[-(nlevels(object$groups)+1)]
 	p <- pchisq(chisq, df, lower.tail=FALSE)
-#	f <- as.numeric(table(x$groups)/x$df[-(nlevels(x$groups)+1)])
-#	u <- sapply(split(coef(x), x$groups), function(x) sum((x-mean(x))^2)/qchisq(0.025, length(x)))
-#	l <- sapply(split(coef(x), x$groups), function(x) sum((x-mean(x))^2)/qchisq(0.975, length(x)))
 	show(format(data.frame(sigma2=v, chisq=chisq, df = df, p.val=p, sig=sig2star(p)), digits=2))
 	cat("\nPartial log hazard:\n")
 	newZ <- object$Z[setdiff(1:nrow(object$Z), object$na.action),]
