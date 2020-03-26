@@ -14,10 +14,10 @@ Description: This package implements an empirical Bayes,
     functions and transition probabilities.
 Depends:
     R (>= 3.5.0),
-    survival (== 2.44-1.1),
+    survival (>= 2.44-1.1),
     parallel,
     RColorBrewer,
-    mstate (== 0.2.11),
+    mstate (>= 0.2.11),
     HDInterval
 Imports:
     glmnet,
