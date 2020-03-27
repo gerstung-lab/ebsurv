@@ -2,7 +2,7 @@
 
 S3method(msfit_generic,coxrfx)
 S3method(msfit_generic,default)
-S3method(print,CoxRFX)
+S3method(print,coxrfx)
 S3method(probtrans_mstate,coxrfx)
 S3method(probtrans_mstate,default)
 S3method(summary,coxrfx)

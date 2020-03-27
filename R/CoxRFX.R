@@ -200,18 +200,18 @@ summary.coxrfx <- function(object){
 	show(format(data.frame(group=object$groups, estimate=object$coefficients,row.names = names(object$coefficients)), digits=2))
 	}
 
-#' Print method for CoxRFX
+#' Print method for CoxRFX objects
 #' 
-#' This function implicitly calls summary.CoxRFX().
-#' @param x CoxRFX
-#' @param ... Currently unused
+#' This function implicitly calls summary.coxrfx().
+#' @param x A \code{coxrfx} object
 #' @return NULL
 #' 
-#' @author Moritz Gerstung
-#' @method print CoxRFX
+#' @author Moritz Gerstung & Rui Costa
 #' @export
-print.CoxRFX <- function(x, ...){
-	summary.CoxRFX(x)
+#' @method print coxrfx
+
+print.coxrfx <- function(x){
+	summary.coxrfx(x)
 }
 
 #' Convert factor to integer.
