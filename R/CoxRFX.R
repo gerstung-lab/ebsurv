@@ -182,51 +182,23 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 
 #' A summary method for CoxRFX models
 #' 
-#' This model prints the means and variances for each groups of covariates, as well as the variance components.
-#' For the means a Wald test with 1 df is computed testing the null-hypothesis of being zero.
+#' This function prints the point estimates of parameters and 
+#' hyperparameters contained in a \code{coxrfx} object.
 #' 
-#' The null-hypothesis of zero variance is tested using a combined Wald test that all coefficients in the group are
-#' identical to the mean. Gray (1992) suggests to use \eqn{\beta H^{-1} \beta} as a test statistic in a chi-square
-#' test with \eqn{\mathrm{tr}[H^{-1} I]}{tr[H^{-1} I]} df, where H is the Hessian of the penalised model
-#' and I is the Hessian of the unpenalised coxph model. Note that all variables taken over the subset of interest only. 
-#' As noted by Therneau (2003) this test may be somewhat optimistic. Here, we are using \eqn{z^2 = \sum_i\beta_i^2/H_{ii}},
-#' which appears to be a more conservative choice, but the consequences remain to be thoroughly evaluated.  
 #' 
-#' @note Note that there is a lively debate about testing random effects in generalised linear models. See for example
-#' http://glmm.wikidot.com/faq
-#' 
-#' @references  R. J. Gray (1992). Flexible Methods for Analyzing Survival Data Using Splines, with Applications to Breast Cancer Prognosis. Journal of the American Statistical Association, 87:942-951. http://dx.doi.org/10.1080/01621459.1992.10476248
-#' T. M. Therneau, P. M. Grambsch, and V. S. Pankratz (2003). Penalized Survival Models and Frailty. Journal of Computational and Graphical Statistics, 12:156-175. http://dx.doi.org/10.1198/1061860031365
-#' @param object A CoxRFX model
-#' @param ... Currently unused
+#' @param object A \code{coxrfx} object 
+#' (obtained by running the function \code{CoxRFX}).
 #' @return NULL
 #' 
-#' @author Moritz Gerstung
+#' @author Rui Costa
 #' @export
 #' @method summary coxrfx
-summary.coxrfx <- function(object, ...){
-	which.mu <- names(object$mu)[object$mu!=0]
-	p <- z <- s <- object$mu
-	z[which.mu] <- object$mu[which.mu]/sqrt(diag(as.matrix(object$mu.var2)))
-	s[which.mu] <- sqrt(diag(as.matrix(object$mu.var2)))
-	p <- pchisq(z^2,1,lower.tail=FALSE)
-	p[!names(p) %in% which.mu] <- NA
-	cat("Means:\n")
-	show(format(data.frame(mean=object$mu, sd=s, z=z, p.val=p, sig=sig2star(p)), digits=2))
-	cat("\nVariances - p-values only indicative:\n")
-	v <- object$sigma2
-	c <- coef(object) - object$mu[object$groups] ## centred coefficients
-	chisq <- sapply(split(c^2/diag(object$Hinv)[1:length(c)], object$groups), sum)
-	df <- object$df[-(nlevels(object$groups)+1)]
-	p <- pchisq(chisq, df, lower.tail=FALSE)
-	show(format(data.frame(sigma2=v, chisq=chisq, df = df, p.val=p, sig=sig2star(p)), digits=2))
-	# cat("\nPartial log hazard:\n")
-	# newZ <- object$Z[setdiff(1:nrow(object$Z), object$na.action),]
-	# p <- PartialRisk(object, newZ = newZ)
-	# v <- VarianceComponents(object, newZ = newZ)
-	# e <- colMeans(PartialRiskVar(object, newZ = newZ))
-	# show(format(data.frame(`Cov[g,g]`=c(diag(cov(p)), TOTAL=NaN), `Sum(Cov[,g])`=c(rowSums(cov(p)),TOTAL=sum(cov(p))), `MSE`=c(e, TOTAL=v[length(v)]), check.names = FALSE),  digits=2))
-}
+summary.coxrfx <- function(object){
+	cat("Hyperparameters:\n")
+	show(format(data.frame(mean=object$mu, variance=object$sigma2), digits=2))
+	cat("\n Parameters: \n")
+	show(format(data.frame(group=object$groups, estimate=object$coefficients,row.names = names(object$coefficients)), digits=2))
+	}
 
 #' Print method for CoxRFX
 #' 
