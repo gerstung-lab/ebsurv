@@ -2,6 +2,9 @@
 #include <Rinternals.h>
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
+#include "survS.h"
+#include <Rversion.h>
+#include "survproto.h"
 
 /*
   The following symbols/expressions for .NAME have been omitted
@@ -19,8 +22,27 @@
 /* .C calls */
 extern void agmssurv(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
+extern void Ccoxfit5a(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+
+extern void Ccoxfit5b(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+
+extern void Ccoxfit5c( void *, void *, void *, void *, void *);
+
+extern void Cagfit5a(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+
+extern void Cagfit5b(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+
+extern void Cagfit5c(void *);
+
 static const R_CMethodDef CEntries[] = {
     {"agmssurv", (DL_FUNC) &agmssurv, 20},
+    {"Ccoxfit5a",   (DL_FUNC) &coxfit5_a, 20},
+    {"Ccoxfit5b",   (DL_FUNC) &coxfit5_b, 19},
+    {"Ccoxfit5c",   (DL_FUNC) &coxfit5_c,  5},
+    {"Cagfit5a",    (DL_FUNC) &agfit5a,  20},
+    {"Cagfit5b",    (DL_FUNC) &agfit5b,  19},
+    {"Cagfit5c",    (DL_FUNC) &agfit5c,   1},
+    
     {NULL, NULL, 0}
 };
 
