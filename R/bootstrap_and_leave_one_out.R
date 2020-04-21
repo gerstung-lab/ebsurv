@@ -163,7 +163,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 #' This function computes bootstrap samples of regression coefficients,
 #' cumulative hazard functions, and transition probability functions.
 #' 
-#' @param mstate_data_expanded Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs).
+#' @param mstate_data_expanded Data in `long format`, possibly with `expanded` covariates (as obtained by running mstate::expand.covs). See details.
 #' @param which_group A character vector with the same meaning as the `groups` argument of the function \code{CoxRFX} but named (with the covariate names).
 #' @param min_nr_samples The confidence interval of any coefficient is based on a number of bootstrap samples at least as high as this argument. See details.
 #' @param patient_data The covariate data for which the estimates of cumulative hazards and transition probabilities are computed. 
@@ -184,7 +184,8 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 #' estimates for all coefficients. If a covariate has little or no variation in a given bootstrap sample, 
 #' no estimate of its coefficient will be computed. The present function will
 #' keep taking bootstrap samples until every coefficient has been estimated
-#' at least \code{min_nr_samples} times.
+#' at least \code{min_nr_samples} times. After expansion, the original covariates should be
+#' excluded from \code{mstate_data_expanded}.
 #' @author Rui Costa
 #' @export
 
@@ -246,7 +247,9 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
       
       msfit_objects_boot[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_args))
       probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model=time_model),probtrans_args))[[1]]
-      probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][sapply(seq(from=0,to=max_time,length.out = 400),function(x) which.min(abs(probtrans_objects_boot[[j]]$time-x))),]
+      if(!is.null(max_time)){
+        probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][which(probtrans_objects_boot[[j]]$time <=max_time),] 
+      }
       print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       if(j %%5==0){
         save(coxrfx_fits_boot,probtrans_objects_boot,
