@@ -10,7 +10,6 @@ loo_ebsurv(
   which_group,
   patient_IDs,
   initial_state,
-  max_time,
   tmat,
   backup_file = NULL,
   input_file = NULL,
@@ -31,8 +30,6 @@ loo_ebsurv(
 \item{patient_IDs}{The IDs of the patients whose cumulative hazards and transition probabilities one wishes to estimate.}
 
 \item{initial_state}{The initial state for which transition probability estimates should be computed}
-
-\item{max_time}{The maximum time for which estimates should be computed}
 
 \item{tmat}{Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}}
 
