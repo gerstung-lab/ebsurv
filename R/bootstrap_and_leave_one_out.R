@@ -289,7 +289,6 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
 #' @param which_group A character vector with the same meaning as the `groups` argument of the function \code{CoxRFX} but named (with the covariate names).
 #' @param patient_IDs The IDs of the patients whose cumulative hazards and transition probabilities one wishes to estimate.
 #' @param initial_state The initial state for which transition probability estimates should be computed
-#' @param max_time The maximum time for which estimates should be computed
 #' @param tmat Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}
 #' @param backup_file Path to file. Objects generated while the present function is running are stored in this file. 
 #' This avoids losing all estimates if and when the algorithm breaks down. See argument \code{input_file}. 
@@ -310,7 +309,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
 
 
 loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
-                     patient_IDs,initial_state,max_time,tmat,
+                     patient_IDs,initial_state,tmat,
                      backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=NULL,
                      msfit_args=NULL,probtrans_args=NULL,...){
   list2env(coxrfx_args,envir = environment())
