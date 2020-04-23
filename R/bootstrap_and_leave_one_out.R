@@ -200,7 +200,6 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 #' @param patient_data The covariate data for which the estimates of cumulative hazards and transition probabilities are computed. 
 #' Must contain: one row of data for each transition, all the covariate columns in the fitted model, and also the 'strata' column. 
 #' @param initial_state The initial state for which transition probability estimates should be computed
-#' @param max_time The maximum time for which estimates should be computed
 #' @param tmat Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}
 #' @param backup_file Path to file. Objects generated while the present function is running are stored in this file. 
 #' This avoids losing all estimates if and when the algorithm breaks down. See argument \code{input_file}. 
@@ -222,7 +221,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 
 
 boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=NULL,
-                      patient_data=NULL,initial_state=NULL,max_time=NULL,tmat=NULL,
+                      patient_data=NULL,initial_state=NULL,tmat=NULL,
                       backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=NULL,
                       msfit_args=NULL,probtrans_args=NULL,...){
   
@@ -278,9 +277,6 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
       
       msfit_objects_boot[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_boot[[j]],newdata=patient_data,trans=tmat),msfit_args))
       probtrans_objects_boot[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_boot[[j]],model=time_model),probtrans_args))[[1]]
-      if(!is.null(max_time)){
-        probtrans_objects_boot[[j]]<-probtrans_objects_boot[[j]][which(probtrans_objects_boot[[j]]$time <=max_time),] 
-      }
       print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       if(j %%5==0){
         save(coxrfx_fits_boot,probtrans_objects_boot,

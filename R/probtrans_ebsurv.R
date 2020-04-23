@@ -175,6 +175,8 @@ joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
 #'\code{mstate} or \code{mstate_generic}.
 #'@param model Either 'Markov' or
 #' 'semiMarkov'. See details.
+#'@param max_time The maximum time for which transition probabilities
+#'are estimated.
 #'
 #'@return An object of class 'probtrans'. See the 'value' 
 #'section in the help page of \code{mstate::probtrans}.
@@ -182,8 +184,8 @@ joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
 #'@seealso \code{\link{probtrans}};
 #'
 #'@export
-probtrans_ebsurv<-function(initial_state,cumhaz,model){
-  probtrans_object<-lapply(initial_state, probtrans_by_convolution,tmat=cumhaz$trans,cumhaz=cumhaz,model=model)
+probtrans_ebsurv<-function(initial_state,cumhaz,model,max_time=5000){
+  probtrans_object<-lapply(initial_state, probtrans_by_convolution,tmat=cumhaz$trans,cumhaz=cumhaz,model=model,max_time=max_time)
   probtrans_object$trans<-cumhaz$trans
   probtrans_object$direction<-"forward"
   probtrans_object$predt<-0
@@ -210,19 +212,20 @@ probtrans_ebsurv<-function(initial_state,cumhaz,model){
 #'@param cumhaz \code{msfit} object (argument passed on from \code{probtrans_ebsurv}).
 #'@param from_state Initial state (argument passed on from \code{probtrans_ebsurv}).
 #'@param model 'Markov' or 'semiMarkov' (argument passed on from \code{probtrans_ebsurv}).
+#'@param max_time The maximum time for which transition probabilities
+#'are estimated.
 #'
 #'@author Rui Costa & Moritz Gerstung
 #'@seealso \code{\link{probtrans_ebsurv}};\code{\link{probtrans_by_convolution_Markov}};
 #'\code{\link{probtrans_by_convolution_semiMarkov}}.
 #'@export
 
-probtrans_by_convolution<-function(tmat,cumhaz,from_state,model){
+probtrans_by_convolution<-function(tmat,cumhaz,from_state,model,max_time){
   spline_list<-cumhaz_splines(cumhaz)
   unique_paths_object<-unique_paths(from_state,tmat)
   all_states<-na.omit(unique(as.vector(unique_paths_object)))
   #all_target_states<-all_states[-which(all_states==from_state)]
-  maximum_time<-max(cumhaz$Haz$time)
-  time<-seq(0,maximum_time,length.out=10000)
+  time<-seq(0,max_time,length.out=10000)
   #time<-sort(c(0,sort(coxph.detail(fit)$time)-1,sort(coxph.detail(fit)$time)+1,maximum_time))
   if(model=="semiMarkov"){
     transprobs_for_all_states<-sapply(all_states, probtrans_by_convolution_semiMarkov,cumhaz=cumhaz,tmat=tmat,from_state=from_state,spline_list=spline_list,unique_paths_object=unique_paths_object,time=time)

@@ -5,7 +5,7 @@
 \title{Compute subject-specific transition probabilities
 using convolution.}
 \usage{
-probtrans_ebsurv(initial_state, cumhaz, model)
+probtrans_ebsurv(initial_state, cumhaz, model, max_time = 5000)
 }
 \arguments{
 \item{initial_state}{The present function 
@@ -17,6 +17,9 @@ in this argument.}
 
 \item{model}{Either 'Markov' or
 'semiMarkov'. See details.}
+
+\item{max_time}{The maximum time for which transition probabilities
+are estimated.}
 }
 \value{
 An object of class 'probtrans'. See the 'value' 

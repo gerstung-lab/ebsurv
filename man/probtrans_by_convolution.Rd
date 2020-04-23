@@ -5,7 +5,7 @@
 \title{Compute all transition probabilities from a given state
 using convolution}
 \usage{
-probtrans_by_convolution(tmat, cumhaz, from_state, model)
+probtrans_by_convolution(tmat, cumhaz, from_state, model, max_time)
 }
 \arguments{
 \item{tmat}{A transition matrix extracted from the \code{cumhaz} argument to 
@@ -16,6 +16,9 @@ probtrans_by_convolution(tmat, cumhaz, from_state, model)
 \item{from_state}{Initial state (argument passed on from \code{probtrans_ebsurv}).}
 
 \item{model}{'Markov' or 'semiMarkov' (argument passed on from \code{probtrans_ebsurv}).}
+
+\item{max_time}{The maximum time for which transition probabilities
+are estimated.}
 }
 \description{
 \code{probtrans_by_convolution} is an internal function of \code{probtrans_ebsurv} and

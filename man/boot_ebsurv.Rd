@@ -10,7 +10,6 @@ boot_ebsurv(
   min_nr_samples = NULL,
   patient_data = NULL,
   initial_state = NULL,
-  max_time = NULL,
   tmat = NULL,
   backup_file = NULL,
   input_file = NULL,
@@ -32,8 +31,6 @@ boot_ebsurv(
 Must contain: one row of data for each transition, all the covariate columns in the fitted model, and also the 'strata' column.}
 
 \item{initial_state}{The initial state for which transition probability estimates should be computed}
-
-\item{max_time}{The maximum time for which estimates should be computed}
 
 \item{tmat}{Transition matrix for the multi-state model, as obtained by running \code{mstate::transMat}}
 
