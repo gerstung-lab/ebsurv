@@ -85,6 +85,37 @@ CIs_for_target_state<-function(target_state,probtrans_objects_boot){
   apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
 }
 
+#' Ancillary function of \code{boot_ebsurv}.
+#' 
+#' Computes 95\% highest density, non-parametric bootstrap confidence 
+#' intervals for the cumulative hazard rate functions, 
+#' given a list of \code{msfit} objects with boostrap estimates of cumulative hazard rate functions
+#' for multiple transitions. This 
+#' function is not meant to be called by the user.
+#' 
+#' @param transition The transition for which transition confidence intervals
+#' are computed.
+#' @param  msfit_objects_boot List of \code{msfit} objects with boostrap estimates 
+#' of cumulative hazard rate functions
+#' for multiple transitions.
+#' @return 95\% highest density, non-parametric bootstrap confidence intervals for the cumulative
+#' hazard rate functions.
+#' @author Rui Costa
+#' @seealso \code{\link{boot_ebsurv}}.
+#' @export
+
+
+cumhazCIs_for_target_transition<-function(transition,msfit_objects_boot){
+  unique_time_points<-sort(unique(unlist(sapply(msfit_objects_boot,function(x) unique(x[[1]][,"time"])))))
+  cumhaz_fun<-function(msfit_object_boot,unique_time_point,transition){
+    msfit_for_target_trans<-msfit_object_boot[[1]][msfit_object_boot[[1]][,"trans"]==transition,]
+    msfit_for_target_trans[which.max(msfit_for_target_trans[,"time"]>=unique_time_point),"Haz"]
+  }
+  obj<-sapply(msfit_objects_boot,function(x) sapply(unique_time_points,cumhaz_fun,msfit_object_boot=x,transition=transition))
+  apply(obj,1,HDInterval::hdi,credMass=0.95)
+}
+
+
 #' Bootstrap confidence intervals for regression coefficients
 #' 
 #' This function computes 95\% highest density bootstrap confidence intervals (non-parametric) for the regression coefficients estimated by CoxRFX.
@@ -269,13 +300,16 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
                         probtrans_objects_boot=probtrans_objects_boot)
   names(probtrans_CIs)<-colnames(tmat)
   
+  cumhaz_CIs<-lapply(sort(unique(mstate_data_expanded$trans)),cumhazCIs_for_target_transition,
+           msfit_objects_boot=msfit_objects_boot)
+  
   
   
   return(list(coefficients_CIs=CIs,coxrfx_fits_boot=coxrfx_fits_boot,
               probtrans_CIs=probtrans_CIs,
               probtrans_objects_boot=probtrans_objects_boot, 
               msfit_objects_boot=msfit_objects_boot,
-              patient_data=patient_data))
+              patient_data=patient_data,cumhaz_CIs=cumhaz_CIs))
   
 }
 
