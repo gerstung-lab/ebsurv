@@ -112,7 +112,9 @@ cumhazCIs_for_target_transition<-function(transition,msfit_objects_boot){
     msfit_for_target_trans[which.max(msfit_for_target_trans[,"time"]>=unique_time_point),"Haz"]
   }
   obj<-sapply(msfit_objects_boot,function(x) sapply(unique_time_points,cumhaz_fun,msfit_object_boot=x,transition=transition))
-  apply(obj,1,HDInterval::hdi,credMass=0.95)
+  output<-apply(obj,1,HDInterval::hdi,credMass=0.95)
+  colnames(output)<-unique_time_points
+  output
 }
 
 
