@@ -173,7 +173,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
       print(min(apply(boot_matrix, 2, function(x) sum(!is.na(x)))))
       j<-j+1
     } 
-    if(min(apply(boot_matrix, 2, function(x) sum(!is.na(x))))==min_nr_samples) break
+    if(min(apply(boot_matrix, 2, function(x) sum(!is.na(x))))>=min_nr_samples) break
     
   }
   
@@ -282,7 +282,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
       }
       j<-j+1
     } 
-    if(min(apply(boot_matrix, 2, function(x) sum(!is.na(x))))==min_nr_samples) break
+    if(min(apply(boot_matrix, 2, function(x) sum(!is.na(x))))>=min_nr_samples) break
     
   }
   
