@@ -13,7 +13,7 @@
 #' @author Rui Costa
 #' @seealso \code{\link{probtrans_ebsurv}}; \code{\link{boot_coxrfx}}; 
 #' \code{\link[mstate]{transMat}}; \code{\link[mstate]{expand.covs}}
-#' @export
+
 
 boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state,max_time){
   msfit_objects_boot<-vector("list",length(coxrfx_fits_boot))
@@ -58,7 +58,6 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state,max_ti
 #' in turn is an ancillary function of \code{boot_probtrans}.
 #' @author Rui Costa
 #' @seealso \code{\link{CIs_for_target_state}}; \code{\link{boot_probtrans}} 
-#' @export
 
 extract_function<-function(list_object,tstate){
   as.vector(list_object[tstate])
@@ -78,7 +77,6 @@ extract_function<-function(list_object,tstate){
 #' @details Uses function \code{extract_function}.
 #' @author Rui Costa
 #' @seealso \code{\link{boot_probtrans}}; \code{\link{extract_function}}.
-#' @export
 
 CIs_for_target_state<-function(target_state,probtrans_objects_boot){
   target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,tstate=target_state))
@@ -102,7 +100,6 @@ CIs_for_target_state<-function(target_state,probtrans_objects_boot){
 #' hazard rate functions.
 #' @author Rui Costa
 #' @seealso \code{\link{boot_ebsurv}}.
-#' @export
 
 
 cumhazCIs_for_target_transition<-function(transition,msfit_objects_boot){
@@ -134,7 +131,6 @@ cumhazCIs_for_target_transition<-function(transition,msfit_objects_boot){
 #' keep taking bootstrap samples until every coefficient has been estimated
 #' at least \code{min_nr_samples} times.
 #' @author Rui Costa
-#' @export
 
 boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output="CIs",...){
   coxrfx_fits_boot<-vector("list")

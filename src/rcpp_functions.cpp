@@ -11,7 +11,6 @@ using namespace Rcpp;
 //' @param time_vector,integrand_1,integrand_2 Numeric vectors.
 //' @author Moritz Gerstung & Rui Costa
 //' @seealso \code{\link{probtrans_by_convolution_semiMarkov}}.
-//' @export
 // [[Rcpp::export]]
 NumericVector convolute_semiMarkov(NumericVector time_vector, NumericVector integrand_1, NumericVector integrand_2 ) {
   int xLen = time_vector.size();
@@ -34,7 +33,6 @@ NumericVector convolute_semiMarkov(NumericVector time_vector, NumericVector inte
 //' @param time_vector,diff_vector,probtrans_vector_1,probtrans_vector_2 Numeric vectors.
 //' @author Moritz Gerstung & Rui Costa
 //' @seealso \code{\link{probtrans_by_convolution_Markov}}.
-//' @export
 // [[Rcpp::export]]
 NumericVector convolute_Markov(NumericVector time_vector, NumericVector diff_vector, NumericVector probtrans_vector_1, NumericVector probtrans_vector_2 ) {
   int xLen = time_vector.size();

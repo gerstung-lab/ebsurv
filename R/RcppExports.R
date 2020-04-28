@@ -11,7 +11,6 @@
 #' @param time_vector,integrand_1,integrand_2 Numeric vectors.
 #' @author Moritz Gerstung & Rui Costa
 #' @seealso \code{\link{probtrans_by_convolution_semiMarkov}}.
-#' @export
 convolute_semiMarkov <- function(time_vector, integrand_1, integrand_2) {
     .Call(`_ebsurv_convolute_semiMarkov`, time_vector, integrand_1, integrand_2)
 }
@@ -26,7 +25,6 @@ convolute_semiMarkov <- function(time_vector, integrand_1, integrand_2) {
 #' @param time_vector,diff_vector,probtrans_vector_1,probtrans_vector_2 Numeric vectors.
 #' @author Moritz Gerstung & Rui Costa
 #' @seealso \code{\link{probtrans_by_convolution_Markov}}.
-#' @export
 convolute_Markov <- function(time_vector, diff_vector, probtrans_vector_1, probtrans_vector_2) {
     .Call(`_ebsurv_convolute_Markov`, time_vector, diff_vector, probtrans_vector_1, probtrans_vector_2)
 }

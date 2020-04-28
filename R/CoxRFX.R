@@ -242,7 +242,6 @@ print.msfit <- function(x){
 #' to called directly by the user.
 #' @author Moritz Gerstung
 #' @seealso \code{\link{CoxRFX}}
-#' @export
 MakeInteger <- function(F){
   res <- as.data.frame(lapply(levels(F), `==`, F))
   colnames(res) <- levels(F)

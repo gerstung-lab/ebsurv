@@ -10,7 +10,6 @@
 #'@return A list of estimated cumulative hazard functions (one for each transition).
 #'@seealso \code{\link{msfit_generic}}; \code{\link{msfit}}; \code{\link{probtrans_by_convolution}}.
 #'@author Rui Costa
-#'@export
 
 cumhaz_splines<-function(cumhaz){
   spline_list<-vector("list",length(unique(cumhaz$Haz$trans)))
@@ -41,7 +40,6 @@ cumhaz_splines<-function(cumhaz){
 #'@author Rui Costa
 #'@seealso \code{\link{probtrans_by_convolution}};
 #' \code{\link{transMat}}.
-#'@export
 
 unique_paths<-function(from_state,tmat){
   M<-matrix(from_state)
@@ -95,7 +93,6 @@ unique_paths<-function(from_state,tmat){
 #'@seealso \code{\link{unique_paths}};
 #' \code{\link{probtrans_by_convolution_Markov}};
 #' \code{\link{probtrans_by_convolution_semiMarkov}}.
-#'@export
 
 successful_transitions<-function(unique_paths_object,to_state){
   row_of_paths_object_with_to_state<-which(apply(unique_paths_object,1,function(x) sum(na.omit(x==to_state))>0))
@@ -143,7 +140,6 @@ successful_transitions<-function(unique_paths_object,to_state){
 #'@seealso \code{\link{probtrans_by_convolution_Markov}};
 #'\code{\link{probtrans_by_convolution_semiMarkov}};
 #' \code{\link{cumhaz_splines}}.
-#'@export
 
 joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
   if(length(competing_transitions)>0){
@@ -218,7 +214,6 @@ probtrans_ebsurv<-function(initial_state,cumhaz,model,max_time=5000){
 #'@author Rui Costa & Moritz Gerstung
 #'@seealso \code{\link{probtrans_ebsurv}};\code{\link{probtrans_by_convolution_Markov}};
 #'\code{\link{probtrans_by_convolution_semiMarkov}}.
-#'@export
 
 probtrans_by_convolution<-function(tmat,cumhaz,from_state,model,max_time){
   spline_list<-cumhaz_splines(cumhaz)
@@ -269,7 +264,7 @@ probtrans_by_convolution<-function(tmat,cumhaz,from_state,model,max_time){
 #'\code{\link{unique_paths}};
 #'\code{\link{cumhaz_splines}}.
 #'@author Rui Costa & Moritz Gerstung
-#'@export
+
 probtrans_by_convolution_Markov<-function(tmat,cumhaz,from_state,to_state,spline_list,unique_paths_object,time){
   row_of_tmat_of_current_state<-which(rownames(tmat)==from_state)
   competing_transitions<-na.omit(tmat[row_of_tmat_of_current_state,])
@@ -335,7 +330,6 @@ probtrans_by_convolution_Markov<-function(tmat,cumhaz,from_state,to_state,spline
 #'\code{\link{unique_paths}};
 #'\code{\link{cumhaz_splines}}.
 #'@author Rui Costa & Moritz Gerstung
-#'@export
 
 probtrans_by_convolution_semiMarkov<-function(tmat,cumhaz,from_state,to_state,spline_list,unique_paths_object,time){
   row_of_tmat_of_current_state<-which(rownames(tmat)==from_state)
