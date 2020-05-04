@@ -80,7 +80,7 @@ extract_function<-function(list_object,tstate){
 
 CIs_for_target_state<-function(target_state,probtrans_objects_boot){
   target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,tstate=target_state))
-  apply(target_state_boot_samples,1,HDInterval::hdi,credMass=0.95)
+  apply(target_state_boot_samples,1,hdi,credMass=0.95)
 }
 
 #' Ancillary function of \code{boot_ebsurv}.
@@ -109,7 +109,7 @@ cumhazCIs_for_target_transition<-function(transition,msfit_objects_boot){
     msfit_for_target_trans[which.max(msfit_for_target_trans[,"time"]>=unique_time_point),"Haz"]
   }
   obj<-sapply(msfit_objects_boot,function(x) sapply(unique_time_points,cumhaz_fun,msfit_object_boot=x,transition=transition))
-  output<-apply(obj,1,HDInterval::hdi,credMass=0.95)
+  output<-apply(obj,1,hdi,credMass=0.95)
   colnames(output)<-unique_time_points
   output
 }
@@ -177,7 +177,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
     
   }
   
-  CIs<-apply(boot_matrix,2,HDInterval::hdi,credMass=0.95)
+  CIs<-apply(boot_matrix,2,hdi,credMass=0.95)
   CIs<-rbind(CIs,apply(boot_matrix, 2, function(x) sum(!is.na(x))))
   dimnames(CIs)[[1]][3]<-"n_samples"
   if(output=="CIs_and_coxrfx_fits"){
@@ -286,7 +286,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
     
   }
   
-  CIs<-apply(boot_matrix,2,HDInterval::hdi,credMass=0.95)
+  CIs<-apply(boot_matrix,2,hdi,credMass=0.95)
   CIs<-rbind(CIs,apply(boot_matrix, 2, function(x) sum(!is.na(x))))
   dimnames(CIs)[[1]][3]<-"n_samples"
   

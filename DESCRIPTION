@@ -15,16 +15,10 @@ Description: This package implements an empirical Bayes,
 Depends:
     R (>= 3.5.0),
     survival (>= 2.44-1.1),
-    parallel,
-    RColorBrewer,
-    mstate (>= 0.2.11),
-    HDInterval
+    mstate (>= 0.2.11)
 Imports:
-    glmnet,
-    MASS,
-    mvtnorm,
-    mice,
     Rcpp,
+    HDInterval
 Suggests:
     coxme
 License: GPL-3
