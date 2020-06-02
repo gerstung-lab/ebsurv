@@ -97,7 +97,7 @@ unique_paths<-function(from_state,tmat){
 successful_transitions<-function(unique_paths_object,to_state){
   row_of_paths_object_with_to_state<-which(apply(unique_paths_object,1,function(x) sum(na.omit(x==to_state))>0))
   reduced_unique_paths_object<-matrix(unique(unique_paths_object[1:row_of_paths_object_with_to_state,],MARGIN = 2),ncol = ncol(unique_paths_object))
-  sucessful_path_column<-which(apply(reduced_unique_paths_object,2,function(x) sum(x==to_state)>0))
+  sucessful_path_column<-which(apply(reduced_unique_paths_object,2,function(x) sum(x==to_state)>0))[1]
   successful_path<-reduced_unique_paths_object[,sucessful_path_column]
   if(length(successful_path)==1){
     return(NULL)
