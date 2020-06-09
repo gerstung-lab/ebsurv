@@ -338,7 +338,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
 
 loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
                      patient_IDs,initial_state,tmat,
-                     backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=NULL,
+                     backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=list(),
                      msfit_args=NULL,probtrans_args=NULL,...){
   list2env(coxrfx_args,envir = environment())
   if(!is.null(input_file)){

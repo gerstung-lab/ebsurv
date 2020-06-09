@@ -14,7 +14,7 @@ loo_ebsurv(
   backup_file = NULL,
   input_file = NULL,
   time_model = NULL,
-  coxrfx_args = NULL,
+  coxrfx_args = list(),
   msfit_args = NULL,
   probtrans_args = NULL,
   ...
