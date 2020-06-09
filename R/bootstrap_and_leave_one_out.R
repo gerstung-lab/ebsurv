@@ -373,7 +373,7 @@ loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
                                  sigma.hat = sigma.hat,
                                  verbose = verbose,coxrfx_args)
     if(sum(is.na(coxrfx_fits_loo[[j]]$coefficients))==0){
-      patient_data<-mstate_data[mstate_data$id==patient_IDs[j],,drop=F][1,][rep(1,3),]
+      patient_data<-mstate_data[mstate_data$id==patient_IDs[j],,drop=F][1,][rep(1,length(unique(mstate_data$trans))),]
       patient_data$trans<-1:length(unique(mstate_data$trans))
       patient_data<-expand.covs(patient_data,
                                 covs = names(patient_data)[!names(patient_data)%in%c("id","from","to","trans","strata","Tstart","Tstop","time","status","type")])
