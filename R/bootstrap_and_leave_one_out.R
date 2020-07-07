@@ -41,7 +41,7 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state,max_ti
   return(list(probtrans_CIs=probtrans_CIs,probtrans_objects_boot=probtrans_objects_boot, msfit_objects_boot=msfit_objects_boot))
 }
 
-#' Ancillary function to \code{boot_probtrans}.
+#' Ancillary function to \code{boot_ebsurv}.
 #' 
 #' Extracts the bootstrap estimates of transition probabilities for
 #' target state `tstate` from a list
@@ -55,15 +55,15 @@ boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state,max_ti
 #' from \code{list_object}. 
 #' @return Bootstrap estimates of transition probabilities into target state `tstate`. 
 #' @details This function is an ancillary function of \code{CIs_for_target_state}, which
-#' in turn is an ancillary function of \code{boot_probtrans}.
+#' in turn is an ancillary function of \code{boot_ebsurv}.
 #' @author Rui Costa
-#' @seealso \code{\link{CIs_for_target_state}}; \code{\link{boot_probtrans}} 
+#' @seealso \code{\link{CIs_for_target_state}}; \code{\link{boot_ebsurv}} 
 
 extract_function<-function(list_object,tstate){
   as.vector(list_object[tstate])
 }
 
-#' Ancillary function of \code{boot_probtrans}.
+#' Ancillary function of \code{boot_ebsurv}.
 #' 
 #' Computes 95\% highest density bootstrap confidence 
 #' intervals for the transition probabilities into \code{target_state}, 
@@ -72,11 +72,12 @@ extract_function<-function(list_object,tstate){
 #' 
 #' @param target_state The target state for whose transition probabilties the confidence intervals
 #' are computed.
+#' @param probtrans_objects_boot A list containing bootstrap estimates of transition probabilities.
 #' @return 95\% highest density bootstrap confidence intervals for the transition
 #' probabilities into \code{target_state}. 
 #' @details Uses function \code{extract_function}.
 #' @author Rui Costa
-#' @seealso \code{\link{boot_probtrans}}; \code{\link{extract_function}}.
+#' @seealso \code{\link{boot_ebsurv}}; \code{\link{extract_function}}.
 
 CIs_for_target_state<-function(target_state,probtrans_objects_boot){
   target_state_boot_samples<-as.data.frame(sapply(probtrans_objects_boot, extract_function,tstate=target_state))
@@ -221,7 +222,7 @@ boot_coxrfx<-function(mstate_data_expanded,which_group,min_nr_samples=100,output
 boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=NULL,
                       patient_data=NULL,initial_state=NULL,tmat=NULL,
                       backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=NULL,
-                      msfit_args=NULL,probtrans_args=NULL,...){
+                      msfit_args=NULL,probtrans_args=NULL){
   
   list2env(coxrfx_args,envir = environment())
   if(!is.null(input_file)){
@@ -339,7 +340,7 @@ boot_ebsurv<-function(mstate_data_expanded=NULL,which_group=NULL,min_nr_samples=
 loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
                      patient_IDs,initial_state,tmat,
                      backup_file=NULL,input_file=NULL,time_model=NULL,coxrfx_args=list(),
-                     msfit_args=NULL,probtrans_args=NULL,...){
+                     msfit_args=NULL,probtrans_args=NULL){
   list2env(coxrfx_args,envir = environment())
   if(!is.null(input_file)){
     load(input_file)

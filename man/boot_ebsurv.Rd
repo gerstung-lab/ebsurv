@@ -16,8 +16,7 @@ boot_ebsurv(
   time_model = NULL,
   coxrfx_args = NULL,
   msfit_args = NULL,
-  probtrans_args = NULL,
-  ...
+  probtrans_args = NULL
 )
 }
 \arguments{

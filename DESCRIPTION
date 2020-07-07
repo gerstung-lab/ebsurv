@@ -19,8 +19,6 @@ Depends:
 Imports:
     Rcpp,
     HDInterval
-Suggests:
-    coxme
 License: GPL-3
 LinkingTo: Rcpp
 RoxygenNote: 7.0.2

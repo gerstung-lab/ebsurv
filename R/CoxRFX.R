@@ -24,6 +24,7 @@
 #' Or a single value, in case the initial value of the variance hyperparameter is meant to be the same for all groups.
 #' @param sigma.hat Which estimator to use for the variance hyperparameters (see details).
 #' @param verbose Gives more output.
+#' @param ... Further arguments passed to the function \code{survival::coxph}.
 #' @details The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
 #' 
 #' Different estimators exist for the variance hyperparameters: the default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
@@ -88,7 +89,7 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 		formula <- formula(paste("surv ~", paste(c(sapply(1:nGroups, function(i) paste("ridge(ZZ[[",i,"]], theta=1/sigma2[",i,"], scale=FALSE)", sep="")), 
 								sumTerm,"strata(strata)"), 
 						collapse=" + ")))
-		fit <- ebsurv:::coxph(formula, ...)
+		fit <- coxph(formula, ...)
 		if(any(is.na(coef(fit)))){
 			warning(paste("NA during estimation (iter: ", iter, ", coef: ", paste(which(is.na(coef(fit)[order(o)])), sep=","), ")", sep=""))
 			break

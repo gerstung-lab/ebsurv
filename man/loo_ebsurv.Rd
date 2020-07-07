@@ -16,8 +16,7 @@ loo_ebsurv(
   time_model = NULL,
   coxrfx_args = list(),
   msfit_args = NULL,
-  probtrans_args = NULL,
-  ...
+  probtrans_args = NULL
 )
 }
 \arguments{

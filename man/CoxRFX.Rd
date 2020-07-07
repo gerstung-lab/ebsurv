@@ -44,6 +44,8 @@ Or a single value, in case the initial value of the variance hyperparameter is m
 \item{sigma.hat}{Which estimator to use for the variance hyperparameters (see details).}
 
 \item{verbose}{Gives more output.}
+
+\item{...}{Further arguments passed to the function \code{survival::coxph}.}
 }
 \value{
 A coxph object (see \code{survival::coxph.object}) with a few extra fields: the inputs $groups, $Z, and $surv;

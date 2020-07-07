@@ -2,13 +2,15 @@
 % Please edit documentation in R/bootstrap_and_leave_one_out.R
 \name{CIs_for_target_state}
 \alias{CIs_for_target_state}
-\title{Ancillary function of \code{boot_probtrans}.}
+\title{Ancillary function of \code{boot_ebsurv}.}
 \usage{
 CIs_for_target_state(target_state, probtrans_objects_boot)
 }
 \arguments{
 \item{target_state}{The target state for whose transition probabilties the confidence intervals
 are computed.}
+
+\item{probtrans_objects_boot}{A list containing bootstrap estimates of transition probabilities.}
 }
 \value{
 95\% highest density bootstrap confidence intervals for the transition
@@ -24,7 +26,7 @@ function is not meant to be called by the user.
 Uses function \code{extract_function}.
 }
 \seealso{
-\code{\link{boot_probtrans}}; \code{\link{extract_function}}.
+\code{\link{boot_ebsurv}}; \code{\link{extract_function}}.
 }
 \author{
 Rui Costa

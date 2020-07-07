@@ -22,11 +22,8 @@
 #' @keywords package
 #' @import parallel
 #' @import survival
-#' @import RColorBrewer
-#' @importFrom mice mice
-#' @importFrom glmnet glmnet
-#' @importFrom mvtnorm rmvnorm
-#' @import MASS
+#' @import mstate
+#' @import HDInterval
 NA
 #' @useDynLib ebsurv, .registration=TRUE
 #' @importFrom Rcpp sourceCpp
