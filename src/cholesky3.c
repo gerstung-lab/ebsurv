@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+ ** imported for protection against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
 /*
 ** subroutine to do Cholesky decompostion on a matrix: C = FDF'
 **   where F is lower triangular with 1's on the diagonal, and D is diagonal

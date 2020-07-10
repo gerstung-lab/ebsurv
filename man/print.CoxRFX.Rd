@@ -4,10 +4,12 @@
 \alias{print.coxrfx}
 \title{Print method for CoxRFX objects}
 \usage{
-\method{print}{coxrfx}(x)
+\method{print}{coxrfx}(x, ...)
 }
 \arguments{
 \item{x}{A \code{coxrfx} object}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \description{
 This function implicitly calls summary.coxrfx().

@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+** imported for protection against changes in 'survival' posterior
+**  to version 2.44-1.1]
+*/
+
 /*
 ** matrix inversion, given the cholesky decomposition
 ** This is a specialized form for the frailty problem.  The matric C in this

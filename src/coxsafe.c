@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+ ** imported for protection against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
 /*
 ** A very few pathologic cases can cause the Newton Raphson iteration
 **  path in coxph to generate a horrific argument to exp().  Since all these

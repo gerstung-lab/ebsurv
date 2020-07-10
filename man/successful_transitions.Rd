@@ -5,13 +5,15 @@
 \title{Find the unique possible path until an 
 absorbing state}
 \usage{
-successful_transitions(unique_paths_object, to_state)
+successful_transitions(unique_paths_object, to_state, tmat)
 }
 \arguments{
 \item{unique_paths_object}{An object created by running 
 \code{\link{unique_paths}}.}
 
 \item{to_state}{An absorbing state.}
+
+\item{tmat}{Transition matrix.}
 }
 \value{
 A vector with the unique sequence of states between two states.

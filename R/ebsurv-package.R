@@ -24,7 +24,11 @@
 #' @import survival
 #' @import mstate
 #' @import HDInterval
+#' @import stats
+#' @import utils
+#' @import methods
 NA
 #' @useDynLib ebsurv, .registration=TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
+

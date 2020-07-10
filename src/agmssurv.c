@@ -1,3 +1,9 @@
+/* [C function from 'mstate' package, by 
+ * Liesbeth de Wreede, Marta Fiocco, Hein Putter.
+ * Needed by functions msfit_generic.default and
+ * msfit_generic.coxrfx.]
+ */
+
 /*  agmssurv.c	*/
 /*
 ** Modeled after agsurv2.c from the survival library by Terry Therneau

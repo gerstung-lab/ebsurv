@@ -379,7 +379,7 @@ loo_ebsurv<-function(mstate_data,mstate_data_expanded,which_group,
       patient_data<-expand.covs(patient_data,
                                 covs = names(patient_data)[!names(patient_data)%in%c("id","from","to","trans","strata","Tstart","Tstop","time","status","type")])
       patient_data<-patient_data[names(mstate_data_expanded)]
-      patient_data$strata<-unique(mstate.data[c("trans","strata")])[,2]
+      patient_data$strata<-unique(mstate_data[c("trans","strata")])[,2]
       msfit_objects_loo[[j]]<-do.call("msfit_generic",c(list(object=coxrfx_fits_loo[[j]],newdata=patient_data,trans=tmat),msfit_args))
       probtrans_objects_loo[[j]]<-do.call("probtrans_ebsurv",c(list(initial_state=initial_state,cumhaz=msfit_objects_loo[[j]],model=time_model),probtrans_args))
       if(j %%5==0){

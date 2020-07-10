@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+ ** imported for protection against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
 /*
 ** callback routines for the coxph frailty interface
 *** This is completely  rewritten for R (TSL April 99)

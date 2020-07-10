@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+** imported for protection against changes in 'survival' posterior
+**  to version 2.44-1.1]
+*/
+
 /* A reentrant version of the agfit program, for penalized effects modeling
 **   with reasonable efficiency (I hope).  The important arrays are saved
 **   from call to call so as to speed up the process.  The x-matrix itself
@@ -72,6 +77,7 @@
 **
 **  the data must be sorted by ascending time within strata
 */
+
 #include <math.h>
 #include <stdio.h>
 #include "survS.h"

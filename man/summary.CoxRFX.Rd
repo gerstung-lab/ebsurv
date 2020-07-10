@@ -4,11 +4,13 @@
 \alias{summary.coxrfx}
 \title{A summary method for CoxRFX models}
 \usage{
-\method{summary}{coxrfx}(object)
+\method{summary}{coxrfx}(object, ...)
 }
 \arguments{
 \item{object}{A \code{coxrfx} object 
 (obtained by running the function \code{CoxRFX}).}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 This function prints the point estimates of parameters and 

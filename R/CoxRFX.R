@@ -45,7 +45,7 @@
 #' and the hyperparameters $sigma2 (variances) and $mu (means). 
 #' 
 #' @author Moritz Gerstung & Rui Costa
-#' @seealso \code{\link{coxph.object}}; \code{\link{coxme}}; \code{\link{Surv}}.
+#' @seealso \code{\link{coxph.object}}; package \code{coxme}; \code{\link{Surv}}.
 #' @export
 # @example inst/example/CoxRFX-example.R
 CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
@@ -189,12 +189,13 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 #' 
 #' @param object A \code{coxrfx} object 
 #' (obtained by running the function \code{CoxRFX}).
+#' @param ... Further arguments passed to or from other methods.
 #' @return NULL
 #' 
 #' @author Rui Costa
 #' @export
 #' @method summary coxrfx
-summary.coxrfx <- function(object){
+summary.coxrfx <- function(object,...){
 	cat("Hyperparameters:\n")
 	show(format(data.frame(mean=object$mu, variance=object$sigma2), digits=2))
 	cat("\n Parameters: \n")
@@ -205,13 +206,14 @@ summary.coxrfx <- function(object){
 #' 
 #' This function implicitly calls summary.coxrfx().
 #' @param x A \code{coxrfx} object
+#' @param ... further arguments passed to or from other methods.
 #' @return NULL
 #' 
 #' @author Moritz Gerstung & Rui Costa
 #' @export
 #' @method print coxrfx
 
-print.coxrfx <- function(x){
+print.coxrfx <- function(x,...){
 	summary.coxrfx(x)
 }
 
@@ -224,15 +226,16 @@ print.coxrfx <- function(x){
 #' object of double class \code{msfit} and \code{coxrfx}.
 #' @param x An object of class \code{msfit} or double class \code{msfit} 
 #' and \code{coxrfx}.
+#' @param ... Further arguments passed to or from other methods.
 #' @return NULL
 #' 
 #' @author Rui Costa
 #' @export
 #' @method print msfit
 
-print.msfit <- function(x){
+print.msfit <- function(x,...){
   #mstate:::summary.msfit(x)
-  print.default(x)
+  print.default(x,...)
 }
 
 
@@ -249,10 +252,13 @@ MakeInteger <- function(F){
   res + 0
 }
 
+#coxph function from survival package version 2.44-1.1
+#followed by non-exported functions of the same package (potentially used by coxph)
+
 coxph<-function (formula, data, weights, subset, na.action, init, control, 
           ties = c("efron", "breslow", "exact"), singular.ok = TRUE, 
-          robust, model = FALSE, x = FALSE, y = TRUE, tt, method = ties, 
-          id, cluster, istate, statedata, ...) 
+          robust = FALSE, model = FALSE, x = FALSE, y = TRUE, tt, method = ties, 
+          ...) 
 {
   ties <- match.arg(ties)
   Call <- match.call()
@@ -266,84 +272,22 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
   }
   if (missing(control)) 
     control <- coxph.control(...)
-  if (missing(formula)) 
-    stop("a formula argument is required")
-  ss <- c("cluster", "offset")
-  if (is.list(formula)) 
-    Terms <- if (missing(data)) 
-      terms(formula[[1]], specials = ss)
-  else terms(formula[[1]], specials = ss, data = data)
-  else Terms <- if (missing(data)) 
-    terms(formula, specials = ss)
-  else terms(formula, specials = ss, data = data)
-  tcl <- attr(Terms, "specials")$cluster
-  if (length(tcl) > 1) 
-    stop("a formula cannot have multiple cluster terms")
-  if (length(tcl) > 0) {
-    factors <- attr(Terms, "factors")
-    if (any(factors[tcl, ] > 1)) 
-      stop("cluster() cannot be in an interaction")
-    if (attr(Terms, "response") == 0) 
-      stop("formula must have a Surv response")
-    temp <- attr(Terms, "term.labels")
-    oo <- attr(Terms, "specials")$offset
-    if (!is.null(oo)) {
-      ooterm <- rownames(factors)[oo]
-      if (oo < tcl) 
-        temp <- c(ooterm, temp)
-      else temp <- c(temp, ooterm)
-    }
-    if (is.null(Call$cluster)) 
-      Call$cluster <- attr(Terms, "variables")[[1 + tcl]][[2]]
-    else warning("cluster appears both in a formula and as an argument, formula term ignored")
-    if (is.list(formula)) 
-      formula[[1]][[3]] <- reformulate(temp[1 - tcl])[[2]]
-    else formula[[3]] <- reformulate(temp[1 - tcl])[[2]]
-    Call$formula <- formula
-  }
-  indx <- match(c("formula", "data", "weights", "subset", 
-                  "na.action", "cluster", "id", "istate"), names(Call), 
-                nomatch = 0)
+  indx <- match(c("formula", "data", "weights", "subset", "na.action"), 
+                names(Call), nomatch = 0)
   if (indx[1] == 0) 
     stop("A formula argument is required")
-  tform <- Call[c(1, indx)]
-  tform[[1L]] <- quote(stats::model.frame)
-  if (is.list(formula)) {
-    multiform <- TRUE
-    dformula <- formula[[1]]
-    if (missing(statedata)) 
-      covlist <- parsecovar1(formula[-1])
-    else {
-      if (!inherits(statedata, "data.frame")) 
-        stop("statedata must be a data frame")
-      if (is.null(statedata$state)) 
-        stop("statedata data frame must contain a 'state' variable")
-      covlist <- parsecovar1(formula[-1], names(statedata))
-    }
-    tlab <- unlist(lapply(covlist$rhs, function(x) attr(terms.formula(x$formula), 
-                                                        "term.labels")))
-    tlab <- c(attr(terms.formula(dformula), "term.labels"), 
-              tlab)
-    newform <- reformulate(tlab, dformula[[2]])
-    environment(newform) <- environment(dformula)
-    formula <- newform
-    tform$na.action <- na.pass
-  }
-  else {
-    multiform <- FALSE
-    covlist <- NULL
-    dformula <- formula
-  }
-  special <- c("strata", "tt")
-  tform$formula <- if (missing(data)) 
+  temp <- Call[c(1, indx)]
+  temp[[1L]] <- quote(stats::model.frame)
+  special <- c("strata", "cluster", "tt")
+  temp$formula <- if (missing(data)) 
     terms(formula, special)
   else terms(formula, special, data = data)
-  if (!is.null(attr(tform$formula, "specials")$tt)) {
+  if (!is.null(attr(temp$formula, "specials")$tt)) {
     coxenv <- new.env(parent = environment(formula))
-    assign("tt", function(x) x, envir = coxenv)
-    environment(tform$formula) <- coxenv
+    assign("tt", function(x) x, env = coxenv)
+    environment(temp$formula) <- coxenv
   }
-  mf <- eval(tform, parent.frame())
+  mf <- eval(temp, parent.frame())
   if (nrow(mf) == 0) 
     stop("No (non-missing) observations")
   Terms <- terms(mf)
@@ -351,15 +295,10 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
   if (!inherits(Y, "Surv")) 
     stop("Response must be a survival object")
   type <- attr(Y, "type")
-  multi <- FALSE
-  if (type == "mright" || type == "mcounting") 
-    multi <- TRUE
-  else if (type != "right" && type != "counting") 
+  if (type != "right" && type != "counting") 
     stop(paste("Cox model doesn't support \"", type, "\" survival data", 
                sep = ""))
   data.n <- nrow(Y)
-  if (!multi && multiform) 
-    stop("formula is a list but the response is not multi-state")
   if (control$timefix) 
     Y <- aeqSurv(Y)
   if (length(attr(Terms, "variables")) > 2) {
@@ -369,31 +308,17 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
       warning("a variable appears on both the left and right sides of the formula")
   }
   strats <- attr(Terms, "specials")$strata
-  hasinteractions <- FALSE
-  dropterms <- NULL
   if (length(strats)) {
     stemp <- untangle.specials(Terms, "strata", 1)
     if (length(stemp$vars) == 1) 
       strata.keep <- mf[[stemp$vars]]
     else strata.keep <- strata(mf[, stemp$vars], shortlabel = TRUE)
-    istrat <- as.integer(strata.keep)
-    for (i in stemp$vars) {
-      if (any(attr(Terms, "order")[attr(Terms, "factors")[i, 
-                                                          ] > 0] > 1)) 
-        hasinteractions <- TRUE
-    }
-    if (!hasinteractions) 
-      dropterms <- stemp$terms
+    strats <- as.numeric(strata.keep)
   }
-  else istrat <- NULL
-  if (hasinteractions && multi) 
-    stop("multi-state coxph does not support strata*covariate interactions")
   timetrans <- attr(Terms, "specials")$tt
   if (missing(tt)) 
     tt <- NULL
   if (length(timetrans)) {
-    if (multi) 
-      stop("the tt() transform is not implemented for multi-state models")
     timetrans <- untangle.specials(Terms, "tt")
     ntrans <- length(timetrans$terms)
     if (is.null(tt)) {
@@ -427,8 +352,8 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
         newstrat[1] <- 1L
       }
       else {
-        sorted <- order(istrat, -Y[, 1], Y[, 2])
-        newstrat <- as.integer(c(1, 1 * (diff(istrat[sorted]) != 
+        sorted <- order(strats, -Y[, 1], Y[, 2])
+        newstrat <- as.integer(c(1, 1 * (diff(strats[sorted]) != 
                                            0)))
       }
       if (storage.mode(Y) != "double") 
@@ -443,9 +368,9 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
         newstrat <- c(1L, rep(0, nrow(Y) - 1))
       }
       else {
-        sort.end <- order(istrat, -Y[, 2], Y[, 3])
-        sort.start <- order(istrat, -Y[, 1])
-        newstrat <- c(1L, as.integer(diff(istrat[sort.end]) != 
+        sort.end <- order(strats, -Y[, 2], Y[, 3])
+        sort.start <- order(strats, -Y[, 1])
+        newstrat <- c(1L, as.integer(diff(strats[sort.end]) != 
                                        0))
       }
       if (storage.mode(Y) != "double") 
@@ -457,17 +382,16 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     Y <- Surv(rep(counts$time, counts$nrisk), counts$status)
     type <- "right"
     mf <- mf[tindex, ]
-    istrat <- rep(1:length(counts$nrisk), counts$nrisk)
+    strats <- rep(1:length(counts$nrisk), counts$nrisk)
     weights <- model.weights(mf)
     if (!is.null(weights) && any(!is.finite(weights))) 
       stop("weights must be finite")
-    tcall <- attr(Terms, "variables")[timetrans$terms + 
-                                        2]
+    tcall <- attr(Terms, "variables")[timetrans$terms + 2]
     pvars <- attr(Terms, "predvars")
     pmethod <- sub("makepredictcall.", "", as.vector(methods("makepredictcall")))
     for (i in 1:ntrans) {
       newtt <- (tt[[i]])(mf[[timetrans$var[i]]], Y[, 1], 
-                         istrat, weights)
+                         strats, weights)
       mf[[timetrans$var[i]]] <- newtt
       nclass <- class(newtt)
       if (any(nclass %in% pmethod)) {
@@ -479,79 +403,35 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     }
     attr(Terms, "predvars") <- pvars
   }
-  xlevels <- .getXlevels(Terms, mf)
-  cluster <- model.extract(mf, "cluster")
-  id <- model.extract(mf, "id")
-  if (!is.null(id) && is.null(cluster) && (missing(robust) || 
-                                           robust)) 
-    cluster <- id
-  if (missing(robust)) 
-    robust <- !is.null(cluster)
-  else if (robust && is.null(cluster)) {
-    if (ncol(Y) == 2) 
-      cluster <- seq.int(1, nrow(mf))
-    else stop("one of cluster or id is needed")
+  cluster <- attr(Terms, "specials")$cluster
+  if (length(cluster)) {
+    robust <- TRUE
+    tempc <- untangle.specials(Terms, "cluster", 1:10)
+    ord <- attr(Terms, "order")[tempc$terms]
+    if (any(ord > 1)) 
+      stop("Cluster can not be used in an interaction")
+    cluster <- strata(mf[, tempc$vars], shortlabel = TRUE)
+    dropterms <- tempc$terms
+    xlevels <- .getXlevels(Terms[-tempc$terms], mf)
+  }
+  else {
+    if (missing(robust)) 
+      robust <- FALSE
+    xlevels <- .getXlevels(Terms, mf)
+    dropterms <- NULL
   }
   contrast.arg <- NULL
   attr(Terms, "intercept") <- 1
-  id <- model.extract(mf, "id")
-  if (multi) {
-    if (length(dropterms)) {
-      Terms2 <- Terms[-dropterms]
-      dformula <- formula(Terms2)
+  stemp <- untangle.specials(Terms, "strata", 1)
+  hasinteractions <- FALSE
+  if (length(stemp$vars) > 0) {
+    for (i in stemp$vars) {
+      if (any(attr(Terms, "order")[attr(Terms, "factors")[i, 
+      ] > 0] > 1)) 
+        hasinteractions <- TRUE
     }
-    else Terms2 <- Terms
-    if (length(id) == 0) 
-      stop("an id statement is required for multi-state models")
-    istate <- model.extract(mf, "istate")
-    mcheck <- survcheck2(Y, id, istate)
-    if (mcheck$flag["overlap"] > 0) 
-      stop("data set has overlapping intervals for one or more subjects")
-    transitions <- mcheck$transitions
-    istate <- mcheck$istate
-    states <- mcheck$states
-    if (missing(statedata)) 
-      covlist2 <- parsecovar2(covlist, NULL, dformula = dformula, 
-                              Terms2, transitions, states)
-    else covlist2 <- parsecovar2(covlist, statedata, dformula = dformula, 
-                                 Terms2, transitions, states)
-    tmap <- covlist2$tmap
-    if (!is.null(covlist)) {
-      good.tran <- bad.tran <- rep(FALSE, nrow(Y))
-      termname <- rownames(attr(Terms, "factors"))
-      trow <- (!is.na(match(rownames(tmap), termname)))
-      termiss <- matrix(0L, nrow(mf), ncol(mf))
-      for (i in 1:ncol(mf)) {
-        xx <- is.na(mf[[i]])
-        if (is.matrix(xx)) 
-          termiss[, i] <- apply(xx, 1, any)
-        else termiss[, i] <- xx
-      }
-      for (i in levels(istate)) {
-        rindex <- which(istate == i)
-        j <- which(covlist2$mapid[, 1] == match(i, states))
-        for (jcol in j) {
-          k <- which(trow & tmap[, jcol] > 0)
-          bad.tran[rindex] <- (bad.tran[rindex] | apply(termiss[rindex, 
-                                                                k, drop = FALSE], 1, any))
-          good.tran[rindex] <- (good.tran[rindex] | 
-                                  apply(!termiss[rindex, k, drop = FALSE], 
-                                        1, all))
-        }
-      }
-      n.partially.used <- sum(good.tran & bad.tran & !is.na(Y))
-      omit <- (!good.tran & bad.tran) | is.na(Y)
-      if (all(omit)) 
-        stop("all observations deleted due to missing values")
-      temp <- setNames(seq(omit)[omit], attr(mf, "row.names")[omit])
-      attr(temp, "class") <- "omit"
-      mf <- mf[!omit, , drop = FALSE]
-      attr(mf, "na.action") <- temp
-      Y <- Y[!omit]
-      id <- id[!omit]
-      if (length(istate)) 
-        istate <- istate[!omit]
-    }
+    if (!hasinteractions) 
+      dropterms <- c(dropterms, stemp$terms)
   }
   if (length(dropterms)) {
     Terms2 <- Terms[-dropterms]
@@ -564,6 +444,8 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     attr(X, "assign") <- temp
   }
   else X <- model.matrix(Terms, mf, contrasts = contrast.arg)
+  if (!all(is.finite(X))) 
+    stop("data contains an infinite predictor")
   Xatt <- attributes(X)
   if (hasinteractions) 
     adrop <- c(0, untangle.specials(Terms, "strata")$terms)
@@ -582,6 +464,16 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     stop("weights must be finite")
   assign <- attrassign(X, Terms)
   contr.save <- attr(X, "contrasts")
+  if (missing(init)) 
+    init <- NULL
+  else {
+    if (length(init) != ncol(X)) 
+      stop("wrong length for init argument")
+    temp <- X %*% init - sum(colMeans(X) * init) + offset
+    if (any(exp(temp) > .Machine$double.xmax) || all(exp(temp) == 
+                                                     0)) 
+      stop("initial values lead to overflow or underflow of the exp function")
+  }
   if (sum(Y[, ncol(Y)]) == 0) {
     ncoef <- ncol(X)
     ctemp <- rep(NA, ncoef)
@@ -593,49 +485,10 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
                                                     ncoef), loglik = c(0, 0), score = 0, iter = 0, linear.predictors = offset, 
                  residuals = rep(0, data.n), means = colMeans(X), 
                  method = method, n = data.n, nevent = 0, terms = Terms, 
-                 assign = assign, concordance = concordance, wald.test = 0, 
-                 y = Y, call = Call)
+                 assign = assign, concordance = concordance, y = Y, 
+                 call = Call)
     class(rval) <- "coxph"
     return(rval)
-  }
-  if (multi) {
-    cmap <- parsecovar3(tmap, colnames(X), attr(X, "assign"))
-    xstack <- stacker(cmap, as.integer(istate), X, Y, strata = istrat, 
-                      states = states)
-    rkeep <- unique(xstack$rindex)
-    transitions <- survcheck2(Y[rkeep, ], id[rkeep], istate[rkeep])$transitions
-    X <- xstack$X
-    Y <- xstack$Y
-    istrat <- xstack$strata
-    if (length(offset)) 
-      offset <- offset[xstack$rindex]
-    if (length(weights)) 
-      weights <- weights[xstack$rindex]
-    if (length(cluster)) 
-      cluster <- cluster[xstack$rindex]
-    t2 <- tmap[-1, , drop = FALSE]
-    r2 <- row(t2)[!duplicated(as.vector(t2))]
-    c2 <- col(t2)[!duplicated(as.vector(t2))]
-    a2 <- lapply(seq(along = r2), function(i) {
-      cmap[1 + assign[[r2[i]]], c2[i]]
-    })
-    tab <- table(r2)
-    count <- tab[r2]
-    names(a2) <- ifelse(count == 1, row.names(t2)[r2], paste(row.names(t2)[r2], 
-                                                             colnames(cmap)[c2], sep = "_"))
-    assign <- a2
-  }
-  if (!all(is.finite(X))) 
-    stop("data contains an infinite predictor")
-  if (missing(init)) 
-    init <- NULL
-  else {
-    if (length(init) != ncol(X)) 
-      stop("wrong length for init argument")
-    temp <- X %*% init - sum(colMeans(X) * init) + offset
-    if (any(exp(temp) > .Machine$double.xmax) || all(exp(temp) == 
-                                                     0)) 
-      stop("initial values lead to overflow or underflow of the exp function")
   }
   pterms <- sapply(mf, inherits, "coxph.penalty")
   if (any(pterms)) {
@@ -646,13 +499,13 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     if (any(ord > 1)) 
       stop("Penalty terms cannot be in an interaction")
     pcols <- assign[match(pname, names(assign))]
-    fit <- coxpenal.fit(X, Y, istrat, offset, init = init, 
+    fit <- coxpenal.fit(X, Y, strats, offset, init = init, 
                         control, weights = weights, method = method, row.names(mf), 
                         pcols, pattr, assign)
   }
   else {
     if (method == "breslow" || method == "efron") {
-      if (grepl("right", type)) 
+      if (type == "right") 
         fitter <- get("coxph.fit")
       else fitter <- get("agreg.fit")
     }
@@ -662,7 +515,7 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
       else fitter <- get("agexact.fit")
     }
     else stop(paste("Unknown method", method))
-    fit <- fitter(X, Y, istrat, offset, init, control, weights = weights, 
+    fit <- fitter(X, Y, strats, offset, init, control, weights = weights, 
                   method = method, row.names(mf))
   }
   if (is.character(fit)) {
@@ -686,8 +539,8 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     if (robust && !is.null(fit$coefficients) && !all(is.na(fit$coefficients))) {
       fit$naive.var <- fit$var
       fit2 <- c(fit, list(x = X, y = Y, weights = weights))
-      if (length(istrat)) 
-        fit2$strata <- istrat
+      if (length(strats)) 
+        fit2$strata <- strats
       if (length(cluster)) {
         temp <- residuals.coxph(fit2, type = "dfbeta", 
                                 collapse = cluster, weighted = TRUE)
@@ -719,10 +572,10 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
     }
     if (length(cluster)) 
       temp <- concordancefit(Y, fit$linear.predictors, 
-                             istrat, weights, cluster = cluster, reverse = TRUE, 
+                             strats, weights, cluster = cluster, reverse = TRUE, 
                              timefix = FALSE)
     else temp <- concordancefit(Y, fit$linear.predictors, 
-                                istrat, weights, reverse = TRUE, timefix = FALSE)
+                                strats, weights, reverse = TRUE, timefix = FALSE)
     if (is.matrix(temp$count)) 
       fit$concordance <- c(colSums(temp$count), concordance = temp$concordance, 
                            std = sqrt(temp$var))
@@ -733,34 +586,26 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
       fit$na.action <- na.action
     if (model) {
       if (length(timetrans)) {
+        mf[[".surv."]] <- Y
+        mf[[".strata."]] <- strats
         stop("'model=TRUE' not supported for models with tt terms")
       }
       fit$model <- mf
     }
     if (x) {
       fit$x <- X
-      if (length(timetrans)) 
-        fit$strata <- istrat
-      else if (length(strats)) 
-        fit$strata <- strata.keep
+      if (length(strats)) {
+        if (length(timetrans)) 
+          fit$strata <- strats
+        else fit$strata <- strata.keep
+      }
     }
     if (y) 
       fit$y <- Y
-    fit$timefix <- control$timefix
   }
   if (!is.null(weights) && any(weights != 1)) 
     fit$weights <- weights
   names(fit$means) <- names(fit$coefficients)
-  if (multi) {
-    fit$transitions <- transitions
-    fit$states <- states
-    fit$cmap <- cmap
-    fit$resid <- rowsum(fit$resid, xstack$rindex)
-    names(fit$coefficients) <- seq(along = fit$coefficients)
-    if (x) 
-      fit$strata <- istrat
-    class(fit) <- c("coxphms", class(fit))
-  }
   fit$formula <- formula(Terms)
   if (length(xlevels) > 0) 
     fit$xlevels <- xlevels
@@ -772,9 +617,111 @@ coxph<-function (formula, data, weights, subset, na.action, init, control,
 }
 
 
+terms.inner<-function (x) 
+{
+  if (inherits(x, "formula")) {
+    if (length(x) == 3) 
+      c(terms.inner(x[[2]]), terms.inner(x[[3]]))
+    else terms.inner(x[[2]])
+  }
+  else if (inherits(x, "call") && (x[[1]] != as.name("$") && 
+                                   x[[1]] != as.name("["))) {
+    if (x[[1]] == "+" || x[[1]] == "*" || x[[1]] == "-") {
+      if (length(x) == 3) 
+        c(terms.inner(x[[2]]), terms.inner(x[[3]]))
+      else terms.inner(x[[2]])
+    }
+    else if (x[[1]] == as.name("Surv")) 
+      unlist(lapply(x[-1], terms.inner))
+    else terms.inner(x[[2]])
+  }
+  else (deparse(x))
+}
+
+coxpenal.df<-function (hmat, hinv, fdiag, assign.list, ptype, nvar, pen1, 
+                       pen2, sparse) 
+{
+  if (ptype == 1 & nvar == 0) {
+    hdiag <- 1/fdiag
+    list(fvar2 = (hdiag - pen1) * fdiag^2, df = sum((hdiag - 
+                                                       pen1) * fdiag), fvar = fdiag, trH = sum(fdiag))
+  }
+  else if (ptype == 2) {
+    hmat.full <- t(hmat) %*% (ifelse(fdiag == 0, 0, 1/fdiag) * 
+                                hmat)
+    hinv.full <- hinv %*% (fdiag * t(hinv))
+    if (length(pen2) == length(hmat.full)) 
+      imat <- hmat.full - pen2
+    else imat <- hmat.full - diag(pen2)
+    var <- hinv.full %*% imat %*% hinv.full
+    if (length(assign.list) == 1) 
+      list(var2 = var, df = sum(imat * hinv.full), trH = sum(diag(hinv.full)), 
+           var = hinv.full)
+    else {
+      df <- trH <- NULL
+      d2 <- diag(hinv.full)
+      for (i in assign.list) {
+        temp <- coxph.wtest(hinv.full[i, i], var[i, i])$solve
+        if (is.matrix(temp)) 
+          df <- c(df, sum(diag(temp)))
+        else df <- c(df, sum(temp))
+        trH <- c(trH, sum(d2[i]))
+      }
+      list(var2 = var, df = df, trH = trH, var = hinv.full)
+    }
+  }
+  else {
+    nf <- length(fdiag) - nvar
+    nr1 <- 1:nf
+    nr2 <- (nf + 1):(nf + nvar)
+    d1 <- fdiag[nr1]
+    d2 <- fdiag[nr2]
+    temp <- t(hinv[nr1, ])
+    temp2 <- t(hinv[nr2, , drop = FALSE])
+    A.diag <- d1 + c(rep(1, nvar) %*% (temp^2 * d2))
+    B <- hinv[nr1, ] %*% (d2 * temp2)
+    C <- hinv[nr2, ] %*% (d2 * temp2)
+    var2 <- C - t(B) %*% (pen1 * B)
+    if (ptype == 3) {
+      hmat.22 <- t(hmat) %*% (ifelse(fdiag == 0, 0, 1/fdiag) * 
+                                hmat)
+      temp <- C - coxph.wtest(hmat.22, diag(nvar))$solve
+      if (nvar == 1) {
+        var2 <- var2 - C * pen2 * C
+        temp2 <- c(temp * pen2)
+      }
+      else if (length(pen2) == nvar) {
+        var2 <- var2 - C %*% (pen2 * C)
+        temp2 <- sum(diag(temp) * pen2)
+      }
+      else {
+        var2 <- var2 - C %*% matrix(pen2, nvar) %*% C
+        temp2 <- sum(diag(temp * pen2))
+      }
+    }
+    else temp2 <- 0
+    df <- trH <- NULL
+    cdiag <- diag(C)
+    for (i in 1:length(assign.list)) {
+      if (sparse == i) {
+        df <- c(df, nf - (sum(A.diag * pen1) + temp2))
+        trH <- c(trH, sum(A.diag))
+      }
+      else {
+        j <- assign.list[[i]]
+        temp <- coxph.wtest(C[j, j], var2[j, j])$solve
+        if (is.matrix(temp)) 
+          df <- c(df, sum(diag(temp)))
+        else df <- c(df, sum(temp))
+        trH <- c(trH, sum(cdiag[j]))
+      }
+    }
+    list(var = C, df = df, trH = trH, fvar = A.diag, var2 = var2)
+  }
+}
 
 coxpenal.fit<-function (x, y, strata, offset, init, control, weights, method, 
-          rownames, pcols, pattr, assign) 
+                        rownames, pcols, pattr, assign) 
 {
   eps <- control$eps
   n <- nrow(y)
@@ -798,8 +745,8 @@ coxpenal.fit<-function (x, y, strata, offset, init, control, weights, method,
       newstrat <- as.integer(n)
     }
     else {
-      sorted <- cbind(order(strata, -y[, 2], y[, 3]), 
-                      order(strata, -y[, 1])) - 1L
+      sorted <- cbind(order(strata, -y[, 2], y[, 3]), order(strata, 
+                                                            -y[, 1])) - 1L
       newstrat <- as.integer(cumsum(table(strata)))
     }
     status <- y[, 3]
@@ -1127,9 +1074,8 @@ coxpenal.fit<-function (x, y, strata, offset, init, control, weights, method,
                                                            coxfit$coef)
   if (andersen) {
     .C(Cagfit5c, as.integer(nvar))
-    if (length(strata) < nrow(y)) 
-      strata <- rep(1L, nrow(y))
-    resid <- NA # CHANGE!
+    resid <- .Call(Cagmart3, y, exp(lp), weights, newstrat, 
+                   sorted, as.integer(method == "efron"))
   }
   else {
     expect <- .C(Ccoxfit5c, as.integer(n), as.integer(nvar), 
@@ -1137,7 +1083,7 @@ coxpenal.fit<-function (x, y, strata, offset, init, control, weights, method,
                  expect = double(n))$expect
     resid <- status - expect
   }
-  names(resid) <- NULL # CHANGE!
+  names(resid) <- rownames
   if (!need.df) {
     if (nfrail > 0) 
       temp1 <- coxlist1$second
@@ -1194,109 +1140,402 @@ coxpenal.fit<-function (x, y, strata, offset, init, control, weights, method,
   }
 }
 
-terms.inner<-function (x) 
+parsecovar1<-function (flist, statedatanames) 
 {
-  if (inherits(x, "formula")) {
-    if (length(x) == 3) 
-      c(terms.inner(x[[2]]), terms.inner(x[[3]]))
-    else terms.inner(x[[2]])
-  }
-  else if (inherits(x, "call") && (x[[1]] != as.name("$") && 
-                                   x[[1]] != as.name("["))) {
-    if (x[[1]] == "+" || x[[1]] == "*" || x[[1]] == "-") {
-      if (length(x) == 3) 
-        c(terms.inner(x[[2]]), terms.inner(x[[3]]))
-      else terms.inner(x[[2]])
+  if (any(sapply(flist, function(x) !inherits(x, "formula")))) 
+    stop("flist must be a list of formulas")
+  if (any(sapply(flist, length) != 3)) 
+    stop("all formulas must have a left and right side")
+  lhs <- lapply(flist, function(x) x[-3])
+  rhs <- lapply(flist, function(x) x[-2])
+  rh2 <- lapply(rhs, function(form) {
+    parts <- strsplit(deparse(form, width.cutoff = 300, control = NULL), 
+                      "/", fixed = TRUE)[[1]]
+    if (length(parts) == 1) {
+      ival <- NULL
+      common <- FALSE
+      fixed <- FALSE
+      clear <- FALSE
     }
-    else if (x[[1]] == as.name("Surv")) 
-      unlist(lapply(x[-1], terms.inner))
-    else terms.inner(x[[2]])
-  }
-  else (deparse(x))
-}
-
-coxpenal.df<-function (hmat, hinv, fdiag, assign.list, ptype, nvar, pen1, 
-                       pen2, sparse) 
-{
-  if (ptype == 1 & nvar == 0) {
-    hdiag <- 1/fdiag
-    list(fvar2 = (hdiag - pen1) * fdiag^2, df = sum((hdiag - 
-                                                       pen1) * fdiag), fvar = fdiag, trH = sum(fdiag))
-  }
-  else if (ptype == 2) {
-    hmat.full <- t(hmat) %*% (ifelse(fdiag == 0, 0, 1/fdiag) * 
-                                hmat)
-    hinv.full <- hinv %*% (fdiag * t(hinv))
-    if (length(pen2) == length(hmat.full)) 
-      imat <- hmat.full - pen2
-    else imat <- hmat.full - diag(pen2)
-    var <- hinv.full %*% imat %*% hinv.full
-    if (length(assign.list) == 1) 
-      list(var2 = var, df = sum(imat * hinv.full), trH = sum(diag(hinv.full)), 
-           var = hinv.full)
     else {
-      df <- trH <- NULL
-      d2 <- diag(hinv.full)
-      for (i in assign.list) {
-        temp <- coxph.wtest(hinv.full[i, i], var[i, 
-                                                 i])$solve
-        if (is.matrix(temp)) 
-          df <- c(df, sum(diag(temp)))
-        else df <- c(df, sum(temp))
-        trH <- c(trH, sum(d2[i]))
+      optterms <- terms(formula(paste("~", parts[2])))
+      ff <- rownames(attr(optterms, "factors"))
+      index <- match(ff, c("common", "fixed", "init", "clear"))
+      if (any(is.na(index))) 
+        stop("option not recognized in a covariates formula: ", 
+             paste(ff[is.na(index)], collapse = ", "))
+      common <- any(index == 1)
+      fixed <- any(index == 2)
+      clear <- any(index == 3)
+      if (any(index == 3)) {
+        optatt <- attributes(optterms)
+        j <- optatt$variables[1 + which(index == 3)]
+        j[[1]] <- as.name("list")
+        ival <- unlist(eval(j, parent.frame()))
       }
-      list(var2 = var, df = df, trH = trH, var = hinv.full)
+      else ival <- NULL
     }
+    form <- formula(paste("~ -1 +", parts[1]))
+    list(common = common, fixed = fixed, clear = clear, ival = ival, 
+         formula = form)
+  })
+  pcut <- function(form) {
+    if (length(form) == 3) {
+      if (form[[1]] == "+") 
+        c(pcut(form[[2]]), pcut(form[[3]]))
+      else if (form[[1]] == "~") 
+        pcut(form[[2]])
+      else list(form)
+    }
+    else list(form)
+  }
+  lcut <- lapply(lhs, function(x) pcut(x[[2]]))
+  env1 <- new.env(parent = parent.frame(2))
+  env2 <- new.env(parent = env1)
+  if (missing(statedatanames)) {
+    assign("state", function(...) list(stateid = "state", 
+                                       values = c(...)), env1)
+    assign("state", list(stateid = "state"))
   }
   else {
-    nf <- length(fdiag) - nvar
-    nr1 <- 1:nf
-    nr2 <- (nf + 1):(nf + nvar)
-    d1 <- fdiag[nr1]
-    d2 <- fdiag[nr2]
-    temp <- t(hinv[nr1, ])
-    temp2 <- t(hinv[nr2, , drop = FALSE])
-    A.diag <- d1 + c(rep(1, nvar) %*% (temp^2 * d2))
-    B <- hinv[nr1, ] %*% (d2 * temp2)
-    C <- hinv[nr2, ] %*% (d2 * temp2)
-    var2 <- C - t(B) %*% (pen1 * B)
-    if (ptype == 3) {
-      hmat.22 <- t(hmat) %*% (ifelse(fdiag == 0, 0, 1/fdiag) * 
-                                hmat)
-      temp <- C - coxph.wtest(hmat.22, diag(nvar))$solve
-      if (nvar == 1) {
-        var2 <- var2 - C * pen2 * C
-        temp2 <- c(temp * pen2)
-      }
-      else if (length(pen2) == nvar) {
-        var2 <- var2 - C %*% (pen2 * C)
-        temp2 <- sum(diag(temp) * pen2)
-      }
-      else {
-        var2 <- var2 - C %*% matrix(pen2, nvar) %*% 
-          C
-        temp2 <- sum(diag(temp * pen2))
-      }
+    for (i in statedatanames) {
+      assign(i, eval(list(stateid = i)), env2)
+      tfun <- eval(parse(text = paste0("function(...) list(stateid='", 
+                                       i, "', values=c(...)")))
+      assign(i, tfun, env1)
     }
-    else temp2 <- 0
-    df <- trH <- NULL
-    cdiag <- diag(C)
-    for (i in 1:length(assign.list)) {
-      if (sparse == i) {
-        df <- c(df, nf - (sum(A.diag * pen1) + temp2))
-        trH <- c(trH, sum(A.diag))
-      }
-      else {
-        j <- assign.list[[i]]
-        temp <- coxph.wtest(C[j, j], var2[j, j])$solve
-        if (is.matrix(temp)) 
-          df <- c(df, sum(diag(temp)))
-        else df <- c(df, sum(temp))
-        trH <- c(trH, sum(cdiag[j]))
-      }
-    }
-    list(var = C, df = df, trH = trH, fvar = A.diag, var2 = var2)
   }
+  lterm <- lapply(lcut, function(x) {
+    lapply(x, function(z) {
+      if (length(z) == 1) {
+        temp <- eval(z, envir = env2)
+        if (is.list(temp) && names(temp)[[1]] == "stateid") 
+          temp
+        else temp
+      }
+      else if (length(z) == 3 && z[[1]] == ":") 
+        list(left = eval(z[[2]], envir = env2), right = eval(z[[3]], 
+                                                             envir = env2))
+      else stop("invalid term: ", deparse(z))
+    })
+  })
+  list(rhs = rh2, lhs = lterm)
 }
 
+parsecovar2<-function (covar1, statedata, dformula, Terms, transitions, states) 
+{
+  if (is.null(statedata)) 
+    statedata <- data.frame(state = states)
+  else {
+    if (is.null(statedata$state)) 
+      stop("the statedata data set must contain a variable 'state'")
+    indx1 <- match(states, statedata$state, nomatch = 0)
+    if (any(indx1 == 0)) 
+      stop("statedata does not contain all the possible states: ", 
+           states[indx1 == 0])
+    statedata <- statedata[indx1, ]
+  }
+  allterm <- attr(Terms, "term.labels")
+  nterm <- length(allterm)
+  nstate <- length(states)
+  tmap <- array(0L, dim = c(nterm + 1, nstate, nstate))
+  dterms <- match(attr(terms.formula(dformula), "term.labels"), 
+                  allterm)
+  dterms <- c(1L, 1L + dterms)
+  k <- seq(along = dterms)
+  for (i in 1:nstate) {
+    for (j in 1:nstate) {
+      tmap[dterms, i, j] <- k
+      k <- k + length(k)
+    }
+  }
+  ncoef <- max(tmap)
+  inits <- NULL
+  if (!is.null(covar1)) {
+    for (i in 1:length(covar1$rhs)) {
+      rhs <- covar1$rhs[[i]]
+      lhs <- covar1$lhs[[i]]
+      rterm <- terms.formula(rhs$formula)
+      rindex <- 1L + match(attr(rterm, "term.labels"), 
+                           allterm, nomatch = 0)
+      if (any(rindex == 1L)) 
+        stop("dterm mismatch bug 2")
+      if (attr(rterm, "intercept") == 1) 
+        rindex <- c(1L, rindex)
+      state1 <- state2 <- NULL
+      for (x in lhs) {
+        if (is.null(x$left)) 
+          stop("term found without a :", x)
+        if (!is.list(x$left) && length(x$left) == 1 & 
+            x$left == 1) 
+          temp1 <- 1:nrow(statedata)
+        else if (is.list(x$left) && names(x$left)[1] == 
+                 "stateid") {
+          if (is.null(x$left$value)) 
+            stop("state variable with no list of values: ", 
+                 x$left$stateid)
+          else temp1 <- which(statedata[[x$left$stateid]] %in% 
+                                x$left$value)
+        }
+        else temp1 <- which(statedata$state %in% x$left)
+        if (!is.list(x$right) && length(x$right) == 1 && 
+            x$right == 1) 
+          temp2 <- 1:nrow(statedata)
+        else if (is.list(x$right) && names(x$right)[1] == 
+                 "stateid") {
+          if (is.null(x$right$value)) 
+            stop("state variable with no list of values: ", 
+                 x$right$stateid)
+          else temp2 <- which(statedata[[x$right$stateid]] %in% 
+                                x$right$value)
+        }
+        else temp2 <- which(statedata$state %in% x$right)
+        state1 <- c(state1, rep(temp1, length(temp2)))
+        state2 <- c(state2, rep(temp2, each = length(temp1)))
+      }
+      if (rhs$clear) 
+        tmap[-1, state1, state2] <- 0
+      if (length(rhs$ival)) 
+        inits <- c(inits, list(term = rindex, state1 = state1, 
+                               state2 = state2, init = rhs$ival))
+      if (rhs$common) 
+        j <- ncoef + seq_len(length(rindex))
+      else j <- ncoef + seq_len(length(rindex) * length(state1))
+      tmap[rindex, state1, state2] <- j
+      ncoef <- max(j)
+    }
+  }
+  t2 <- transitions[, -1, drop = FALSE]
+  indx1 <- match(rownames(t2), states)
+  indx2 <- match(colnames(t2), states)
+  tmap2 <- matrix(0L, nrow = 1 + nterm, ncol = sum(t2 > 0))
+  trow <- row(t2)[t2 > 0]
+  tcol <- col(t2)[t2 > 0]
+  for (i in 1:length(trow)) tmap2[, i] <- tmap[, indx1[trow[i]], 
+                                               indx2[tcol[i]]]
+  dimnames(tmap2) <- list(c("Intercept", allterm), paste(indx1[trow], 
+                                                         indx2[tcol], sep = ":"))
+  list(tmap = tmap2, inits = inits, mapid = cbind(indx1[trow], 
+                                                  indx2[tcol]))
+}
 
+parsecovar3<-function (tmap, Xcol, Xassign) 
+{
+  hasintercept <- (Xassign[1] == 0)
+  cmap <- matrix(0L, length(Xcol) + !hasintercept, ncol(tmap))
+  cmap[1, ] <- match(tmap[1, ], sort(c(0, unique(tmap[1, ])))) - 
+    1L
+  xcount <- table(factor(Xassign, levels = 1:max(Xassign)))
+  mult <- 1 + max(xcount)
+  j <- 1
+  for (i in 2:nrow(tmap)) {
+    k <- seq_len(xcount[i - 1])
+    cmap[j + k, ] <- ifelse(tmap[i, ] == 0, 0, tmap[i, ] * 
+                              mult + rep(k, ncol(tmap)))
+    j <- j + max(k)
+  }
+  cmap[-1, ] <- match(cmap[-1, ], sort(unique(c(0L, cmap[-1, 
+  ])))) - 1L
+  colnames(cmap) <- colnames(tmap)
+  if (hasintercept) 
+    rownames(cmap) <- Xcol
+  else rownames(cmap) <- c("(Intercept)", Xcol)
+  cmap
+}
+
+residuals.coxph<-function (object, type = c("martingale", "deviance", "score", 
+                           "schoenfeld", "dfbeta", "dfbetas", "scaledsch", "partial"), 
+          collapse = FALSE, weighted = FALSE, ...) 
+{
+  type <- match.arg(type)
+  otype <- type
+  if (type == "dfbeta" || type == "dfbetas") {
+    otype <- type
+    type <- "score"
+    if (missing(weighted)) 
+      weighted <- TRUE
+  }
+  if (type == "scaledsch") 
+    type <- "schoenfeld"
+  n <- length(object$residuals)
+  rr <- object$residuals
+  y <- object$y
+  x <- object[["x"]]
+  vv <- drop(object$naive.var)
+  if (is.null(vv)) 
+    vv <- drop(object$var)
+  weights <- object$weights
+  if (is.null(weights)) 
+    weights <- rep(1, n)
+  strat <- object$strata
+  method <- object$method
+  if (method == "exact" && (type == "score" || type == "schoenfeld")) 
+    stop(paste(otype, "residuals are not available for the exact method"))
+  if (type == "martingale" || type == "partial") 
+    rr <- object$residuals
+  else {
+    Terms <- object$terms
+    if (!inherits(Terms, "terms")) 
+      stop("invalid terms component of object")
+    strats <- attr(Terms, "specials")$strata
+    if (is.null(y) || (is.null(x) && type != "deviance")) {
+      temp <- coxph.getdata(object, y = TRUE, x = TRUE, 
+                            stratax = TRUE)
+      y <- temp$y
+      x <- temp$x
+      if (length(strats)) 
+        strat <- temp$strata
+    }
+    ny <- ncol(y)
+    status <- y[, ny, drop = TRUE]
+    if (type != "deviance") {
+      nstrat <- as.numeric(strat)
+      nvar <- ncol(x)
+      if (is.null(strat)) {
+        ord <- order(y[, ny - 1], -status)
+        newstrat <- rep(0, n)
+      }
+      else {
+        ord <- order(nstrat, y[, ny - 1], -status)
+        newstrat <- c(diff(as.numeric(nstrat[ord])) != 
+                        0, 1)
+      }
+      newstrat[n] <- 1
+      x <- x[ord, ]
+      y <- y[ord, ]
+      score <- exp(object$linear.predictors)[ord]
+    }
+  }
+  if (type == "schoenfeld") {
+    if (ny == 2) {
+      mintime <- min(y[, 1])
+      if (mintime < 0) 
+        y <- cbind(2 * mintime - 1, y)
+      else y <- cbind(-1, y)
+    }
+    temp <- .C(Ccoxscho, n = as.integer(n), as.integer(nvar), 
+               as.double(y), resid = as.double(x), as.double(score * 
+                                                               weights[ord]), as.integer(newstrat), as.integer(method == 
+                                                                                                                 "efron"), double(3 * nvar))
+    deaths <- y[, 3] == 1
+    if (nvar == 1) 
+      rr <- temp$resid[deaths]
+    else rr <- matrix(temp$resid[deaths], ncol = nvar)
+    if (weighted) 
+      rr <- rr * weights[deaths]
+    if (length(strats)) 
+      attr(rr, "strata") <- table((strat[ord])[deaths])
+    time <- c(y[deaths, 2])
+    if (is.matrix(rr)) 
+      dimnames(rr) <- list(time, names(object$coefficients))
+    else names(rr) <- time
+    if (otype == "scaledsch") {
+      ndead <- sum(deaths)
+      coef <- ifelse(is.na(object$coefficients), 0, object$coefficients)
+      rr <- drop(rr %*% vv * ndead + rep(coef, each = nrow(rr)))
+    }
+    return(rr)
+  }
+  if (type == "score") {
+    if (ny == 2) {
+      resid <- .C(Ccoxscore, as.integer(n), as.integer(nvar), 
+                  as.double(y), x = as.double(x), as.integer(newstrat), 
+                  as.double(score), as.double(weights[ord]), as.integer(method == 
+                                                                          "efron"), resid = double(n * nvar), double(2 * 
+                                                                                                                       nvar))$resid
+    }
+    else {
+      resid <- .C(Cagscore, as.integer(n), as.integer(nvar), 
+                  as.double(y), as.double(x), as.integer(newstrat), 
+                  as.double(score), as.double(weights[ord]), as.integer(method == 
+                                                                          "efron"), resid = double(n * nvar), double(nvar * 
+                                                                                                                       6))$resid
+    }
+    if (nvar > 1) {
+      rr <- matrix(0, n, nvar)
+      rr[ord, ] <- matrix(resid, ncol = nvar)
+      dimnames(rr) <- list(names(object$residuals), names(object$coefficients))
+    }
+    else rr[ord] <- resid
+    if (otype == "dfbeta") {
+      if (is.matrix(rr)) 
+        rr <- rr %*% vv
+      else rr <- rr * vv
+    }
+    else if (otype == "dfbetas") {
+      if (is.matrix(rr)) 
+        rr <- (rr %*% vv) %*% diag(sqrt(1/diag(vv)))
+      else rr <- rr * sqrt(vv)
+    }
+  }
+  if (weighted) 
+    rr <- rr * weights
+  if (!is.null(object$na.action)) {
+    rr <- naresid(object$na.action, rr)
+    if (is.matrix(rr)) 
+      n <- nrow(rr)
+    else n <- length(rr)
+    if (type == "deviance") 
+      status <- naresid(object$na.action, status)
+  }
+  if (type == "partial") {
+    rr <- rr + predict(object, type = "terms")
+  }
+  if (!missing(collapse)) {
+    if (length(collapse) != n) 
+      stop("Wrong length for 'collapse'")
+    rr <- drop(rowsum(rr, collapse))
+    if (type == "deviance") 
+      status <- drop(rowsum(status, collapse))
+  }
+  if (type == "deviance") 
+    sign(rr) * sqrt(-2 * (rr + ifelse(status == 0, 0, status * 
+                                        log(status - rr))))
+  else rr
+}
+
+coxph.getdata<-function (fit, y = TRUE, x = TRUE, stratax = TRUE, offset = FALSE) 
+{
+  ty <- fit[["y"]]
+  tx <- fit[["x"]]
+  strat <- fit$strata
+  Terms <- fit$terms
+  if (is.null(attr(Terms, "offset"))) 
+    offset <- FALSE
+  if (offset) 
+    x <- TRUE
+  if (!inherits(Terms, "terms")) 
+    stop("invalid terms component of fit")
+  strats <- attr(Terms, "specials")$strata
+  if (length(strats) == 0) 
+    stratax <- FALSE
+  if ((y && is.null(ty)) || (x && is.null(tx)) || (stratax && 
+                                                   is.null(strat)) || offset) {
+    m <- stats::model.frame(fit)
+    if (y && is.null(ty)) 
+      ty <- model.extract(m, "response")
+    if (offset) 
+      toff <- model.extract(m, "offset")
+    if ((x || stratax) && is.null(tx)) {
+      if (stratax) {
+        temp <- untangle.specials(Terms, "strata", 1)
+        strat <- strata(m[temp$vars], shortlabel = T)
+      }
+      if (x) 
+        tx <- model.matrix(fit, data = m)
+    }
+  }
+  else if (offset) 
+    toff <- fit$linear.predictors - (c(tx %*% fit$coef) - 
+                                       sum(fit$means * fit$coef))
+  temp <- list()
+  if (y) 
+    temp$y <- ty
+  if (x) 
+    temp$x <- tx
+  if (stratax) 
+    temp$strata <- strat
+  if (offset) 
+    temp$offset <- toff
+  temp
+}

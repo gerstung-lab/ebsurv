@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+ ** imported for protection against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
 /*
 ** Solve the equation Ab = y, where the cholesky decomposition of A and y
 **   are the inputs.

@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+ ** imported for protection against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
 /*
 ** set up the indices so that C code can use x[i][j] notation for R
 **  matrices.  Remember that R sees matrices in column order and C in

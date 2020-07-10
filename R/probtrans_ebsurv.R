@@ -87,6 +87,7 @@ unique_paths<-function(from_state,tmat){
 #'@param unique_paths_object An object created by running 
 #'\code{\link{unique_paths}}.
 #'@param to_state An absorbing state.
+#'@param tmat Transition matrix.
 #'@return A vector with the unique sequence of states between two states. 
 #'
 #'@author Rui Costa
@@ -94,7 +95,7 @@ unique_paths<-function(from_state,tmat){
 #' \code{\link{probtrans_by_convolution_Markov}};
 #' \code{\link{probtrans_by_convolution_semiMarkov}}.
 
-successful_transitions<-function(unique_paths_object,to_state){
+successful_transitions<-function(unique_paths_object,to_state,tmat){
   row_of_paths_object_with_to_state<-which(apply(unique_paths_object,1,function(x) sum(na.omit(x==to_state))>0))
   reduced_unique_paths_object<-matrix(unique(unique_paths_object[1:row_of_paths_object_with_to_state,],MARGIN = 2),ncol = ncol(unique_paths_object))
   sucessful_path_column<-which(apply(reduced_unique_paths_object,2,function(x) sum(x==to_state)>0))[1]
@@ -276,7 +277,7 @@ probtrans_by_convolution_Markov<-function(tmat,cumhaz,from_state,to_state,spline
   if(from_state==to_state){
     return(probtrans_vector_1)
   }
-  successful_transitions_object<-successful_transitions(unique_paths_object,to_state)
+  successful_transitions_object<-successful_transitions(unique_paths_object,to_state,tmat)
   #lagged_differences_vector<-diff(spline_list[[successful_transitions_object[1]]](time))
   #integrand_1<-survival_function*c(0,lagged_differences_vector)
   
@@ -342,7 +343,7 @@ probtrans_by_convolution_semiMarkov<-function(tmat,cumhaz,from_state,to_state,sp
   if(from_state==to_state){
     return(survival_function)
   }
-  successful_transitions_object<-successful_transitions(unique_paths_object,to_state)
+  successful_transitions_object<-successful_transitions(unique_paths_object,to_state,tmat)
   lagged_differences_vector<-diff(spline_list[[successful_transitions_object[1]]](time))
   integrand_1<-survival_function*c(lagged_differences_vector,0)
   for(i in 1:length(successful_transitions_object)){

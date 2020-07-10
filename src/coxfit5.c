@@ -1,3 +1,8 @@
+/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
+ ** imported for protection against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
 /* A reentrant version of the Coxfit program, for random effects modeling
 **   with reasonable efficiency (I hope).  The important arrays are saved
 **   from call to call so as to speed up the process.  The x-matrix itself
@@ -674,3 +679,8 @@ void coxfit5_c (Sint *nusedx, Sint *nvar, Sint *strata, Sint *methodx,
 	cmatrix_free(covar);
         }
     }
+
+
+
+
+
