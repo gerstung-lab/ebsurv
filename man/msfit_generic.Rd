@@ -34,11 +34,11 @@ a multi-state Cox model.}
 variances to be computed (so only needed if variance=TRUE).}
 
 \item{trans}{Transition matrix describing the states and transitions in 
-the multi-state model. See \code{trans} in \code{\link{msprep}} (\code{mstate}
-package) for more detailed information.}
+the multi-state model. See \code{trans} in \code{\link[mstate:msprep]{mstate::msprep}}
+for more detailed information.}
 }
 \value{
-An object of class "msfit". See \code{\link{msfit}} for details.
+An object of class "msfit". See \code{\link[mstate:msfit]{mstate::msfit}} for details.
 }
 \description{
 This function computes subject-specific or overall cumulative transition
@@ -61,6 +61,55 @@ An additional column strata (numeric) is needed to describe for each transition 
 which stratum it belongs. The name has to be \code{strata}, even if in the original
 \code{coxph} call another variable was used. See \code{\link{msfit}} for more details.
 }
+\examples{
+# Compute cumulative hazard rates
+# under a (pre-estimated) empirical Bayes Cox
+# model.
+
+#load simulated data (illness-death model,
+#500 patients) and estimated empirical
+# Bayes Cox model
+data("mstate_data_sample")
+data("coxrfx_object_sample")
+
+# Make objects 'surv' and 'Z'
+# with the data used in the estimation
+
+#outcome data
+surv<-coxrfx_object_sample$surv
+
+#covariate data
+Z<-coxrfx_object_sample$Z
+
+# Build a data frame 'patient_data'
+# with the covariate values for which 
+# cumulative hazards are to be computed
+# (patient 1 covariate values in this case).
+# 'patient_data' must have one row for each
+# transition in the model 
+# and the same columns as 'Z'. The assignment
+# of transitions to strata (made in the 'strata'
+# column) must follow the original model in
+# 'coxrfx_object_sample'.
+
+patient_data<-mstate_data_sample[mstate_data_sample$id==1,
+   ,drop=FALSE][rep(1,3),]
+patient_data$strata<-patient_data$trans<-1:3
+patient_data<-mstate::expand.covs(patient_data,
+   covs=names(patient_data)[!names(patient_data)\%in\%
+   c("id","from","to","trans","Tstart","Tstop","time",
+   "to","trans","Tstart","Tstop","time","status",
+   "strata")],append=TRUE)
+
+# compute cumulative hazards
+msfit_object<-msfit_generic(coxrfx_object_sample,
+                            patient_data,
+                            coxrfx_object_sample$tmat)
+
+# show estimates
+print(msfit_object)
+
+}
 \references{
 de Wreede LC, Fiocco M, and Putter H (2010). The mstate package for 
 estimation and prediction in non- and semi-parametric multi-state and 
@@ -68,7 +117,7 @@ competing risks models. \emph{Computer Methods and Programs in Biomedicine}
 \strong{99}, 261–274.
 }
 \seealso{
-\code{\link{msfit}}; \code{\link{msprep}}; \code{\link{plot.msfit}}.
+\code{\link[mstate:msfit]{mstate::msfit}}; \code{\link[mstate:msprep]{mstate::msprep}}; \code{\link[mstate:plot.msfit]{mstate::plot.msfit}}.
 }
 \author{
 Rui Costa, adapting the work of Hein Putter in the package

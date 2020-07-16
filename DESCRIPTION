@@ -14,15 +14,16 @@ Description: This package implements an empirical Bayes,
     functions and transition probabilities.
 Depends:
     R (>= 3.5.0),
+    survival (>= 2.44-1.1),
+    mstate (>= 0.2.11)
 Imports:
     Rcpp,
     HDInterval,
     stats,
     utils,
-    methods,
-    survival (>= 2.44-1.1),
-    mstate (>= 0.2.11)
+    methods
 License: GPL-3
 LinkingTo: Rcpp
 RoxygenNote: 7.0.2
 Encoding: UTF-8
+LazyData: true

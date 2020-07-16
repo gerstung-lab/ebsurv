@@ -5,12 +5,22 @@
 #' imposed on the regression coefficients (see Therneau et al., 2003).
 #' Multiple groups of coefficients can be defined: coefficients within a group share 
 #' the same (possibly unknown) mean and variance. The parameters and hyperparameters are
-#' efficiently estimated by an EM-type algorithm.
-#' @param Z A data frame consisting of the covariate columns of a data set in 'long format'.
+#' efficiently estimated by an EM-type algorithm built around the function
+#' \code{survival::coxph}.
+#' @param Z A data frame consisting of the covariate columns of a data set in 'long format',
+#' and two extra columns: one named 'trans', with
+#' the transition that each row refers to, and 
+#' another named 'strata', with the stratum
+#' of each transition (transitions belonging to the same 
+#' stratum are assumed to have the same baseline hazard
+#' function).
 #' @param surv A `survival' object created with \code{survival::Surv}.
 #' @param groups A character or numeric vector whose \eqn{i}th element gives the group of the regression
 #' coefficient associated with the \eqn{i}th covariate column of Z (coefficients belonging to the same group 
 #' share the same Gaussian prior).
+#' @param tmat Transition matrix describing the states and transitions in 
+#' the multi-state model. See \code{trans} in \code{\link[mstate:msprep]{mstate::msprep}}
+#' for more detailed information.
 #' @param which.mu A vector with names or numbers of coefficient groups (see 
 #' argument \code{groups}). If the name or number of a group of coefficients is
 #' given in this argument, \code{CoxRFX} will estimate the mean of its Gaussian distribution;
@@ -25,7 +35,7 @@
 #' @param sigma.hat Which estimator to use for the variance hyperparameters (see details).
 #' @param verbose Gives more output.
 #' @param ... Further arguments passed to the function \code{survival::coxph}.
-#' @details The argument \code{Z} must be of class \code{c(data.frame,msdata)}. 
+#' @details
 #' 
 #' Different estimators exist for the variance hyperparameters: the default is "df", as used by Perperoglou (2014) and introduced by Schall (1991). 
 #' Alternatives are MLE, REML, and BLUP, as defined by Therneau et al. (2003). 
@@ -41,17 +51,23 @@
 #' 
 #' R. Schall (1991). Estimation in generalized linear models with random effects. Biometrika, 78:719-727. http://dx.doi.org/10.1093/biomet/78.4.719
 
-#' @return A coxph object (see \code{survival::coxph.object}) with a few extra fields: the inputs $groups, $Z, and $surv;
-#' and the hyperparameters $sigma2 (variances) and $mu (means). 
+#' @return An object of class \code{c(coxrfx,coxph.penal,coxph)},
+#' which is essentially a \code{coxph} object with a few extra 
+#' fields [the inputs $groups, $Z, $surv, and $tmat,
+#' and the hyperparameters $sigma2 (variances) and $mu (means)].
+#' See \code{\link[survival:coxph.object]{survival::coxph.object}}. 
 #' 
 #' @author Moritz Gerstung & Rui Costa
-#' @seealso \code{\link{coxph.object}}; package \code{coxme}; \code{\link{Surv}}.
+#' @seealso  \code{\link[survival:coxph]{survival::coxph}};
+#' \code{\link[survival:coxph.object]{survival::coxph.object}};
+#' \code{\link[survival:Surv]{survival::Surv}}; package \code{coxme}.
 #' @export
-# @example inst/example/CoxRFX-example.R
-CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
+#' @example inst/examples/CoxRFX-example.R
+CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)),tmat=NULL, which.mu = unique(groups), tol=1e-3, max.iter=50, sigma0 = 0.1, sigma.hat=c("df","MLE","REML","BLUP"), verbose=FALSE, ...){
   ##
+  trans<-Z$trans
   strata<-Z$strata
-  Z$strata<-NULL
+  Z$strata<-Z$trans<-NULL
   namesZ<-names(Z)
   ##
   Z = as.matrix(Z)
@@ -135,8 +151,9 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	names(fit$sigma2) <- uniqueGroups
 	#fit$sigma2.mu = sigma2.mu
 	fit$mu = mu
-	fit$Z = Z[,order(o)]
+	fit$Z = data.frame(Z[,order(o)],trans=trans,strata=strata)
 	fit$surv = surv
+	fit$tmat=tmat
 	C <- rbind(diag(1, ncol(Z)),t(as.matrix(MakeInteger(groups)[which.mu]))) ## map from centred to uncentred coefficients 
 	fit$groups = groups[order(o)]
 	var = fit$var
@@ -175,7 +192,6 @@ CoxRFX <- function(Z, surv, groups = rep(1, ncol(Z)), which.mu = unique(groups),
 	attr(fit$terms,"specials")<-list(strata=NULL,cluster=NULL)
 	attr(fit$terms,"specials")$strata<-length(attr(fit$terms,"term.labels"))+1
 	fit$call <- call
-	fit$strata<-strata
 	class(fit) <- c("coxrfx", class(fit))
 	return(fit)
 }
@@ -1538,4 +1554,75 @@ coxph.getdata<-function (fit, y = TRUE, x = TRUE, stratax = TRUE, offset = FALSE
   if (offset) 
     temp$offset <- toff
   temp
+}
+
+# Create a strata variable, possibly from many objects
+#
+strata <- function(..., na.group=FALSE, shortlabel, sep=', ') {
+  # First, grab a copy of the call, which will be used to manufacture
+  #  labels for unlabeled arguments
+  # Then get the arguments as a list
+  words <- as.character((match.call())[-1])
+  allf <- list(...)
+  # If there is only one argument, and it itself is a list, use
+  #  it instead
+  if(length(allf) == 1 && is.list(ttt <- unclass(allf[[1]]))) allf <- ttt
+  nterms <- length(allf)
+  
+  # Keep the names of named args as their label, what was typed otherwise
+  if (is.null(names(allf))) {
+    argname <- words[1:nterms]
+    if (missing(shortlabel))
+      shortlabel <- all(sapply(allf, 
+                               function(x) is.character(x) | inherits(x, 'factor')))
+  }
+  else {
+    argname <- ifelse(names(allf) == '', words[1:nterms], names(allf))
+    if (missing(shortlabel)) shortlabel <- FALSE
+  }
+  
+  # If the arguments are not all the same length, stop now    
+  # Mostly this is to stop calls with an improper object
+  arglength <- sapply(allf, length)
+  if (any(arglength != arglength[1])) 
+    stop("all arguments must be the same length")
+  if (!all(sapply(allf, is.atomic))) stop("all arguments must be vectors")
+  
+  # Process the first argument
+  what <- allf[[1]]
+  if(is.null(levels(what)))
+    what <- factor(what)
+  levs <- unclass(what) - 1
+  wlab <- levels(what)
+  if (na.group && any(is.na(what))){
+    # add "NA" as a level
+    levs[is.na(levs)] <- length(wlab)
+    wlab <- c(wlab, "NA")
+  }
+  
+  if (shortlabel) labs <- wlab
+  else            labs <- paste(argname[1], wlab, sep='=')
+  
+  # Now march through the other variables, if any
+  for (i in (1:nterms)[-1]) {
+    what <- allf[[i]]
+    if(is.null(levels(what)))
+      what <- factor(what)
+    wlab <- levels(what)
+    wlev <- unclass(what) - 1
+    if (na.group && any(is.na(wlev))){
+      wlev[is.na(wlev)] <- length(wlab)
+      wlab <- c(wlab, "NA")
+    }
+    if (!shortlabel) wlab <- format(paste(argname[i], wlab, sep='='))
+    levs <- wlev + levs*(length(wlab))
+    labs <- paste(rep(labs, rep(length(wlab), length(labs))),
+                  rep(wlab, length(labs)), sep=sep)
+  }
+  levs <- levs + 1
+  ulevs <- sort(unique(levs[!is.na(levs)]))
+  levs <- match(levs, ulevs)
+  labs <- labs[ulevs]
+  
+  factor(levs, labels=labs)
 }
