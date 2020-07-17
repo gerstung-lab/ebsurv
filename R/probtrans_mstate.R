@@ -37,14 +37,15 @@
 #' on product limit calculations.
 #' @return An object of class \code{probtrans}. See the `value' section in the
 #' the help page of \code{\link{probtrans}} for details.
-#' @author Rui Costa, adapting the work of Liesbeth de Wreede and Hein Putter in the
-#' \code{mstate} package.
+#' @author Rui Costa, adapting the work of L. de Wreede,
+#' M. Fiocco and H. Putter in the
+#' \code{\link{mstate}} package.
 #' @references 
 #' de Wreede LC, Fiocco M, and Putter H (2010). The mstate package for 
 #' estimation and prediction in non- and semi-parametric multi-state and 
 #' competing risks models. \emph{Computer Methods and Programs in Biomedicine} 
 #' \strong{99}, 261–274.
-#' @seealso \code{\link{probtrans}}; \code{\link{msfit}}; \code{\link{msfit_generic}}. 
+#' @seealso \code{\link[mstate:probtrans]{mstate::probtrans}}; \code{\link[mstate:msfit]{mstate::msfit}}; \code{\link{msfit_generic}}. 
 #' @export
 probtrans_mstate <- function(object, ...){
   UseMethod("probtrans_mstate")

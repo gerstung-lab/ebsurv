@@ -44,4 +44,3 @@ msfit_object<-msfit_generic(coxrfx_object_sample,
 
 # show estimates
 print(msfit_object)
-

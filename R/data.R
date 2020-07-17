@@ -41,3 +41,20 @@
 #' @seealso \code{\link{mstate_data_sample}}; 
 #' \code{\link{CoxRFX}}.
 "coxrfx_object_sample"
+
+#' Estimated cumulative hazard rates under 
+#' an empirical Bayes Cox model (example)
+#'
+#' An RData object containing estimated
+#' cumulative hazards,
+#' obtained by running \code{msfit_generic} on the
+#' object \code{coxrfx_object_sample} (also included 
+#' in the present package).
+#' 
+#'
+#' @format An object of class 
+#' \code{c(msfit,coxrfx)}. See \code{\link{msfit_generic}} 
+#' and \code{\link[mstate:msfit]{mstate::msfit}} for details. 
+#'  
+#' @seealso \code{\link{coxrfx_object_sample}}.
+"msfit_object_sample"

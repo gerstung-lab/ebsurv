@@ -4,7 +4,8 @@
 \name{mstate_data_sample}
 \alias{mstate_data_sample}
 \title{A simulated event-history data set}
-\format{A data frame with 649 rows and 18 variables
+\format{
+A data frame with 649 rows and 18 variables
  (250 patients):
 \describe{
   \item{id}{patient identification number}
@@ -18,7 +19,8 @@
   \item{time}{Tstop-Tstart}
   \item{status}{did the transition occur at Tstop?}
   \item{Cov1,Cov2,Cov3,Cov4,Cov5,Cov6,Cov7,Cov8,Cov9,Cov10}{covariates}
-}}
+}
+}
 \usage{
 mstate_data_sample
 }

@@ -9,7 +9,7 @@ probtrans_ebsurv(
   initial_state,
   cumhaz,
   model,
-  max_time = 5000,
+  max_time = NULL,
   nr_steps = 10000
 )
 }
@@ -50,6 +50,20 @@ The algorithm behing \code{probtrans_ebsurv} is based
 on the convolution of density and survival functions and
 is suitable for processes with a tree-like transition
 structure only.
+}
+\examples{
+# Compute transition probabilities
+# from an object with (pre-estimated) 
+# cumulative hazard rates.
+
+#load object with estimated
+#cumulative hazard rates 
+data("msfit_object_sample")
+
+#compute transition probabilities
+probtrans_object<-probtrans_ebsurv("health",
+   msfit_object_sample,"Markov")
+
 }
 \seealso{
 \code{\link{probtrans}};

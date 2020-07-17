@@ -11,7 +11,10 @@ Description: This package implements an empirical Bayes,
     same group sharing the same Gaussian prior. It takes
     as input a data set in 'long format' and generates
     estimates of relative hazards, cumulative hazard
-    functions and transition probabilities.
+    functions and transition probabilities. It relies 
+    on packages 'survival' and 'mstate'
+    and incorporates some 
+    of their functions to reduce upstream dependency.
 Depends:
     R (>= 3.5.0),
     survival (>= 2.44-1.1),
@@ -24,6 +27,6 @@ Imports:
     methods
 License: GPL-3
 LinkingTo: Rcpp
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 LazyData: true

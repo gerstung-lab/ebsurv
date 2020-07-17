@@ -77,9 +77,10 @@ competing risks models. \emph{Computer Methods and Programs in Biomedicine}
 \strong{99}, 261–274.
 }
 \seealso{
-\code{\link{probtrans}}; \code{\link{msfit}}; \code{\link{msfit_generic}}.
+\code{\link[mstate:probtrans]{mstate::probtrans}}; \code{\link[mstate:msfit]{mstate::msfit}}; \code{\link{msfit_generic}}.
 }
 \author{
-Rui Costa, adapting the work of Liesbeth de Wreede and Hein Putter in the
-\code{mstate} package.
+Rui Costa, adapting the work of L. de Wreede,
+M. Fiocco and H. Putter in the
+\code{\link{mstate}} package.
 }

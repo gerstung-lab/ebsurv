@@ -38,7 +38,10 @@ the multi-state model. See \code{trans} in \code{\link[mstate:msprep]{mstate::ms
 for more detailed information.}
 }
 \value{
-An object of class "msfit". See \code{\link[mstate:msfit]{mstate::msfit}} for details.
+An 'msfit' object. See \code{\link[mstate:msfit]{mstate::msfit}} for details.
+If the S3 method \code{msfit_generic.coxrfx} is called, the 
+returned object will be of class \code{c(msfit,coxrfx)}; 
+otherwise, it will be of class \code{msfit}.
 }
 \description{
 This function computes subject-specific or overall cumulative transition
@@ -108,7 +111,6 @@ msfit_object<-msfit_generic(coxrfx_object_sample,
 
 # show estimates
 print(msfit_object)
-
 }
 \references{
 de Wreede LC, Fiocco M, and Putter H (2010). The mstate package for 
@@ -120,6 +122,7 @@ competing risks models. \emph{Computer Methods and Programs in Biomedicine}
 \code{\link[mstate:msfit]{mstate::msfit}}; \code{\link[mstate:msprep]{mstate::msprep}}; \code{\link[mstate:plot.msfit]{mstate::plot.msfit}}.
 }
 \author{
-Rui Costa, adapting the work of Hein Putter in the package
-\code{mstate}.
+Rui Costa, adapting the work of L. de Wreede,
+M. Fiocco and H. Putter in the
+\code{\link{mstate}} package.
 }

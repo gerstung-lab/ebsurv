@@ -4,12 +4,14 @@
 \name{coxrfx_object_sample}
 \alias{coxrfx_object_sample}
 \title{Example of an empirical Bayes model fit}
-\format{An object of class 
+\format{
+An object of class 
 \code{c(coxrfx,coxph.penal,coxph)}, which is 
 essentially a coxph object with a few 
 extra fields [the inputs $groups, $Z,
 and $surv, and the hyperparameters 
-$sigma2 (variances) and $mu (means)].}
+$sigma2 (variances) and $mu (means)].
+}
 \usage{
 coxrfx_object_sample
 }

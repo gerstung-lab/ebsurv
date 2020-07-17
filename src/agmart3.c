@@ -1,7 +1,18 @@
-/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
- ** imported for protection against changes in 'survival' posterior
+/* [The next function is imported for protection 
+ * against changes in 'survival' posterior
  **  to version 2.44-1.1]
  */
+
+/* Package:survival
+ * Version: 2.44-1.1
+ ** Authors@R: c(person(c("Terry", "M"), "Therneau",
+ **                    email="therneau.terry@mayo.edu",
+ **                     role=c("aut", "cre")),
+ **              person("Thomas", "Lumley", role=c("ctb", "trl"),
+ **                     comment="original S->R port and R maintainer until 2009"))
+ ** License: LGPL (>= 2)
+ */
+
 
 /*
 ** The fastest possible calculation (at least the fastest I've come up with)

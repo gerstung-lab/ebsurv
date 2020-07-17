@@ -143,5 +143,6 @@ R. Schall (1991). Estimation in generalized linear models with random effects. B
 \code{\link[survival:Surv]{survival::Surv}}; package \code{coxme}.
 }
 \author{
-Moritz Gerstung & Rui Costa
+Moritz Gerstung & Rui Costa, extending the work of 
+Terry Therneau et al. in the package \code{\link[survival:00Index]{survival}}
 }

@@ -179,11 +179,13 @@ joint_cum_hazard_function<-function(t,competing_transitions,spline_list){
 #'
 #'@return An object of class 'probtrans'. See the 'value' 
 #'section in the help page of \code{mstate::probtrans}.
+#'@example inst/examples/probtrans_ebsurv-example.R
 #'@author Rui Costa & Moritz Gerstung
 #'@seealso \code{\link{probtrans}};
 #'
 #'@export
-probtrans_ebsurv<-function(initial_state,cumhaz,model,max_time=5000,nr_steps=10000){
+probtrans_ebsurv<-function(initial_state,cumhaz,model,max_time=NULL,nr_steps=10000){
+  if(is.null(max_time)) max_time<-max(cumhaz$Haz$time)
   probtrans_object<-lapply(initial_state, probtrans_by_convolution,tmat=cumhaz$trans,cumhaz=cumhaz,model=model,max_time=max_time,nr_steps=nr_steps)
   probtrans_object$trans<-cumhaz$trans
   probtrans_object$direction<-"forward"

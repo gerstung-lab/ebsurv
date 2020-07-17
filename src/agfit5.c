@@ -1,7 +1,17 @@
-/* [A C function from the package 'survival' (v. 2.44-1.1) by Terry Therneau,
-** imported for protection against changes in 'survival' posterior
-**  to version 2.44-1.1]
-*/
+/* [The next function is imported for protection 
+ * against changes in 'survival' posterior
+ **  to version 2.44-1.1]
+ */
+
+/* Package:survival
+ * Version: 2.44-1.1
+ ** Authors@R: c(person(c("Terry", "M"), "Therneau",
+ **                    email="therneau.terry@mayo.edu",
+ **                     role=c("aut", "cre")),
+ **              person("Thomas", "Lumley", role=c("ctb", "trl"),
+ **                     comment="original S->R port and R maintainer until 2009"))
+ ** License: LGPL (>= 2)
+ */
 
 /* A reentrant version of the agfit program, for penalized effects modeling
 **   with reasonable efficiency (I hope).  The important arrays are saved
