@@ -26,7 +26,7 @@ for each of the transitions in the multi-state model and,
 if standard errors are requested, (co)variances of these cumulative hazards
 for each pair of transitions.}
 
-\item{...}{other arguments}
+\item{...}{other arguments.}
 
 \item{predt}{A positive number indicating the prediction time. 
 This is either the time at which the prediction is made (if direction= "forward") 
