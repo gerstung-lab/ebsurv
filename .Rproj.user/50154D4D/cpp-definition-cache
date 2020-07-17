@@ -1,0 +1,56 @@
+[
+    {
+        "definitions" : [
+            {
+                "column" : 6,
+                "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/agmssurv.c",
+                "kind" : 6,
+                "line" : 37,
+                "name" : "agmssurv(int *, int *, int *, int *, int *, int *, int *, double *, double *, double *, double *, int *, int *, double *, double *, double *, double *, double *, double *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@agmssurv"
+            }
+        ],
+        "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/agmssurv.c",
+        "file_last_write" : 1551180890.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 6,
+                "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/init.c",
+                "kind" : 6,
+                "line" : 37,
+                "name" : "R_init_ebsurv(DllInfo *)",
+                "parent_name" : "",
+                "usr" : "c:@F@R_init_ebsurv"
+            }
+        ],
+        "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/init.c",
+        "file_last_write" : 1549041223.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 15,
+                "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/rcpp_functions.cpp",
+                "kind" : 6,
+                "line" : 16,
+                "name" : "convolute_semiMarkov(Rcpp::NumericVector, Rcpp::NumericVector, Rcpp::NumericVector)",
+                "parent_name" : "",
+                "usr" : "c:@F@convolute_semiMarkov#$@N@Rcpp@S@Vector>#VI14#@N@Rcpp@ST>1#T@PreserveStorage#S0_#S0_#"
+            },
+            {
+                "column" : 15,
+                "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/rcpp_functions.cpp",
+                "kind" : 6,
+                "line" : 39,
+                "name" : "convolute_Markov(Rcpp::NumericVector, Rcpp::NumericVector, Rcpp::NumericVector, Rcpp::NumericVector)",
+                "parent_name" : "",
+                "usr" : "c:@F@convolute_Markov#$@N@Rcpp@S@Vector>#VI14#@N@Rcpp@ST>1#T@PreserveStorage#S0_#S0_#S0_#"
+            }
+        ],
+        "file" : "/Users/ruibarrigana/Google Drive/RWORK/packages/ebsurv/src/rcpp_functions.cpp",
+        "file_last_write" : 1580476106.000000
+    }
+]

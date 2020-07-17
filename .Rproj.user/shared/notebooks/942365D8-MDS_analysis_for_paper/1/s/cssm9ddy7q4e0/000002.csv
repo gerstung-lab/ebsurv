@@ -1,0 +1,1 @@
+"0","genotypes <- allGenotypes[,colSums(allGenotypes)>0]"

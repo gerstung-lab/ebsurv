@@ -1,0 +1,66 @@
+"0","set.seed(973009)"
+"0","library(ebsurv)"
+"2","Loading required package: survival
+"
+"2","Loading required package: parallel
+"
+"2","Loading required package: RColorBrewer
+"
+"2","Loading required package: mstate
+"
+"2","Loading required package: HDInterval
+"
+"2","Registered S3 method overwritten by 'dplyr':
+  method           from
+  print.rowwise_df     
+"
+"0","library(caret)"
+"2","Loading required package: lattice
+"
+"2","Loading required package: ggplot2
+"
+"2","Registered S3 method overwritten by 'data.table':
+  method           from
+  print.data.table     
+"
+"2","
+Attaching package: ‘caret’
+
+"
+"2","The following object is masked from ‘package:survival’:
+
+    cluster
+
+"
+"0","library(plotrix)"
+"0","library(mg14) #devtools::install_github(""mg14/mg14"") will install this package (if needed)"
+"0","library(hot.deck)"
+"0","library(glmnet)"
+"2","Loading required package: Matrix
+"
+"2","Loaded glmnet 3.0-2
+
+"
+"0","library(randomForestSRC)"
+"2","
+ randomForestSRC 2.9.3 
+ 
+ Type rfsrc.news() to see new features, changes, and bug fixes. 
+ 
+
+"
+"0","library(cgwtools)"
+"2","
+Attaching package: ‘cgwtools’
+
+"
+"2","The following object is masked from ‘package:base’:
+
+    !
+
+"
+"0","setwd(""~/Library/Mobile\ Documents/com~apple~CloudDocs/RWORK/MDS-multistage/code"")"
+"0","# load(""../data/R_objects_ebsurv_paper.Rdata"")"
+"0","# load(""../data/boot_ebsurv_paper.Rdata"")"
+"0","# load(""../data/VarComps_ebsurv_paper.Rdata"")"
+"0","load(""../data/MDS_R_objects.Rdata"")"

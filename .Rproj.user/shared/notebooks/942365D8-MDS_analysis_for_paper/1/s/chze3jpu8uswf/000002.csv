@@ -1,0 +1,9 @@
+"0","boot_probtrans_object<-boot_probtrans(boot_coefs$coxrfx_fits_boot,patient_data,tmat)
+"
+"1","[1]"
+"1"," 1"
+"1","
+"
+"2","Error in msfit_generic.coxrfx(coxrfx_fits_boot[[i]], patient_data2, trans = tmat) : 
+  no ""strata"" column present in newdata
+"

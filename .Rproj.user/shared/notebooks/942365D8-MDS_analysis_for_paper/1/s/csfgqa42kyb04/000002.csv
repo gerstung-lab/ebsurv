@@ -1,0 +1,2 @@
+"0","rownames(mdsClinicalData)<-mdsClinicalData$PDID"
+"0","mdsClinicalData<-mdsClinicalData[c(""DATE.OF.DIAGNOSIS"",""AML.PROGRESSION"",""DATE.AML.PROGRESSION"",""DATE.LAST.FU"",""OUTCOME"")]"

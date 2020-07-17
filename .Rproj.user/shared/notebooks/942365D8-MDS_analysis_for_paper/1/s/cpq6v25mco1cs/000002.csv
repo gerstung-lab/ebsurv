@@ -1,0 +1,3 @@
+"0","mdsGeneticData <- read.table(""../data/MDS.TPD.20Nov2012.csv"", sep="","", header=T, fill=T, quote = ""\"""") ## Genotypes"
+"0","levels(mdsGeneticData$Gene)[levels(mdsGeneticData$Gene)==""SFRS2""] = ""SRSF2"" #correct typo in level name"
+"0","levels(mdsGeneticData$Gene)[levels(mdsGeneticData$Gene)==""ENSG00000091592""] = ""NLRP1"" #change level name"

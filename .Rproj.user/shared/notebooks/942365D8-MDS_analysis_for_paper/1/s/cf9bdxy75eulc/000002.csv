@@ -1,0 +1,8 @@
+"0","gene_vars<-names(imputedData)[1:43]"
+"0","cytogenetic_vars<-names(imputedData)[44:55]"
+"0","clinical_vars<-names(imputedData)[56:75]"
+"0","nuisance_vars<-names(imputedData)[76:81]"
+"0",""
+"0","mutation_vars<-names(imputedData)[1:55]"
+"0","all_clinical_vars<-names(imputedData)[56:81]"
+"0",""

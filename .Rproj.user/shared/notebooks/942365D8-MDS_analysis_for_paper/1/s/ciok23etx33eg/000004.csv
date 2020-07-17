@@ -1,0 +1,8 @@
+"0",""
+"0","mstate.data<-cbind(mstate.data,imputedData[mstate.data$id,])"
+"0",""
+"0","tmat<-transMat(x=list(c(2,3),c(4),c(),c()),names=c(""MDS"",""AML"",""death"",""death_after_AML""))"
+"0","class(mstate.data)<-c(""data.frame"",""msdata"")"
+"0","attr(mstate.data,""trans"")<-tmat"
+"0",""
+"0",""

@@ -1,0 +1,32 @@
+Package: ebsurv
+Type: Package
+Title: Empirical Bayes multi-state Cox model
+Version: 0.0.73
+Date: Wed Jan 21 21:34:01 GMT 2020
+Author: Rui Costa, Moritz Gerstung
+Maintainer: Rui Costa <rui.costa@ebi.ac.uk>
+Description: This package implements an empirical Bayes,
+    multi-state Cox model.Different groups of regression
+    coefficients can be defined, with coefficients of the
+    same group sharing the same Gaussian prior. It takes
+    as input a data set in 'long format' and generates
+    estimates of relative hazards, cumulative hazard
+    functions and transition probabilities.
+Depends:
+    R (>= 3.5.0),
+    survival (== 2.44-1.1),
+    parallel,
+    RColorBrewer,
+    mstate (== 0.2.11)
+Imports:
+    glmnet,
+    MASS,
+    mvtnorm,
+    mice,
+    Rcpp,
+Suggests:
+    coxme
+License: GPL-3
+LinkingTo: Rcpp
+RoxygenNote: 7.0.2
+Encoding: UTF-8
