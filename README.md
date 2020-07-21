@@ -1,4 +1,4 @@
-CoxHD
+ebsurv
 -----
 
 [![Build Status](https://travis-ci.org/mg14/CoxHD.svg)](https://travis-ci.org/mg14/CoxHD)
@@ -11,4 +11,4 @@ CoxHD
 Installation is easy using devtools::install_github()
 
 	> library(devtools)
-	> install_github("gerstung-lab/CoxHD",ref = "ebsurv")
+	> install_github("gerstung-lab/ebsurv")
