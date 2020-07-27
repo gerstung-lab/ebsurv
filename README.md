@@ -1,6 +1,5 @@
----
-title: "ebsurv"
----
+# ebsurv
+
 ### An R package for multi-state survival analysis under empirical Bayes Cox models.
  
 #### Installation
