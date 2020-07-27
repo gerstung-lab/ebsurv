@@ -1,11 +1,11 @@
 Package: ebsurv
 Type: Package
-Title: Empirical Bayes multi-state Cox model
+Title: Empirical Bayes Multi-State Cox Model
 Version: 0.0.73
-Date: Wed Jan 21 21:34:01 GMT 2020
+Date: 2020-07-21 21:34:01 GMT 
 Author: Rui Costa, Moritz Gerstung
 Maintainer: Rui Costa <rui.costa@ebi.ac.uk>
-Description: This package implements an empirical Bayes,
+Description: Implements an empirical Bayes,
     multi-state Cox model.Different groups of regression
     coefficients can be defined, with coefficients of the
     same group sharing the same Gaussian prior. It takes
@@ -16,7 +16,7 @@ Description: This package implements an empirical Bayes,
     and incorporates some 
     of their functions to reduce upstream dependency.
 Depends:
-    R (>= 3.5.0),
+    R (>= 3.6.0),
     survival (>= 2.44-1.1),
     mstate (>= 0.2.11)
 Imports:

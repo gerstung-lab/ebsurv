@@ -1,24 +1,31 @@
 ## Test environments
-* local OS X install, R 3.1.2
-* ubuntu 12.04 (on travis-ci), R 3.1.2
-* win-builder (devel and release)
+* local OS X install, R-release
+* Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+* Ubuntu Linux 16.04 LTS, R-release, GCC
+* Fedora Linux, R-devel, clang, gfortran
+* Debian Linux, R-devel, GCC ASAN/UBSAN
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
+Notes in each platform:
 
-There was 1 NOTE:
+1. Platform:   Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+ *Note 1:
+    checking CRAN incoming feasibility ... NOTE
+    Maintainer: 'Rui Costa <rui.costa@ebi.ac.uk>'
+    New submission
+ *Comment to note 1:
+    Seems to be an unavoidable comment for first submissions.
 
-* checking dependencies in R code ... NOTE
-  Namespace in Imports field not imported from: 'R6'
+> checking examples ...
+  ** running examples for arch 'i386' ... OK
+  ** running examples for arch 'x64' ... NOTE
+  Examples with CPU (user + system) or elapsed time > 5s
+                   user system elapsed
+  probtrans_ebsurv  5.2      0     5.2
 
-  R6 is a build-time dependency.
+0 errors ✓ | 0 warnings ✓ | 2 notes x
+
 
 ## Downstream dependencies
-I have also run R CMD check on downstream dependencies of httr 
-(https://github.com/wch/checkresults/blob/master/httr/r-release). 
-All packages that I could install passed except:
-
-* Ecoengine: this appears to be a failure related to config on 
-  that machine. I couldn't reproduce it locally, and it doesn't 
-  seem to be related to changes in httr (the same problem exists 
-  with httr 0.4).
+There are currently no downstream dependencies for this package.

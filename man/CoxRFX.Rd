@@ -138,11 +138,11 @@ A. Perperoglou (2014). Cox models with dynamic ridge penalties on time-varying e
 R. Schall (1991). Estimation in generalized linear models with random effects. Biometrika, 78:719-727. http://dx.doi.org/10.1093/biomet/78.4.719
 }
 \seealso{
-\code{\link[survival:coxph]{survival::coxph}};
+Package \code{survival}
 \code{\link[survival:coxph.object]{survival::coxph.object}};
 \code{\link[survival:Surv]{survival::Surv}}; package \code{coxme}.
 }
 \author{
 Moritz Gerstung & Rui Costa, extending the work of 
-Terry Therneau et al. in the package \code{\link[survival:00Index]{survival}}
+Terry Therneau et al. in the package \code{survival}.
 }

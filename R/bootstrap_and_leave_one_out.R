@@ -12,7 +12,7 @@
 #' @return Interval estimates for transition probabilities. 
 #' @author Rui Costa
 #' @seealso \code{\link{probtrans_ebsurv}}; \code{\link{boot_coxrfx}}; 
-#' \code{\link[mstate]{transMat}}; \code{\link[mstate]{expand.covs}}
+#' \code{\link[mstate:trans]{transMat}}; \code{\link[mstate]{expand.covs}}
 
 
 boot_probtrans<-function(coxrfx_fits_boot,patient_data,tmat,initial_state,max_time){

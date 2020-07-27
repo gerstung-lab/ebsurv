@@ -58,8 +58,8 @@
 #' See \code{\link[survival:coxph.object]{survival::coxph.object}}. 
 #' 
 #' @author Moritz Gerstung & Rui Costa, extending the work of 
-#' Terry Therneau et al. in the package \code{\link[survival:00Index]{survival}}
-#' @seealso  \code{\link[survival:coxph]{survival::coxph}};
+#' Terry Therneau et al. in the package \code{survival}.
+#' @seealso Package \code{survival}
 #' \code{\link[survival:coxph.object]{survival::coxph.object}};
 #' \code{\link[survival:Surv]{survival::Surv}}; package \code{coxme}.
 #' @export
