@@ -1,3 +1,0 @@
-"0","poorMansImpute <- function(x) {x[is.na(x)] <- sample(x[!is.na(x)],sum(is.na(x)),replace = T); return(x)}"
-"0","imputedData <- as.data.frame(sapply(rawData,poorMansImpute))"
-"0",""

@@ -1,2 +1,0 @@
-"0","imputedData<-imputedData[!(is.na(mdsClinicalData$DATE.OF.DIAGNOSIS)|is.na(mdsClinicalData$DATE.LAST.FU)|is.na(mdsClinicalData$OUTCOME)|is.na(mdsClinicalData$AML.PROGRESSION)),]"
-"0","mdsClinicalData<-mdsClinicalData[!(is.na(mdsClinicalData$DATE.OF.DIAGNOSIS)|is.na(mdsClinicalData$DATE.LAST.FU)|is.na(mdsClinicalData$OUTCOME)|is.na(mdsClinicalData$AML.PROGRESSION)),]"

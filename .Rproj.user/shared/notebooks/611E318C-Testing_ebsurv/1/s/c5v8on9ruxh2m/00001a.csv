@@ -1,2 +1,0 @@
-"0","pdf(paste0(""../plots/"",file3,""_sumSqErrDbn.pdf""),width = 4,height = 4)"
-"0","plot(density(sse_coxrfx),main="""",xlab = ""sum of squared errors"",ylab=""estimated density"",col=""red"",xlim=c(0,2.5))"

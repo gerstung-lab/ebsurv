@@ -1,2 +1,0 @@
-"0","centers <- sapply(unique(1:5), function(i) mdsClinicalData$center==i) + 0"
-"0","colnames(centers) <- paste(""center"",1:5, sep="""")"

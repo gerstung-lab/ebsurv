@@ -1,1 +1,0 @@
-"0","mdsClinicalData[c(""DATE.OF.DIAGNOSIS"",""DATE.LAST.FU"",""DATE.AML.PROGRESSION"")]<-sapply(mdsClinicalData[c(""DATE.OF.DIAGNOSIS"",""DATE.LAST.FU"",""DATE.AML.PROGRESSION"")], function(x) as.numeric(as.Date(x,format=""%d/%m/%Y"")))"

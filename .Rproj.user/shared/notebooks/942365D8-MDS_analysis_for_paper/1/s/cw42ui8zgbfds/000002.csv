@@ -1,5 +1,0 @@
-"0","mdsClinicalData <- read.table(""../data/mds.paper.clin.txt"", header=T, sep=""\t"", fill=T, na.strings = c(""NA"",""na"")) ## Import clinical data"
-"0","mdsClinicalData <- mdsClinicalData [!duplicated(mdsClinicalData$PDID),] ## remove duplicated observations"
-"0","mdsClinicalData[mdsClinicalData==""""] = NA #replace empty string with NAs"
-"0","mdsClinicalData = mdsClinicalData[mdsClinicalData$X0.no.mut.1.seq.2.removedbyqc.3.failed <2,] ## What is 'X0.no.mut.seq.2.removedbyqc.3.failed'? Why should it be lower than 2"
-"0","mdsClinicalData$IPSS.norm = factor(tolower(as.character(mdsClinicalData$IPSS.norm)), levels=c(""low"", ""int-1"", ""int-2"", ""high"")) # removes factor level ""Low"", keeping factor level ""low"""
